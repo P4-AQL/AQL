@@ -15,3 +15,4 @@
 /home/Projects/AntlrCSharp/obj/Debug/net9.0/AntlrCSharp.pdb
 /home/Projects/AntlrCSharp/obj/Debug/net9.0/AntlrCSharp.genruntimeconfig.cache
 /home/Projects/AntlrCSharp/obj/Debug/net9.0/ref/AntlrCSharp.dll
+/home/Projects/AntlrCSharp/obj/Debug/net9.0/AntlrCSharp.sourcelink.json
