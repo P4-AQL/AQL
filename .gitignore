@@ -1,8 +1,6 @@
 # Ignore generated ANTLR files
 .antlr/
-GeneratedCode/*.interp
-GeneratedCode/*.tokens
-GeneratedCode/*.cs
+GeneratedCode/
 
 # Ignore build files
 bin/
