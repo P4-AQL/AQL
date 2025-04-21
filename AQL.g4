@@ -7,11 +7,11 @@ importList
   ;
 def 
   : 'const' type ID '=' expr
-  | 'function' type ID '(' paramList ')' '{' funcBody '}'
+  | 'function' type ID '(' paramList ')' '{' stmt '}'
   | network
   ;
 network
-  : 'queue' ID '=' '{' serviceCount 'service:' intOrDouble ',' 'capacity:' INT metrics '}'
+  : 'queue' ID '=' '{' serviceCount 'service:' value ',' 'capacity:' value metrics '}'
   | 'network' ID '=' '{' 'inputs:' '[' inputs ']' ',' 'outputs:' '[' outputs ']' ',' 'routes:' '{' routes '}' metrics '}'
   ;
 
@@ -24,7 +24,7 @@ inputList
   ;
 inputOption
   : STRING
-  | ID
+  | qualifiedID
   ;
 outputs
   : STRING outputContB
@@ -35,19 +35,19 @@ outputContB
   ;
 
 routes
-  : ID '->' ID routesB
-  | ID '->' '[' routeIDList ']' routesB
+  : qualifiedID '->' qualifiedID routesB
+  | qualifiedID '->' '[' routeIDList ']' routesB
   ;
 routesB
-  : ',' ID '->' ID routesB
-  | ',' ID '->' '[' routeIDList ']' routesB
+  : ',' qualifiedID '->' qualifiedID routesB
+  | ',' qualifiedID '->' '[' routeIDList ']' routesB
   | //Epsilon
   ;
 routeIDList
-  : aExpr ID routeIDListB
+  : expr qualifiedID routeIDListB
   ;
 routeIDListB
-  : ',' aExpr ID routeIDListB
+  : ',' expr qualifiedID routeIDListB
   | //Epsilon
   ;
 
@@ -57,6 +57,7 @@ metrics
   ;
 metricList
   : metric metricListA
+  | //Epsilon
   ;
 metricListA
   : ',' metric metricListA
@@ -72,121 +73,92 @@ metric
   ;
 
 serviceCount
-  : 'numberOfService:' funcCall ','
-  | 'numberOfService:' INT ','
+  : 'number_of_services:' expr ','
   | //Epsilon
   ;
 paramList 
-  : type ID paramListA
+  : type qualifiedID paramListA
   | //Epsilon
   ;
 paramListA 
-  : ',' type ID paramListA
+  : ',' type qualifiedID paramListA
   | //Epsilon
   ;
 stmt
-  : stmtA ';' stmt
+  : stmtA stmt
   | //Epsilon
   ;
 stmtA 
-  : 'while' bExpr 'do' stmt
-  | ID '=' expr
-  | type ID '=' expr
-  | 'if' bExpr '{' branchBody '}' else1
+  : 'while' expr 'do' stmt
+  | ID '=' expr ';'
+  | type ID '=' expr ';'
+  | 'if' expr '{' stmt '}' else1
+  | 'return' expr ';'
   ;
 else1
   : elseIf else2
   | //Epsion
   ;
 else2
-  : 'else {' branchBody '}'
+  : 'else {' stmt '}'
   | //Epsilon
   ;
 elseIf
-  : 'else if' bExpr '{' branchBody '}' elseIf
+  : 'else if' expr '{' stmt '}' elseIf
   | //Epsilon
-  ;
-branchBody
-  : stmt ';' branchBody
-  | 'return' expr
-  | //Epsilon
-  ;
-funcBody
-  : stmt ';' funcBody
-  | 'return' expr
   ;
 expr 
-  : aExpr
-  | bExpr
-  | ID
-  | funcCall
+  : exprOr
+  ;
+exprOr
+  : exprAnd ('||' exprAnd)*
+  ;
+exprAnd
+  : exprEq ('&&' exprEq)*
+  ;
+exprEq
+  : exprLess (('=='|'!=') exprLess)*
+  ;
+exprLess
+  : exprPlus (('<'|'<='|'>'|'>=') exprPlus)*
+  ;
+exprPlus
+  : exprTimes (('+'|'-') exprTimes)*
+  ;
+exprTimes
+  : exprNot (('*'|'/') exprNot)*
+  ;
+exprNot
+  : '!' exprFunc // Add '-'?
+  | exprFunc
+  ;
+exprFunc
+  : routes
+  | value
+  ;
+value
+  : funcCall
+  | qualifiedID
   | STRING
   | DOUBLE
   | INT
   | BOOL
   ;
+
 actualParamList 
-  : ID paramListA
+  : qualifiedID paramListA
+  | value paramListA
   | //Epsilon
   ;
 actualParamListA 
-  : ',' ID paramListA
+  : ',' qualifiedID paramListA
+  | ',' value paramListA
   | //Epsilon
   ;
 funcCall
-  : ID '(' actualParamList ')'
+  : qualifiedID '(' actualParamList ')'
   ;
 
-aExpr 
-  : aTerm aExpr2 
-  ;
-aExpr2 
-  : '+' aTerm aExpr2 // Change to '+' AExpr?
-  | '-' aTerm aExpr2
-  | //Epsilon
-  ;
-aTerm: aFactor aTerm2;
-aTerm2 
-  : '*' aFactor aTerm2
-  | '/' aFactor aTerm2
-  | //Epsilon
-  ;
-aFactor 
-  : '(' aExpr ')'
-  | '-' intOrDouble
-  | intOrDouble
-  ;
-intOrDouble
-  : INT
-  | DOUBLE
-  | ID
-  | funcCall
-  ;
-
-bExpr
-  : b2 b3
-  ;
-b1 //Probably make a priority
-  : '||' bExpr
-  | '&&' bExpr
-  ;
-b2
-  : aExpr aToBExpr
-  | '!'bExpr
-  | BOOL
-  | '(' bExpr ')'
-  ;
-b3
-  : b1
-  | //Epsilon
-  ;
-aToBExpr
-  : '<=' aExpr
-  | '>=' aExpr
-  | '==' aExpr
-  | '<' aExpr
-  | '>' aExpr
-  ;
 type
   : 'bool'
   | 'int'
@@ -198,6 +170,9 @@ type
   ;
 ID
   : [a-zA-Z_][a-zA-Z0-9_]*
+  ;
+qualifiedID
+  : ID ('.' ID)*
   ;
 BOOL
   : 'true'

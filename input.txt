@@ -3,11 +3,11 @@ import "stdlib"
 const int x = 5 + 3
 
 function bool someFunc (int y) {
-  return x == y
+  return x == y;
 }
 
 function double main_entrance () {
-  current_time = stdlib.get_time_in_hours(); //This function is a made up function that could be in a standard library
+  current_time = stdlib.get_time_in_hours();
 
   int number_of_hours_passed = current_time / 3600;
 
@@ -15,49 +15,49 @@ function double main_entrance () {
     return 350;
   } else {
     return 250;
-  };  
+  }
 }
 
-Queue someQ = {
+queue someQ = {
   number_of_services: 5,
   service: stdlib.exponential(10),
   capacity: 95,
   metrics: [vrt, avgNum]
 }
 
-Queue someOtherQ = {
+queue someOtherQ = {
   number_of_services: 7,
   service: 20,
   capacity: 10,
   metrics: []
 }
 
-Network someNetwork = {
-  inputs: ["firstInput", "secondInput"]
-  output: ["output"]
+network someNetwork = {
+  inputs: ["firstInput", "secondInput"],
+  outputs: ["output"],
   routes: {
     firstInput -> someQ,
-    secondInput -> someQ
+    secondInput -> someQ,
     someQ -> output
   }
 }
 
-Network someOtherNetwork = {
+network someOtherNetwork = {
   inputs: ["firstInput", "secondInput"],
-  output: ["output"],
+  outputs: ["output"],
   routes: {
     firstInput -> [0.5 someQ, 0.5 someOtherQ],
-    someOtherQ -> [0.9 someQ, 0.1 output]
+    someOtherQ -> [0.9 someQ, 0.1 output],
     someQ -> output
-  },
+  }
 }
 
-Network bigNetwork = {
-  inputs: [main_entrance]
-  output: ["out"]
+network bigNetwork = {
+  inputs: [main_entrance],
+  outputs: ["out"],
   routes: {
-    main_entrance -> [0.1 someNetwork.firstInput, 0.9 someOtherNetwork.secondInput]
-    someNetwork.output -> out
+    main_entrance -> [0.1 someNetwork.firstInput, 0.9 someOtherNetwork.secondInput],
+    someNetwork.output -> out,
     someOtherNetwork.output -> out
   },
   metrics: [mrt, vrt, util]
