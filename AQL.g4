@@ -129,7 +129,7 @@ exprTimes
   : exprNot (('*'|'/') exprNot)*
   ;
 exprNot
-  : '!' exprFunc // Add '-'?
+  : exprFunc (('!'|'-') exprFunc)
   | exprFunc
   ;
 exprFunc
@@ -179,13 +179,13 @@ BOOL
   | 'false'
   ;
 INT
-  : [0-9]+
+  : '-'? [0-9]+
   ;
 DOUBLE
-  : [0-9]* '.' [0-9]+
+  : '-'? [0-9]* '.' [0-9]+
   ;
 STRING
-  : '"' ~["\\\r\n]* '"'
+  :  '"' ~["\\\r\n]* '"'
   ;
 
 WS
