@@ -12,26 +12,11 @@ def
   ;
 network
   : 'queue' ID '=' '{' serviceCount 'service:' value ',' 'capacity:' value metrics '}'
-  | 'network' ID '=' '{' 'inputs:' '[' inputs ']' ',' 'outputs:' '[' outputs ']' ',' 'routes:' '{' routes '}' metrics '}'
+  | 'network' ID '=' '{' 'inputs:' '[' identifierList ']' ',' 'outputs:' '[' identifierList ']' ',' 'routes:' '{' routes '}' metrics '}'
   ;
 
-inputs
-  : inputOption inputList
-  ;
-inputList
-  : ',' inputOption inputList
-  | //Epsilon
-  ;
-inputOption
-  : STRING
-  | qualifiedID
-  ;
-outputs
-  : STRING outputContB
-  ;
-outputContB
-  : ',' STRING outputContB
-  | //Epsilon
+identifierList
+  : ID (',' ID)* 
   ;
 
 routes
@@ -129,8 +114,7 @@ exprTimes
   : exprNot (('*'|'/') exprNot)*
   ;
 exprNot
-  : exprFunc (('!'|'-') exprFunc)
-  | exprFunc
+  : ('!'|'-')? exprFunc*
   ;
 exprFunc
   : routes

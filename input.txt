@@ -33,8 +33,8 @@ queue someOtherQ = {
 }
 
 network someNetwork = {
-  inputs: ["firstInput", "secondInput"],
-  outputs: ["output"],
+  inputs: [firstInput, secondInput],
+  outputs: [output],
   routes: {
     firstInput -> someQ,
     secondInput -> someQ,
@@ -43,8 +43,8 @@ network someNetwork = {
 }
 
 network someOtherNetwork = {
-  inputs: ["firstInput", "secondInput"],
-  outputs: ["output"],
+  inputs: [firstInput, secondInput],
+  outputs: [output],
   routes: {
     firstInput -> [0.5 someQ, 0.5 someOtherQ],
     someOtherQ -> [0.9 someQ, 0.1 output],
@@ -54,7 +54,7 @@ network someOtherNetwork = {
 
 network bigNetwork = {
   inputs: [main_entrance],
-  outputs: ["out"],
+  outputs: [out],
   routes: {
     main_entrance -> [0.1 someNetwork.firstInput, 0.9 someOtherNetwork.secondInput],
     someNetwork.output -> out,
