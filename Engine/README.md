@@ -31,7 +31,7 @@ Track statistics like:
 * Service and arrival times mainly use the following distributions: exponential, normal, etc.
 * Build or plug in a library to generate values from there
 
-## Visualization or Debug Ouput (Don't think we will have time for this)
+## Visualization or Debug Output (Don't think we will have time for this)
 * A CLI or GUI that shows queue states, customer movement, etc.
 * maybe a way to easily change certain things for easy debugging
 * maybe a rewind
