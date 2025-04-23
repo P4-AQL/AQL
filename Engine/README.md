@@ -33,5 +33,5 @@ Track statistics like:
 
 ## Visualization or Debug Output (Don't think we will have time for this)
 * A CLI or GUI that shows queue states, customer movement, etc.
-* maybe a way to easily change certain things for easy debugging
+* Potential configuration options to facilitate debugging
 * maybe a rewind
