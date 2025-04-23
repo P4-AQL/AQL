@@ -17,7 +17,7 @@ Needs to support language constructs like:
 * Server Objects: Serve customers; have service times availability status, etc.
 
 ## Simulation World State
-keeps track of all queues, servers, customers, and metrics (like queue lengths, wait times, etc)
+Keeps track of all queues, servers, customers, and metrics (like queue lengths, wait times, etc)
 
 ## Metrics Collector
 Track statistics like:
