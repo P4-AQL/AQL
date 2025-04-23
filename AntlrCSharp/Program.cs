@@ -6,7 +6,7 @@ using Antlr4.Runtime;
 
 try
 {
-    string input = "";
+    string input = File.ReadAllText("input.AQL");
 
     AntlrInputStream inputStream = new(input);
     AQLLexer lexer = new(inputStream);
@@ -21,5 +21,5 @@ try
 }
 catch (Exception ex)
 {
-    Console.WriteLine(ex.Message);
+    Console.WriteLine($"Error {ex}");
 }
