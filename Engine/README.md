@@ -28,7 +28,7 @@ Track statistics like:
 (This could support live updates but that will not be done because of time)
 
 ## Random Distribution Support
-* Service and arrival times mainly uses the follow distributions exponential, normal, etc.
+* Service and arrival times mainly use the following distributions: exponential, normal, etc.
 * Build or plug in a library to generate values from there
 
 ## Visualization or Debug Ouput (Don't think we will have time for this)
