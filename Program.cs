@@ -6,15 +6,13 @@ class Program
 {
     static void Main(string[] args)
     {
-        var inputStream = new AntlrFileStream("input.txt");
-        var lexer = new AQLLexer(inputStream);
-        var tokens = new CommonTokenStream(lexer);
-        var parser = new AQLParser(tokens);
+        AntlrFileStream inputStream = new("input.txt");
+        AQLLexer lexer = new(inputStream);
+        CommonTokenStream tokens = new(lexer);
+        AQLParser parser = new(tokens);
 
-        // Start parsing at the top-level rule (e.g., 'prog')
-        var tree = parser.prog();
+        var tree = parser.Program();
 
-        // Print the parse tree
         System.Console.WriteLine(tree.ToStringTree(parser));
     }
 }

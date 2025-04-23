@@ -109,15 +109,15 @@ elseIf
   | //Epsilon
   ;
 expr 
-  : expr ('||' expr)
-  | expr ('&&' expr)
-  | expr (('=='|'!=') expr)
-  | expr (('<'|'<='|'>'|'>=') expr)
-  | expr (('+'|'-') expr)
-  | expr (('*'|'/') expr)
-  | <assoc=right> ('!'|'-') expr
+  : value
   | routes
-  | value
+  | <assoc=right> ('!'|'-') expr
+  | expr ('*'|'/') expr
+  | expr ('+'|'-') expr
+  | expr ('<'|'<='|'>'|'>=') expr
+  | expr ('=='|'!=') expr
+  | expr '&&' expr
+  | expr '||' expr
   ;
 value
   : funcCall
