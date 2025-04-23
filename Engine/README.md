@@ -14,7 +14,7 @@ Needs to support language constructs like:
 
 ## Queue Model Components
 * Customer Entity: Data structure representing a unit moving through the system.
-* Server Objects: Serve customers; have service times avaliability status, etc.
+* Server Objects: Serve customers; have service times availability status, etc.
 
 ## Simulation World State
 keeps track of all queues, servers, customers, and matrics (like queue lenghts, wait times, etc)
