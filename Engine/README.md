@@ -1,4 +1,4 @@
-# What need to be done
+# What needs to be done
 
 ## Simulation Core
 Discrete Event Simulation
