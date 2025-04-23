@@ -6,17 +6,31 @@ importList
   | // Epsilon
   ;
 def 
-  : 'const' type ID '=' expr
+  : 'const' type assign
   | 'function' type ID '(' paramList ')' '{' stmt '}'
   | network
+  | 'simulate' '{' 'run:' qualifiedID ',' 'until:' expr ',' 'times:' expr '}'
   ;
 network
-  : 'queue' ID '=' '{' serviceCount 'service:' value ',' 'capacity:' value metrics '}'
-  | 'network' ID '=' '{' 'inputs:' '[' identifierList ']' ',' 'outputs:' '[' identifierList ']' ',' 'routes:' '{' routes '}' metrics '}'
+  : 'queue' ID '{' serviceCount 'service:' value ',' 'capacity:' value (',' metrics)? '}'
+  | 'network' ID '{' 'inputs:' idList ';' 'outputs:' idList (';' instances)? ';' 'routes:' '{' routes '}' (';' metrics)? ';'? '}'
   ;
 
-identifierList
+idList
   : ID (',' ID)* 
+  ;
+qualifiedIdList
+  : qualifiedID (',' qualifiedID)*
+  ;
+instances
+  : 'instances:' '{' instancesList '}'
+  ;
+instancesList
+  : instance (';' instance)* ';'?
+  | //Epsilon
+  ;
+instance
+  : qualifiedID ':' idList
   ;
 
 routes
@@ -37,8 +51,7 @@ routeIDListB
   ;
 
 metrics
-  : ',' 'metrics:' '[' metricList ']'
-  | //Epsilon
+  : 'metrics:' '[' metricList ']'
   ;
 metricList
   : metric metricListA
@@ -69,14 +82,17 @@ paramListA
   : ',' type qualifiedID paramListA
   | //Epsilon
   ;
+assign
+  : ID '=' expr ';'
+  ;
 stmt
   : stmtA stmt
   | //Epsilon
   ;
 stmtA 
   : 'while' expr 'do' stmt
-  | ID '=' expr ';'
-  | type ID '=' expr ';'
+  | assign
+  | type assign
   | 'if' expr '{' stmt '}' else1
   | 'return' expr ';'
   ;
@@ -93,31 +109,14 @@ elseIf
   | //Epsilon
   ;
 expr 
-  : exprOr
-  ;
-exprOr
-  : exprAnd ('||' exprAnd)*
-  ;
-exprAnd
-  : exprEq ('&&' exprEq)*
-  ;
-exprEq
-  : exprLess (('=='|'!=') exprLess)*
-  ;
-exprLess
-  : exprPlus (('<'|'<='|'>'|'>=') exprPlus)*
-  ;
-exprPlus
-  : exprTimes (('+'|'-') exprTimes)*
-  ;
-exprTimes
-  : exprNot (('*'|'/') exprNot)*
-  ;
-exprNot
-  : ('!'|'-')? exprFunc*
-  ;
-exprFunc
-  : routes
+  : expr ('||' expr)
+  | expr ('&&' expr)
+  | expr (('=='|'!=') expr)
+  | expr (('<'|'<='|'>'|'>=') expr)
+  | expr (('+'|'-') expr)
+  | expr (('*'|'/') expr)
+  | <assoc=right> ('!'|'-') expr
+  | routes
   | value
   ;
 value
@@ -127,6 +126,8 @@ value
   | DOUBLE
   | INT
   | BOOL
+  | array
+  | arrayValue
   ;
 
 actualParamList 
@@ -151,6 +152,12 @@ type
   | 'network'
   | '[' type ']'
   | '(' type '->' type ')'
+  ;
+array
+  : '{' value* (',' value)* '}'
+  ;
+arrayValue
+  : qualifiedID'['expr']'
   ;
 ID
   : [a-zA-Z_][a-zA-Z0-9_]*
