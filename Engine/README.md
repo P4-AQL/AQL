@@ -5,7 +5,7 @@ Discrete Event Simulation
 Event Queue
 
 ## Interpreter / Execution Engine
-Pares and executes AQL
+Parses and executes AQL
 Needs to support anguage construsts like:
 * Queue definitions
 * Customer arrival logic
