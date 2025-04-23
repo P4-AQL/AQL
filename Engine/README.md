@@ -25,7 +25,7 @@ Track statistics like:
 * Server utilization
 * Queue lengths over time
 * Throughput
-(This could support live updates but that will we not be doing because of time)
+(This could support live updates but that will not be done because of time)
 
 ## Random Distribution Support
 * Service and arrival times mainly uses the follow distributions exponential, normal, etc.
