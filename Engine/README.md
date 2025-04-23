@@ -21,7 +21,7 @@ keeps track of all queues, servers, customers, and matrics (like queue lenghts, 
 
 ## Metrics Collector
 Track statistics like:
-* Averege wait time
+* Average wait time
 * Server utilization
 * Queue lengths over time
 * Throughput
