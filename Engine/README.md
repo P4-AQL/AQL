@@ -6,7 +6,7 @@ Event Queue
 
 ## Interpreter / Execution Engine
 Parses and executes AQL
-Needs to support anguage construsts like:
+Needs to support language constructs like:
 * Queue definitions
 * Customer arrival logic
 * Service time distributions
