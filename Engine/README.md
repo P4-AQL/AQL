@@ -13,8 +13,7 @@ Needs to support language constructs like:
 * Routing logic
 
 ## Queue Model Components
-* Custmer Entity: Data structure representing a unit moving hrough the system.
-* Queue Objects: Hold customers; manage entry/exit logic.
+* Customer Entity: Data structure representing a unit moving through the system.
 * Server Objects: Serve customers; have service times avaliability status, etc.
 
 ## Simulation World State
