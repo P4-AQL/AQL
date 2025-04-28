@@ -43,44 +43,49 @@ public partial class AQLParser : Parser {
 		T__31=32, T__32=33, T__33=34, T__34=35, T__35=36, T__36=37, T__37=38, 
 		T__38=39, T__39=40, T__40=41, T__41=42, T__42=43, T__43=44, T__44=45, 
 		T__45=46, T__46=47, T__47=48, T__48=49, T__49=50, T__50=51, T__51=52, 
-		T__52=53, T__53=54, T__54=55, T__55=56, T__56=57, T__57=58, ID=59, BOOL=60, 
-		INT=61, DOUBLE=62, STRING=63, WS=64;
+		T__52=53, T__53=54, TYPEKEYWORD=55, ID=56, BOOL=57, INT=58, DOUBLE=59, 
+		STRING=60, WS=61;
 	public const int
-		RULE_prog = 0, RULE_importList = 1, RULE_def = 2, RULE_network = 3, RULE_idList = 4, 
-		RULE_qualifiedIdList = 5, RULE_instances = 6, RULE_instancesList = 7, 
-		RULE_instance = 8, RULE_routes = 9, RULE_routesB = 10, RULE_routeIDList = 11, 
-		RULE_routeIDListB = 12, RULE_metrics = 13, RULE_metricList = 14, RULE_metricListA = 15, 
-		RULE_metric = 16, RULE_serviceCount = 17, RULE_paramList = 18, RULE_paramListA = 19, 
-		RULE_assign = 20, RULE_stmt = 21, RULE_stmtA = 22, RULE_else1 = 23, RULE_else2 = 24, 
-		RULE_elseIf = 25, RULE_expr = 26, RULE_value = 27, RULE_actualParamList = 28, 
-		RULE_actualParamListA = 29, RULE_funcCall = 30, RULE_type = 31, RULE_array = 32, 
-		RULE_arrayValue = 33, RULE_qualifiedID = 34;
+		RULE_program = 0, RULE_importList = 1, RULE_importStatement = 2, RULE_definition = 3, 
+		RULE_constDefinition = 4, RULE_functionDefinition = 5, RULE_networkDefinitions = 6, 
+		RULE_queueDefinition = 7, RULE_serviceCount = 8, RULE_networkDefinition = 9, 
+		RULE_simulateDefinition = 10, RULE_instances = 11, RULE_instancesList = 12, 
+		RULE_instance = 13, RULE_routes = 14, RULE_routesB = 15, RULE_routeIDList = 16, 
+		RULE_routeIDListB = 17, RULE_metrics = 18, RULE_metricList = 19, RULE_metric = 20, 
+		RULE_formalParameterList = 21, RULE_assign = 22, RULE_stmt = 23, RULE_stmtA = 24, 
+		RULE_else1 = 25, RULE_else2 = 26, RULE_elseIf = 27, RULE_expression = 28, 
+		RULE_value = 29, RULE_actualParameterList = 30, RULE_funcCall = 31, RULE_type = 32, 
+		RULE_arrayInitialization = 33, RULE_arrayIndexing = 34, RULE_arrayType = 35, 
+		RULE_routeType = 36, RULE_qualifiedIdList = 37, RULE_qualifiedID = 38, 
+		RULE_idList = 39;
 	public static readonly string[] ruleNames = {
-		"prog", "importList", "def", "network", "idList", "qualifiedIdList", "instances", 
-		"instancesList", "instance", "routes", "routesB", "routeIDList", "routeIDListB", 
-		"metrics", "metricList", "metricListA", "metric", "serviceCount", "paramList", 
-		"paramListA", "assign", "stmt", "stmtA", "else1", "else2", "elseIf", "expr", 
-		"value", "actualParamList", "actualParamListA", "funcCall", "type", "array", 
-		"arrayValue", "qualifiedID"
+		"program", "importList", "importStatement", "definition", "constDefinition", 
+		"functionDefinition", "networkDefinitions", "queueDefinition", "serviceCount", 
+		"networkDefinition", "simulateDefinition", "instances", "instancesList", 
+		"instance", "routes", "routesB", "routeIDList", "routeIDListB", "metrics", 
+		"metricList", "metric", "formalParameterList", "assign", "stmt", "stmtA", 
+		"else1", "else2", "elseIf", "expression", "value", "actualParameterList", 
+		"funcCall", "type", "arrayInitialization", "arrayIndexing", "arrayType", 
+		"routeType", "qualifiedIdList", "qualifiedID", "idList"
 	};
 
 	private static readonly string[] _LiteralNames = {
 		null, "'import'", "'const'", "'function'", "'('", "')'", "'{'", "'}'", 
-		"'simulate'", "'run:'", "','", "'until:'", "'times:'", "'queue'", "'service:'", 
-		"'capacity:'", "'network'", "'inputs:'", "';'", "'outputs:'", "'routes:'", 
-		"'instances:'", "':'", "'->'", "'['", "']'", "'metrics:'", "'mrt'", "'vrt'", 
-		"'util'", "'throughput'", "'num'", "'avgNum'", "'number_of_services:'", 
-		"'='", "'while'", "'do'", "'if'", "'return'", "'else {'", "'else if'", 
-		"'!'", "'-'", "'*'", "'/'", "'+'", "'<'", "'<='", "'>'", "'>='", "'=='", 
-		"'!='", "'&&'", "'||'", "'bool'", "'int'", "'double'", "'string'", "'.'"
+		"'queue'", "'service:'", "','", "'capacity:'", "'number_of_services:'", 
+		"'network'", "'inputs:'", "';'", "'outputs:'", "'routes:'", "'simulate'", 
+		"'run:'", "'until:'", "'times:'", "'instances:'", "':'", "'->'", "'['", 
+		"']'", "'metrics:'", "'mrt'", "'vrt'", "'util'", "'throughput'", "'num'", 
+		"'avgNum'", "'='", "'while'", "'do'", "'if'", "'return'", "'else {'", 
+		"'else if'", "'!'", "'-'", "'*'", "'/'", "'+'", "'<'", "'<='", "'>'", 
+		"'>='", "'=='", "'!='", "'&&'", "'||'", "'.'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, "ID", 
-		"BOOL", "INT", "DOUBLE", "STRING", "WS"
+		null, null, null, null, null, null, null, "TYPEKEYWORD", "ID", "BOOL", 
+		"INT", "DOUBLE", "STRING", "WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -114,50 +119,50 @@ public partial class AQLParser : Parser {
 		Interpreter = new ParserATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
 	}
 
-	public partial class ProgContext : ParserRuleContext {
+	public partial class ProgramContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ImportListContext importList() {
 			return GetRuleContext<ImportListContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public DefContext[] def() {
-			return GetRuleContexts<DefContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public DefinitionContext[] definition() {
+			return GetRuleContexts<DefinitionContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public DefContext def(int i) {
-			return GetRuleContext<DefContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public DefinitionContext definition(int i) {
+			return GetRuleContext<DefinitionContext>(i);
 		}
-		public ProgContext(ParserRuleContext parent, int invokingState)
+		public ProgramContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_prog; } }
+		public override int RuleIndex { get { return RULE_program; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitProg(this);
+			if (typedVisitor != null) return typedVisitor.VisitProgram(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ProgContext prog() {
-		ProgContext _localctx = new ProgContext(Context, State);
-		EnterRule(_localctx, 0, RULE_prog);
+	public ProgramContext program() {
+		ProgramContext _localctx = new ProgramContext(Context, State);
+		EnterRule(_localctx, 0, RULE_program);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 70;
+			State = 80;
 			importList();
-			State = 74;
+			State = 84;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 73996L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 270604L) != 0)) {
 				{
 				{
-				State = 71;
-				def();
+				State = 81;
+				definition();
 				}
 				}
-				State = 76;
+				State = 86;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -175,9 +180,11 @@ public partial class AQLParser : Parser {
 	}
 
 	public partial class ImportListContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(AQLParser.STRING, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ImportListContext importList() {
-			return GetRuleContext<ImportListContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ImportStatementContext[] importStatement() {
+			return GetRuleContexts<ImportStatementContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ImportStatementContext importStatement(int i) {
+			return GetRuleContext<ImportStatementContext>(i);
 		}
 		public ImportListContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -196,29 +203,137 @@ public partial class AQLParser : Parser {
 	public ImportListContext importList() {
 		ImportListContext _localctx = new ImportListContext(Context, State);
 		EnterRule(_localctx, 2, RULE_importList);
+		int _la;
 		try {
-			State = 81;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 90;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==T__0) {
+				{
+				{
+				State = 87;
+				importStatement();
+				}
+				}
+				State = 92;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ImportStatementContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(AQLParser.STRING, 0); }
+		public ImportStatementContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_importStatement; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitImportStatement(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ImportStatementContext importStatement() {
+		ImportStatementContext _localctx = new ImportStatementContext(Context, State);
+		EnterRule(_localctx, 4, RULE_importStatement);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 93;
+			Match(T__0);
+			State = 94;
+			Match(STRING);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DefinitionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ConstDefinitionContext constDefinition() {
+			return GetRuleContext<ConstDefinitionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FunctionDefinitionContext functionDefinition() {
+			return GetRuleContext<FunctionDefinitionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public NetworkDefinitionsContext networkDefinitions() {
+			return GetRuleContext<NetworkDefinitionsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public SimulateDefinitionContext simulateDefinition() {
+			return GetRuleContext<SimulateDefinitionContext>(0);
+		}
+		public DefinitionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_definition; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDefinition(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DefinitionContext definition() {
+		DefinitionContext _localctx = new DefinitionContext(Context, State);
+		EnterRule(_localctx, 6, RULE_definition);
+		try {
+			State = 100;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case T__0:
+			case T__1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 77;
-				Match(T__0);
-				State = 78;
-				Match(STRING);
-				State = 79;
-				importList();
+				State = 96;
+				constDefinition();
 				}
 				break;
-			case Eof:
-			case T__1:
 			case T__2:
-			case T__7:
-			case T__12:
-			case T__15:
 				EnterOuterAlt(_localctx, 2);
 				{
+				State = 97;
+				functionDefinition();
+				}
+				break;
+			case T__7:
+			case T__12:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 98;
+				networkDefinitions();
+				}
+				break;
+			case T__17:
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 99;
+				simulateDefinition();
 				}
 				break;
 			default:
@@ -236,120 +351,163 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class DefContext : ParserRuleContext {
+	public partial class ConstDefinitionContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
 			return GetRuleContext<TypeContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public AssignContext assign() {
 			return GetRuleContext<AssignContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(AQLParser.ID, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ParamListContext paramList() {
-			return GetRuleContext<ParamListContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StmtContext stmt() {
-			return GetRuleContext<StmtContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public NetworkContext network() {
-			return GetRuleContext<NetworkContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
-			return GetRuleContext<QualifiedIDContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext[] expr() {
-			return GetRuleContexts<ExprContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr(int i) {
-			return GetRuleContext<ExprContext>(i);
-		}
-		public DefContext(ParserRuleContext parent, int invokingState)
+		public ConstDefinitionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_def; } }
+		public override int RuleIndex { get { return RULE_constDefinition; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitDef(this);
+			if (typedVisitor != null) return typedVisitor.VisitConstDefinition(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public DefContext def() {
-		DefContext _localctx = new DefContext(Context, State);
-		EnterRule(_localctx, 4, RULE_def);
+	public ConstDefinitionContext constDefinition() {
+		ConstDefinitionContext _localctx = new ConstDefinitionContext(Context, State);
+		EnterRule(_localctx, 8, RULE_constDefinition);
 		try {
-			State = 110;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 102;
+			Match(T__1);
+			State = 103;
+			type();
+			State = 104;
+			assign();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FunctionDefinitionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
+			return GetRuleContext<TypeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(AQLParser.ID, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public StmtContext stmt() {
+			return GetRuleContext<StmtContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FormalParameterListContext formalParameterList() {
+			return GetRuleContext<FormalParameterListContext>(0);
+		}
+		public FunctionDefinitionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_functionDefinition; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFunctionDefinition(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FunctionDefinitionContext functionDefinition() {
+		FunctionDefinitionContext _localctx = new FunctionDefinitionContext(Context, State);
+		EnterRule(_localctx, 10, RULE_functionDefinition);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 106;
+			Match(T__2);
+			State = 107;
+			type();
+			State = 108;
+			Match(ID);
+			State = 109;
+			Match(T__3);
+			State = 111;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 108086391090446336L) != 0)) {
+				{
+				State = 110;
+				formalParameterList();
+				}
+			}
+
+			State = 113;
+			Match(T__4);
+			State = 114;
+			Match(T__5);
+			State = 115;
+			stmt();
+			State = 116;
+			Match(T__6);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class NetworkDefinitionsContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public QueueDefinitionContext queueDefinition() {
+			return GetRuleContext<QueueDefinitionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public NetworkDefinitionContext networkDefinition() {
+			return GetRuleContext<NetworkDefinitionContext>(0);
+		}
+		public NetworkDefinitionsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_networkDefinitions; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNetworkDefinitions(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public NetworkDefinitionsContext networkDefinitions() {
+		NetworkDefinitionsContext _localctx = new NetworkDefinitionsContext(Context, State);
+		EnterRule(_localctx, 12, RULE_networkDefinitions);
+		try {
+			State = 120;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case T__1:
+			case T__7:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 83;
-				Match(T__1);
-				State = 84;
-				type();
-				State = 85;
-				assign();
-				}
-				break;
-			case T__2:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 87;
-				Match(T__2);
-				State = 88;
-				type();
-				State = 89;
-				Match(ID);
-				State = 90;
-				Match(T__3);
-				State = 91;
-				paramList();
-				State = 92;
-				Match(T__4);
-				State = 93;
-				Match(T__5);
-				State = 94;
-				stmt();
-				State = 95;
-				Match(T__6);
+				State = 118;
+				queueDefinition();
 				}
 				break;
 			case T__12:
-			case T__15:
-				EnterOuterAlt(_localctx, 3);
+				EnterOuterAlt(_localctx, 2);
 				{
-				State = 97;
-				network();
-				}
-				break;
-			case T__7:
-				EnterOuterAlt(_localctx, 4);
-				{
-				State = 98;
-				Match(T__7);
-				State = 99;
-				Match(T__5);
-				State = 100;
-				Match(T__8);
-				State = 101;
-				qualifiedID();
-				State = 102;
-				Match(T__9);
-				State = 103;
-				Match(T__10);
-				State = 104;
-				expr(0);
-				State = 105;
-				Match(T__9);
-				State = 106;
-				Match(T__11);
-				State = 107;
-				expr(0);
-				State = 108;
-				Match(T__6);
+				State = 119;
+				networkDefinition();
 				}
 				break;
 			default:
@@ -367,7 +525,7 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class NetworkContext : ParserRuleContext {
+	public partial class QueueDefinitionContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(AQLParser.ID, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ServiceCountContext serviceCount() {
 			return GetRuleContext<ServiceCountContext>(0);
@@ -381,142 +539,111 @@ public partial class AQLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public MetricsContext metrics() {
 			return GetRuleContext<MetricsContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public IdListContext[] idList() {
-			return GetRuleContexts<IdListContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public IdListContext idList(int i) {
-			return GetRuleContext<IdListContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public RoutesContext routes() {
-			return GetRuleContext<RoutesContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public InstancesContext instances() {
-			return GetRuleContext<InstancesContext>(0);
-		}
-		public NetworkContext(ParserRuleContext parent, int invokingState)
+		public QueueDefinitionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_network; } }
+		public override int RuleIndex { get { return RULE_queueDefinition; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitNetwork(this);
+			if (typedVisitor != null) return typedVisitor.VisitQueueDefinition(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public NetworkContext network() {
-		NetworkContext _localctx = new NetworkContext(Context, State);
-		EnterRule(_localctx, 6, RULE_network);
+	public QueueDefinitionContext queueDefinition() {
+		QueueDefinitionContext _localctx = new QueueDefinitionContext(Context, State);
+		EnterRule(_localctx, 14, RULE_queueDefinition);
 		int _la;
 		try {
-			State = 153;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 122;
+			Match(T__7);
+			State = 123;
+			Match(ID);
+			State = 124;
+			Match(T__5);
+			State = 125;
+			serviceCount();
+			State = 126;
+			Match(T__8);
+			State = 127;
+			value();
+			State = 128;
+			Match(T__9);
+			State = 129;
+			Match(T__10);
+			State = 130;
+			value();
+			State = 133;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==T__9) {
+				{
+				State = 131;
+				Match(T__9);
+				State = 132;
+				metrics();
+				}
+			}
+
+			State = 135;
+			Match(T__6);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ServiceCountContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public ServiceCountContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_serviceCount; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitServiceCount(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ServiceCountContext serviceCount() {
+		ServiceCountContext _localctx = new ServiceCountContext(Context, State);
+		EnterRule(_localctx, 16, RULE_serviceCount);
+		try {
+			State = 142;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case T__12:
+			case T__11:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 112;
-				Match(T__12);
-				State = 113;
-				Match(ID);
-				State = 114;
-				Match(T__5);
-				State = 115;
-				serviceCount();
-				State = 116;
-				Match(T__13);
-				State = 117;
-				value();
-				State = 118;
+				State = 137;
+				Match(T__11);
+				State = 138;
+				expression(0);
+				State = 139;
 				Match(T__9);
-				State = 119;
-				Match(T__14);
-				State = 120;
-				value();
-				State = 123;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==T__9) {
-					{
-					State = 121;
-					Match(T__9);
-					State = 122;
-					metrics();
-					}
-				}
-
-				State = 125;
-				Match(T__6);
 				}
 				break;
-			case T__15:
+			case T__8:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 127;
-				Match(T__15);
-				State = 128;
-				Match(ID);
-				State = 129;
-				Match(T__5);
-				State = 130;
-				Match(T__16);
-				State = 131;
-				idList();
-				State = 132;
-				Match(T__17);
-				State = 133;
-				Match(T__18);
-				State = 134;
-				idList();
-				State = 137;
-				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,4,Context) ) {
-				case 1:
-					{
-					State = 135;
-					Match(T__17);
-					State = 136;
-					instances();
-					}
-					break;
-				}
-				State = 139;
-				Match(T__17);
-				State = 140;
-				Match(T__19);
-				State = 141;
-				Match(T__5);
-				State = 142;
-				routes();
-				State = 143;
-				Match(T__6);
-				State = 146;
-				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,5,Context) ) {
-				case 1:
-					{
-					State = 144;
-					Match(T__17);
-					State = 145;
-					metrics();
-					}
-					break;
-				}
-				State = 149;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==T__17) {
-					{
-					State = 148;
-					Match(T__17);
-					}
-				}
-
-				State = 151;
-				Match(T__6);
 				}
 				break;
 			default:
@@ -534,50 +661,106 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class IdListContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ID() { return GetTokens(AQLParser.ID); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID(int i) {
-			return GetToken(AQLParser.ID, i);
+	public partial class NetworkDefinitionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(AQLParser.ID, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public IdListContext[] idList() {
+			return GetRuleContexts<IdListContext>();
 		}
-		public IdListContext(ParserRuleContext parent, int invokingState)
+		[System.Diagnostics.DebuggerNonUserCode] public IdListContext idList(int i) {
+			return GetRuleContext<IdListContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public RoutesContext routes() {
+			return GetRuleContext<RoutesContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InstancesContext instances() {
+			return GetRuleContext<InstancesContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public MetricsContext metrics() {
+			return GetRuleContext<MetricsContext>(0);
+		}
+		public NetworkDefinitionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_idList; } }
+		public override int RuleIndex { get { return RULE_networkDefinition; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitIdList(this);
+			if (typedVisitor != null) return typedVisitor.VisitNetworkDefinition(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public IdListContext idList() {
-		IdListContext _localctx = new IdListContext(Context, State);
-		EnterRule(_localctx, 8, RULE_idList);
+	public NetworkDefinitionContext networkDefinition() {
+		NetworkDefinitionContext _localctx = new NetworkDefinitionContext(Context, State);
+		EnterRule(_localctx, 18, RULE_networkDefinition);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 155;
+			State = 144;
+			Match(T__12);
+			State = 145;
 			Match(ID);
+			State = 146;
+			Match(T__5);
+			State = 147;
+			Match(T__13);
+			State = 148;
+			idList();
+			State = 149;
+			Match(T__14);
+			State = 150;
+			Match(T__15);
+			State = 151;
+			idList();
+			State = 154;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,7,Context) ) {
+			case 1:
+				{
+				State = 152;
+				Match(T__14);
+				State = 153;
+				instances();
+				}
+				break;
+			}
+			State = 156;
+			Match(T__14);
+			State = 157;
+			Match(T__16);
+			State = 158;
+			Match(T__5);
+			State = 159;
+			routes();
 			State = 160;
+			Match(T__6);
+			State = 163;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,8,Context) ) {
+			case 1:
+				{
+				State = 161;
+				Match(T__14);
+				State = 162;
+				metrics();
+				}
+				break;
+			}
+			State = 166;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (_la==T__9) {
+			if (_la==T__14) {
 				{
-				{
-				State = 156;
-				Match(T__9);
-				State = 157;
-				Match(ID);
+				State = 165;
+				Match(T__14);
 				}
-				}
-				State = 162;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
 			}
+
+			State = 168;
+			Match(T__6);
 			}
 		}
 		catch (RecognitionException re) {
@@ -591,52 +774,58 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class QualifiedIdListContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext[] qualifiedID() {
-			return GetRuleContexts<QualifiedIDContext>();
+	public partial class SimulateDefinitionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
+			return GetRuleContext<QualifiedIDContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID(int i) {
-			return GetRuleContext<QualifiedIDContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
 		}
-		public QualifiedIdListContext(ParserRuleContext parent, int invokingState)
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public SimulateDefinitionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_qualifiedIdList; } }
+		public override int RuleIndex { get { return RULE_simulateDefinition; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitQualifiedIdList(this);
+			if (typedVisitor != null) return typedVisitor.VisitSimulateDefinition(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public QualifiedIdListContext qualifiedIdList() {
-		QualifiedIdListContext _localctx = new QualifiedIdListContext(Context, State);
-		EnterRule(_localctx, 10, RULE_qualifiedIdList);
-		int _la;
+	public SimulateDefinitionContext simulateDefinition() {
+		SimulateDefinitionContext _localctx = new SimulateDefinitionContext(Context, State);
+		EnterRule(_localctx, 20, RULE_simulateDefinition);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 163;
+			State = 170;
+			Match(T__17);
+			State = 171;
+			Match(T__5);
+			State = 172;
+			Match(T__18);
+			State = 173;
 			qualifiedID();
-			State = 168;
-			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			while (_la==T__9) {
-				{
-				{
-				State = 164;
-				Match(T__9);
-				State = 165;
-				qualifiedID();
-				}
-				}
-				State = 170;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-			}
+			State = 174;
+			Match(T__9);
+			State = 175;
+			Match(T__19);
+			State = 176;
+			expression(0);
+			State = 177;
+			Match(T__9);
+			State = 178;
+			Match(T__20);
+			State = 179;
+			expression(0);
+			State = 180;
+			Match(T__6);
 			}
 		}
 		catch (RecognitionException re) {
@@ -670,17 +859,17 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public InstancesContext instances() {
 		InstancesContext _localctx = new InstancesContext(Context, State);
-		EnterRule(_localctx, 12, RULE_instances);
+		EnterRule(_localctx, 22, RULE_instances);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 171;
-			Match(T__20);
-			State = 172;
+			State = 182;
+			Match(T__21);
+			State = 183;
 			Match(T__5);
-			State = 173;
+			State = 184;
 			instancesList();
-			State = 174;
+			State = 185;
 			Match(T__6);
 			}
 		}
@@ -718,43 +907,43 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public InstancesListContext instancesList() {
 		InstancesListContext _localctx = new InstancesListContext(Context, State);
-		EnterRule(_localctx, 14, RULE_instancesList);
+		EnterRule(_localctx, 24, RULE_instancesList);
 		int _la;
 		try {
 			int _alt;
-			State = 188;
+			State = 199;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case ID:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 176;
+				State = 187;
 				instance();
-				State = 181;
+				State = 192;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,10,Context);
 				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						State = 177;
-						Match(T__17);
-						State = 178;
+						State = 188;
+						Match(T__14);
+						State = 189;
 						instance();
 						}
 						} 
 					}
-					State = 183;
+					State = 194;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,10,Context);
 				}
-				State = 185;
+				State = 196;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if (_la==T__17) {
+				if (_la==T__14) {
 					{
-					State = 184;
-					Match(T__17);
+					State = 195;
+					Match(T__14);
 					}
 				}
 
@@ -803,15 +992,15 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public InstanceContext instance() {
 		InstanceContext _localctx = new InstanceContext(Context, State);
-		EnterRule(_localctx, 16, RULE_instance);
+		EnterRule(_localctx, 26, RULE_instance);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 190;
+			State = 201;
 			qualifiedID();
-			State = 191;
-			Match(T__21);
-			State = 192;
+			State = 202;
+			Match(T__22);
+			State = 203;
 			idList();
 			}
 		}
@@ -855,38 +1044,38 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public RoutesContext routes() {
 		RoutesContext _localctx = new RoutesContext(Context, State);
-		EnterRule(_localctx, 18, RULE_routes);
+		EnterRule(_localctx, 28, RULE_routes);
 		try {
-			State = 206;
+			State = 217;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,13,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 194;
+				State = 205;
 				qualifiedID();
-				State = 195;
-				Match(T__22);
-				State = 196;
+				State = 206;
+				Match(T__23);
+				State = 207;
 				qualifiedID();
-				State = 197;
+				State = 208;
 				routesB();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 199;
+				State = 210;
 				qualifiedID();
-				State = 200;
-				Match(T__22);
-				State = 201;
+				State = 211;
 				Match(T__23);
-				State = 202;
-				routeIDList();
-				State = 203;
+				State = 212;
 				Match(T__24);
-				State = 204;
+				State = 213;
+				routeIDList();
+				State = 214;
+				Match(T__25);
+				State = 215;
 				routesB();
 				}
 				break;
@@ -932,42 +1121,42 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public RoutesBContext routesB() {
 		RoutesBContext _localctx = new RoutesBContext(Context, State);
-		EnterRule(_localctx, 20, RULE_routesB);
+		EnterRule(_localctx, 30, RULE_routesB);
 		try {
-			State = 223;
+			State = 234;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 208;
+				State = 219;
 				Match(T__9);
-				State = 209;
+				State = 220;
 				qualifiedID();
-				State = 210;
-				Match(T__22);
-				State = 211;
+				State = 221;
+				Match(T__23);
+				State = 222;
 				qualifiedID();
-				State = 212;
+				State = 223;
 				routesB();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 214;
+				State = 225;
 				Match(T__9);
-				State = 215;
+				State = 226;
 				qualifiedID();
-				State = 216;
-				Match(T__22);
-				State = 217;
+				State = 227;
 				Match(T__23);
-				State = 218;
-				routeIDList();
-				State = 219;
+				State = 228;
 				Match(T__24);
-				State = 220;
+				State = 229;
+				routeIDList();
+				State = 230;
+				Match(T__25);
+				State = 231;
 				routesB();
 				}
 				break;
@@ -990,8 +1179,8 @@ public partial class AQLParser : Parser {
 	}
 
 	public partial class RouteIDListContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
-			return GetRuleContext<ExprContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
 			return GetRuleContext<QualifiedIDContext>(0);
@@ -1015,15 +1204,15 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public RouteIDListContext routeIDList() {
 		RouteIDListContext _localctx = new RouteIDListContext(Context, State);
-		EnterRule(_localctx, 22, RULE_routeIDList);
+		EnterRule(_localctx, 32, RULE_routeIDList);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 225;
-			expr(0);
-			State = 226;
+			State = 236;
+			expression(0);
+			State = 237;
 			qualifiedID();
-			State = 227;
+			State = 238;
 			routeIDListB();
 			}
 		}
@@ -1039,8 +1228,8 @@ public partial class AQLParser : Parser {
 	}
 
 	public partial class RouteIDListBContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
-			return GetRuleContext<ExprContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
 			return GetRuleContext<QualifiedIDContext>(0);
@@ -1064,25 +1253,25 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public RouteIDListBContext routeIDListB() {
 		RouteIDListBContext _localctx = new RouteIDListBContext(Context, State);
-		EnterRule(_localctx, 24, RULE_routeIDListB);
+		EnterRule(_localctx, 34, RULE_routeIDListB);
 		try {
-			State = 235;
+			State = 246;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case T__9:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 229;
+				State = 240;
 				Match(T__9);
-				State = 230;
-				expr(0);
-				State = 231;
+				State = 241;
+				expression(0);
+				State = 242;
 				qualifiedID();
-				State = 232;
+				State = 243;
 				routeIDListB();
 				}
 				break;
-			case T__24:
+			case T__25:
 				EnterOuterAlt(_localctx, 2);
 				{
 				}
@@ -1122,18 +1311,18 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public MetricsContext metrics() {
 		MetricsContext _localctx = new MetricsContext(Context, State);
-		EnterRule(_localctx, 26, RULE_metrics);
+		EnterRule(_localctx, 36, RULE_metrics);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 237;
-			Match(T__25);
-			State = 238;
-			Match(T__23);
-			State = 239;
-			metricList();
-			State = 240;
+			State = 248;
+			Match(T__26);
+			State = 249;
 			Match(T__24);
+			State = 250;
+			metricList();
+			State = 251;
+			Match(T__25);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1151,8 +1340,11 @@ public partial class AQLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public MetricContext metric() {
 			return GetRuleContext<MetricContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public MetricListAContext metricListA() {
-			return GetRuleContext<MetricListAContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public MetricListContext[] metricList() {
+			return GetRuleContexts<MetricListContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public MetricListContext metricList(int i) {
+			return GetRuleContext<MetricListContext>(i);
 		}
 		public MetricListContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1170,85 +1362,44 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public MetricListContext metricList() {
 		MetricListContext _localctx = new MetricListContext(Context, State);
-		EnterRule(_localctx, 28, RULE_metricList);
+		EnterRule(_localctx, 38, RULE_metricList);
 		try {
-			State = 246;
+			int _alt;
+			State = 262;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case T__26:
 			case T__27:
 			case T__28:
 			case T__29:
 			case T__30:
 			case T__31:
+			case T__32:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 242;
+				State = 253;
 				metric();
-				State = 243;
-				metricListA();
+				State = 258;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,16,Context);
+				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+					if ( _alt==1 ) {
+						{
+						{
+						State = 254;
+						Match(T__9);
+						State = 255;
+						metricList();
+						}
+						} 
+					}
+					State = 260;
+					ErrorHandler.Sync(this);
+					_alt = Interpreter.AdaptivePredict(TokenStream,16,Context);
+				}
 				}
 				break;
-			case T__24:
-				EnterOuterAlt(_localctx, 2);
-				{
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class MetricListAContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public MetricContext metric() {
-			return GetRuleContext<MetricContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public MetricListAContext metricListA() {
-			return GetRuleContext<MetricListAContext>(0);
-		}
-		public MetricListAContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_metricListA; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitMetricListA(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public MetricListAContext metricListA() {
-		MetricListAContext _localctx = new MetricListAContext(Context, State);
-		EnterRule(_localctx, 30, RULE_metricListA);
-		try {
-			State = 253;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
 			case T__9:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 248;
-				Match(T__9);
-				State = 249;
-				metric();
-				State = 250;
-				metricListA();
-				}
-				break;
-			case T__24:
+			case T__25:
 				EnterOuterAlt(_localctx, 2);
 				{
 				}
@@ -1285,14 +1436,14 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public MetricContext metric() {
 		MetricContext _localctx = new MetricContext(Context, State);
-		EnterRule(_localctx, 32, RULE_metric);
+		EnterRule(_localctx, 40, RULE_metric);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 255;
+			State = 264;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 8455716864L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 16911433728L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -1312,182 +1463,51 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ServiceCountContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
-			return GetRuleContext<ExprContext>(0);
-		}
-		public ServiceCountContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_serviceCount; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitServiceCount(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public ServiceCountContext serviceCount() {
-		ServiceCountContext _localctx = new ServiceCountContext(Context, State);
-		EnterRule(_localctx, 34, RULE_serviceCount);
-		try {
-			State = 262;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__32:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 257;
-				Match(T__32);
-				State = 258;
-				expr(0);
-				State = 259;
-				Match(T__9);
-				}
-				break;
-			case T__13:
-				EnterOuterAlt(_localctx, 2);
-				{
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class ParamListContext : ParserRuleContext {
+	public partial class FormalParameterListContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
 			return GetRuleContext<TypeContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
-			return GetRuleContext<QualifiedIDContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(AQLParser.ID, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public FormalParameterListContext formalParameterList() {
+			return GetRuleContext<FormalParameterListContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ParamListAContext paramListA() {
-			return GetRuleContext<ParamListAContext>(0);
-		}
-		public ParamListContext(ParserRuleContext parent, int invokingState)
+		public FormalParameterListContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_paramList; } }
+		public override int RuleIndex { get { return RULE_formalParameterList; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitParamList(this);
+			if (typedVisitor != null) return typedVisitor.VisitFormalParameterList(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ParamListContext paramList() {
-		ParamListContext _localctx = new ParamListContext(Context, State);
-		EnterRule(_localctx, 36, RULE_paramList);
+	public FormalParameterListContext formalParameterList() {
+		FormalParameterListContext _localctx = new FormalParameterListContext(Context, State);
+		EnterRule(_localctx, 42, RULE_formalParameterList);
+		int _la;
 		try {
-			State = 269;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 266;
+			type();
+			State = 267;
+			Match(ID);
+			State = 270;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__3:
-			case T__15:
-			case T__23:
-			case T__53:
-			case T__54:
-			case T__55:
-			case T__56:
-				EnterOuterAlt(_localctx, 1);
+			_la = TokenStream.LA(1);
+			if (_la==T__9) {
 				{
-				State = 264;
-				type();
-				State = 265;
-				qualifiedID();
-				State = 266;
-				paramListA();
-				}
-				break;
-			case T__4:
-				EnterOuterAlt(_localctx, 2);
-				{
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class ParamListAContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
-			return GetRuleContext<TypeContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
-			return GetRuleContext<QualifiedIDContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ParamListAContext paramListA() {
-			return GetRuleContext<ParamListAContext>(0);
-		}
-		public ParamListAContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_paramListA; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitParamListA(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public ParamListAContext paramListA() {
-		ParamListAContext _localctx = new ParamListAContext(Context, State);
-		EnterRule(_localctx, 38, RULE_paramListA);
-		try {
-			State = 277;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__9:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 271;
+				State = 268;
 				Match(T__9);
-				State = 272;
-				type();
-				State = 273;
-				qualifiedID();
-				State = 274;
-				paramListA();
+				State = 269;
+				formalParameterList();
 				}
-				break;
-			case Eof:
-			case T__4:
-				EnterOuterAlt(_localctx, 2);
-				{
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -1503,8 +1523,8 @@ public partial class AQLParser : Parser {
 
 	public partial class AssignContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(AQLParser.ID, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
-			return GetRuleContext<ExprContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
 		public AssignContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1522,18 +1542,18 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public AssignContext assign() {
 		AssignContext _localctx = new AssignContext(Context, State);
-		EnterRule(_localctx, 40, RULE_assign);
+		EnterRule(_localctx, 44, RULE_assign);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 279;
+			State = 272;
 			Match(ID);
-			State = 280;
+			State = 273;
 			Match(T__33);
-			State = 281;
-			expr(0);
-			State = 282;
-			Match(T__17);
+			State = 274;
+			expression(0);
+			State = 275;
+			Match(T__14);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1570,17 +1590,17 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public StmtContext stmt() {
 		StmtContext _localctx = new StmtContext(Context, State);
-		EnterRule(_localctx, 42, RULE_stmt);
+		EnterRule(_localctx, 46, RULE_stmt);
 		try {
-			State = 288;
+			State = 281;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,21,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,19,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 284;
+				State = 277;
 				stmtA();
-				State = 285;
+				State = 278;
 				stmt();
 				}
 				break;
@@ -1603,8 +1623,8 @@ public partial class AQLParser : Parser {
 	}
 
 	public partial class StmtAContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
-			return GetRuleContext<ExprContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StmtContext stmt() {
 			return GetRuleContext<StmtContext>(0);
@@ -1634,76 +1654,68 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public StmtAContext stmtA() {
 		StmtAContext _localctx = new StmtAContext(Context, State);
-		EnterRule(_localctx, 44, RULE_stmtA);
+		EnterRule(_localctx, 48, RULE_stmtA);
 		try {
-			State = 310;
+			State = 303;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__34:
+			switch ( Interpreter.AdaptivePredict(TokenStream,20,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 290;
+				State = 283;
 				Match(T__34);
-				State = 291;
-				expr(0);
-				State = 292;
+				State = 284;
+				expression(0);
+				State = 285;
 				Match(T__35);
-				State = 293;
+				State = 286;
 				stmt();
 				}
 				break;
-			case ID:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 295;
+				State = 288;
 				assign();
 				}
 				break;
-			case T__3:
-			case T__15:
-			case T__23:
-			case T__53:
-			case T__54:
-			case T__55:
-			case T__56:
+			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 296;
+				State = 289;
 				type();
-				State = 297;
+				State = 290;
 				assign();
 				}
 				break;
-			case T__36:
+			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 299;
+				State = 292;
 				Match(T__36);
-				State = 300;
-				expr(0);
-				State = 301;
+				State = 293;
+				expression(0);
+				State = 294;
 				Match(T__5);
-				State = 302;
+				State = 295;
 				stmt();
-				State = 303;
+				State = 296;
 				Match(T__6);
-				State = 304;
+				State = 297;
 				else1();
 				}
 				break;
-			case T__37:
+			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 306;
+				State = 299;
 				Match(T__37);
-				State = 307;
-				expr(0);
-				State = 308;
-				Match(T__17);
+				State = 300;
+				expression(0);
+				State = 301;
+				Match(T__14);
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1740,17 +1752,17 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public Else1Context else1() {
 		Else1Context _localctx = new Else1Context(Context, State);
-		EnterRule(_localctx, 46, RULE_else1);
+		EnterRule(_localctx, 50, RULE_else1);
 		try {
-			State = 316;
+			State = 309;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,23,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,21,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 312;
+				State = 305;
 				elseIf();
-				State = 313;
+				State = 306;
 				else2();
 				}
 				break;
@@ -1792,33 +1804,28 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public Else2Context else2() {
 		Else2Context _localctx = new Else2Context(Context, State);
-		EnterRule(_localctx, 48, RULE_else2);
+		EnterRule(_localctx, 52, RULE_else2);
 		try {
-			State = 323;
+			State = 316;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case T__38:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 318;
+				State = 311;
 				Match(T__38);
-				State = 319;
+				State = 312;
 				stmt();
-				State = 320;
+				State = 313;
 				Match(T__6);
 				}
 				break;
-			case T__3:
 			case T__6:
-			case T__15:
-			case T__23:
+			case T__24:
 			case T__34:
 			case T__36:
 			case T__37:
-			case T__53:
-			case T__54:
-			case T__55:
-			case T__56:
+			case TYPEKEYWORD:
 			case ID:
 				EnterOuterAlt(_localctx, 2);
 				{
@@ -1840,8 +1847,8 @@ public partial class AQLParser : Parser {
 	}
 
 	public partial class ElseIfContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
-			return GetRuleContext<ExprContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StmtContext stmt() {
 			return GetRuleContext<StmtContext>(0);
@@ -1865,40 +1872,35 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public ElseIfContext elseIf() {
 		ElseIfContext _localctx = new ElseIfContext(Context, State);
-		EnterRule(_localctx, 50, RULE_elseIf);
+		EnterRule(_localctx, 54, RULE_elseIf);
 		try {
-			State = 333;
+			State = 326;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case T__39:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 325;
+				State = 318;
 				Match(T__39);
-				State = 326;
-				expr(0);
-				State = 327;
+				State = 319;
+				expression(0);
+				State = 320;
 				Match(T__5);
-				State = 328;
+				State = 321;
 				stmt();
-				State = 329;
+				State = 322;
 				Match(T__6);
-				State = 330;
+				State = 323;
 				elseIf();
 				}
 				break;
-			case T__3:
 			case T__6:
-			case T__15:
-			case T__23:
+			case T__24:
 			case T__34:
 			case T__36:
 			case T__37:
 			case T__38:
-			case T__53:
-			case T__54:
-			case T__55:
-			case T__56:
+			case TYPEKEYWORD:
 			case ID:
 				EnterOuterAlt(_localctx, 2);
 				{
@@ -1919,67 +1921,67 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ExprContext : ParserRuleContext {
+	public partial class ExpressionContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ValueContext value() {
 			return GetRuleContext<ValueContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public RoutesContext routes() {
 			return GetRuleContext<RoutesContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext[] expr() {
-			return GetRuleContexts<ExprContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr(int i) {
-			return GetRuleContext<ExprContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
 		}
-		public ExprContext(ParserRuleContext parent, int invokingState)
+		public ExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_expr; } }
+		public override int RuleIndex { get { return RULE_expression; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitExpr(this);
+			if (typedVisitor != null) return typedVisitor.VisitExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ExprContext expr() {
-		return expr(0);
+	public ExpressionContext expression() {
+		return expression(0);
 	}
 
-	private ExprContext expr(int _p) {
+	private ExpressionContext expression(int _p) {
 		ParserRuleContext _parentctx = Context;
 		int _parentState = State;
-		ExprContext _localctx = new ExprContext(Context, _parentState);
-		ExprContext _prevctx = _localctx;
-		int _startState = 52;
-		EnterRecursionRule(_localctx, 52, RULE_expr, _p);
+		ExpressionContext _localctx = new ExpressionContext(Context, _parentState);
+		ExpressionContext _prevctx = _localctx;
+		int _startState = 56;
+		EnterRecursionRule(_localctx, 56, RULE_expression, _p);
 		int _la;
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 340;
+			State = 333;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,26,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,24,Context) ) {
 			case 1:
 				{
-				State = 336;
+				State = 329;
 				value();
 				}
 				break;
 			case 2:
 				{
-				State = 337;
+				State = 330;
 				routes();
 				}
 				break;
 			case 3:
 				{
-				State = 338;
+				State = 331;
 				_la = TokenStream.LA(1);
 				if ( !(_la==T__40 || _la==T__41) ) {
 				ErrorHandler.RecoverInline(this);
@@ -1988,31 +1990,31 @@ public partial class AQLParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 339;
-				expr(7);
+				State = 332;
+				expression(7);
 				}
 				break;
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 362;
+			State = 355;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,28,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,26,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( ParseListeners!=null )
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 360;
+					State = 353;
 					ErrorHandler.Sync(this);
-					switch ( Interpreter.AdaptivePredict(TokenStream,27,Context) ) {
+					switch ( Interpreter.AdaptivePredict(TokenStream,25,Context) ) {
 					case 1:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
-						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 342;
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 335;
 						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
-						State = 343;
+						State = 336;
 						_la = TokenStream.LA(1);
 						if ( !(_la==T__42 || _la==T__43) ) {
 						ErrorHandler.RecoverInline(this);
@@ -2021,17 +2023,17 @@ public partial class AQLParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 344;
-						expr(7);
+						State = 337;
+						expression(7);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
-						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 345;
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 338;
 						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
-						State = 346;
+						State = 339;
 						_la = TokenStream.LA(1);
 						if ( !(_la==T__41 || _la==T__44) ) {
 						ErrorHandler.RecoverInline(this);
@@ -2040,17 +2042,17 @@ public partial class AQLParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 347;
-						expr(6);
+						State = 340;
+						expression(6);
 						}
 						break;
 					case 3:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
-						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 348;
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 341;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 349;
+						State = 342;
 						_la = TokenStream.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1055531162664960L) != 0)) ) {
 						ErrorHandler.RecoverInline(this);
@@ -2059,17 +2061,17 @@ public partial class AQLParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 350;
-						expr(5);
+						State = 343;
+						expression(5);
 						}
 						break;
 					case 4:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
-						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 351;
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 344;
 						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
-						State = 352;
+						State = 345;
 						_la = TokenStream.LA(1);
 						if ( !(_la==T__49 || _la==T__50) ) {
 						ErrorHandler.RecoverInline(this);
@@ -2078,40 +2080,40 @@ public partial class AQLParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 353;
-						expr(4);
+						State = 346;
+						expression(4);
 						}
 						break;
 					case 5:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
-						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 354;
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 347;
 						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-						State = 355;
+						State = 348;
 						Match(T__51);
-						State = 356;
-						expr(3);
+						State = 349;
+						expression(3);
 						}
 						break;
 					case 6:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
-						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 357;
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 350;
 						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
-						State = 358;
+						State = 351;
 						Match(T__52);
-						State = 359;
-						expr(2);
+						State = 352;
+						expression(2);
 						}
 						break;
 					}
 					} 
 				}
-				State = 364;
+				State = 357;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,28,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,26,Context);
 			}
 			}
 		}
@@ -2137,11 +2139,11 @@ public partial class AQLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOUBLE() { return GetToken(AQLParser.DOUBLE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INT() { return GetToken(AQLParser.INT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BOOL() { return GetToken(AQLParser.BOOL, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ArrayContext array() {
-			return GetRuleContext<ArrayContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ArrayInitializationContext arrayInitialization() {
+			return GetRuleContext<ArrayInitializationContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ArrayValueContext arrayValue() {
-			return GetRuleContext<ArrayValueContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ArrayIndexingContext arrayIndexing() {
+			return GetRuleContext<ArrayIndexingContext>(0);
 		}
 		public ValueContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2159,65 +2161,65 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public ValueContext value() {
 		ValueContext _localctx = new ValueContext(Context, State);
-		EnterRule(_localctx, 54, RULE_value);
+		EnterRule(_localctx, 58, RULE_value);
 		try {
-			State = 373;
+			State = 366;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,29,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,27,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 365;
+				State = 358;
 				funcCall();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 366;
+				State = 359;
 				qualifiedID();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 367;
+				State = 360;
 				Match(STRING);
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 368;
+				State = 361;
 				Match(DOUBLE);
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 369;
+				State = 362;
 				Match(INT);
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 370;
+				State = 363;
 				Match(BOOL);
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 371;
-				array();
+				State = 364;
+				arrayInitialization();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 372;
-				arrayValue();
+				State = 365;
+				arrayIndexing();
 				}
 				break;
 			}
@@ -2233,131 +2235,50 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ActualParamListContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
-			return GetRuleContext<QualifiedIDContext>(0);
+	public partial class ActualParameterListContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ID() { return GetTokens(AQLParser.ID); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID(int i) {
+			return GetToken(AQLParser.ID, i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ParamListAContext paramListA() {
-			return GetRuleContext<ParamListAContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ValueContext value() {
-			return GetRuleContext<ValueContext>(0);
-		}
-		public ActualParamListContext(ParserRuleContext parent, int invokingState)
+		public ActualParameterListContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_actualParamList; } }
+		public override int RuleIndex { get { return RULE_actualParameterList; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitActualParamList(this);
+			if (typedVisitor != null) return typedVisitor.VisitActualParameterList(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ActualParamListContext actualParamList() {
-		ActualParamListContext _localctx = new ActualParamListContext(Context, State);
-		EnterRule(_localctx, 56, RULE_actualParamList);
+	public ActualParameterListContext actualParameterList() {
+		ActualParameterListContext _localctx = new ActualParameterListContext(Context, State);
+		EnterRule(_localctx, 60, RULE_actualParameterList);
+		int _la;
 		try {
-			State = 382;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 368;
+			Match(ID);
+			State = 373;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,30,Context) ) {
-			case 1:
-				EnterOuterAlt(_localctx, 1);
+			_la = TokenStream.LA(1);
+			while (_la==T__9) {
 				{
+				{
+				State = 369;
+				Match(T__9);
+				State = 370;
+				Match(ID);
+				}
+				}
 				State = 375;
-				qualifiedID();
-				State = 376;
-				paramListA();
-				}
-				break;
-			case 2:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 378;
-				value();
-				State = 379;
-				paramListA();
-				}
-				break;
-			case 3:
-				EnterOuterAlt(_localctx, 3);
-				{
-				}
-				break;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
 			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class ActualParamListAContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
-			return GetRuleContext<QualifiedIDContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ParamListAContext paramListA() {
-			return GetRuleContext<ParamListAContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ValueContext value() {
-			return GetRuleContext<ValueContext>(0);
-		}
-		public ActualParamListAContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_actualParamListA; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitActualParamListA(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public ActualParamListAContext actualParamListA() {
-		ActualParamListAContext _localctx = new ActualParamListAContext(Context, State);
-		EnterRule(_localctx, 58, RULE_actualParamListA);
-		try {
-			State = 393;
-			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,31,Context) ) {
-			case 1:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 384;
-				Match(T__9);
-				State = 385;
-				qualifiedID();
-				State = 386;
-				paramListA();
-				}
-				break;
-			case 2:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 388;
-				Match(T__9);
-				State = 389;
-				value();
-				State = 390;
-				paramListA();
-				}
-				break;
-			case 3:
-				EnterOuterAlt(_localctx, 3);
-				{
-				}
-				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -2375,8 +2296,8 @@ public partial class AQLParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
 			return GetRuleContext<QualifiedIDContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ActualParamListContext actualParamList() {
-			return GetRuleContext<ActualParamListContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ActualParameterListContext actualParameterList() {
+			return GetRuleContext<ActualParameterListContext>(0);
 		}
 		public FuncCallContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2394,17 +2315,26 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public FuncCallContext funcCall() {
 		FuncCallContext _localctx = new FuncCallContext(Context, State);
-		EnterRule(_localctx, 60, RULE_funcCall);
+		EnterRule(_localctx, 62, RULE_funcCall);
+		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 395;
+			State = 376;
 			qualifiedID();
-			State = 396;
+			State = 377;
 			Match(T__3);
-			State = 397;
-			actualParamList();
-			State = 398;
+			State = 379;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==ID) {
+				{
+				State = 378;
+				actualParameterList();
+				}
+			}
+
+			State = 381;
 			Match(T__4);
 			}
 		}
@@ -2420,11 +2350,12 @@ public partial class AQLParser : Parser {
 	}
 
 	public partial class TypeContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public TypeContext[] type() {
-			return GetRuleContexts<TypeContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TYPEKEYWORD() { return GetToken(AQLParser.TYPEKEYWORD, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ArrayTypeContext arrayType() {
+			return GetRuleContext<ArrayTypeContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type(int i) {
-			return GetRuleContext<TypeContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public RouteTypeContext routeType() {
+			return GetRuleContext<RouteTypeContext>(0);
 		}
 		public TypeContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2442,70 +2373,30 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public TypeContext type() {
 		TypeContext _localctx = new TypeContext(Context, State);
-		EnterRule(_localctx, 62, RULE_type);
+		EnterRule(_localctx, 64, RULE_type);
 		try {
-			State = 415;
+			State = 386;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case T__53:
+			case TYPEKEYWORD:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 400;
-				Match(T__53);
+				State = 383;
+				Match(TYPEKEYWORD);
 				}
 				break;
-			case T__54:
+			case T__24:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 401;
-				Match(T__54);
+				State = 384;
+				arrayType();
 				}
 				break;
-			case T__55:
+			case ID:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 402;
-				Match(T__55);
-				}
-				break;
-			case T__56:
-				EnterOuterAlt(_localctx, 4);
-				{
-				State = 403;
-				Match(T__56);
-				}
-				break;
-			case T__15:
-				EnterOuterAlt(_localctx, 5);
-				{
-				State = 404;
-				Match(T__15);
-				}
-				break;
-			case T__23:
-				EnterOuterAlt(_localctx, 6);
-				{
-				State = 405;
-				Match(T__23);
-				State = 406;
-				type();
-				State = 407;
-				Match(T__24);
-				}
-				break;
-			case T__3:
-				EnterOuterAlt(_localctx, 7);
-				{
-				State = 409;
-				Match(T__3);
-				State = 410;
-				type();
-				State = 411;
-				Match(T__22);
-				State = 412;
-				type();
-				State = 413;
-				Match(T__4);
+				State = 385;
+				routeType();
 				}
 				break;
 			default:
@@ -2523,67 +2414,67 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ArrayContext : ParserRuleContext {
+	public partial class ArrayInitializationContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ValueContext[] value() {
 			return GetRuleContexts<ValueContext>();
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ValueContext value(int i) {
 			return GetRuleContext<ValueContext>(i);
 		}
-		public ArrayContext(ParserRuleContext parent, int invokingState)
+		public ArrayInitializationContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_array; } }
+		public override int RuleIndex { get { return RULE_arrayInitialization; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitArray(this);
+			if (typedVisitor != null) return typedVisitor.VisitArrayInitialization(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ArrayContext array() {
-		ArrayContext _localctx = new ArrayContext(Context, State);
-		EnterRule(_localctx, 64, RULE_array);
+	public ArrayInitializationContext arrayInitialization() {
+		ArrayInitializationContext _localctx = new ArrayInitializationContext(Context, State);
+		EnterRule(_localctx, 66, RULE_arrayInitialization);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 417;
+			State = 388;
 			Match(T__5);
-			State = 421;
+			State = 392;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & -576460752303423424L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2233785415175766080L) != 0)) {
 				{
 				{
-				State = 418;
+				State = 389;
 				value();
 				}
 				}
-				State = 423;
+				State = 394;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 428;
+			State = 399;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==T__9) {
 				{
 				{
-				State = 424;
+				State = 395;
 				Match(T__9);
-				State = 425;
+				State = 396;
 				value();
 				}
 				}
-				State = 430;
+				State = 401;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 431;
+			State = 402;
 			Match(T__6);
 			}
 		}
@@ -2598,41 +2489,189 @@ public partial class AQLParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ArrayValueContext : ParserRuleContext {
+	public partial class ArrayIndexingContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID() {
 			return GetRuleContext<QualifiedIDContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
-			return GetRuleContext<ExprContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
-		public ArrayValueContext(ParserRuleContext parent, int invokingState)
+		public ArrayIndexingContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_arrayValue; } }
+		public override int RuleIndex { get { return RULE_arrayIndexing; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitArrayValue(this);
+			if (typedVisitor != null) return typedVisitor.VisitArrayIndexing(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ArrayValueContext arrayValue() {
-		ArrayValueContext _localctx = new ArrayValueContext(Context, State);
-		EnterRule(_localctx, 66, RULE_arrayValue);
+	public ArrayIndexingContext arrayIndexing() {
+		ArrayIndexingContext _localctx = new ArrayIndexingContext(Context, State);
+		EnterRule(_localctx, 68, RULE_arrayIndexing);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 433;
+			State = 404;
 			qualifiedID();
-			State = 434;
-			Match(T__23);
-			State = 435;
-			expr(0);
-			State = 436;
+			State = 405;
 			Match(T__24);
+			State = 406;
+			expression(0);
+			State = 407;
+			Match(T__25);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ArrayTypeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
+			return GetRuleContext<TypeContext>(0);
+		}
+		public ArrayTypeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_arrayType; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitArrayType(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ArrayTypeContext arrayType() {
+		ArrayTypeContext _localctx = new ArrayTypeContext(Context, State);
+		EnterRule(_localctx, 70, RULE_arrayType);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 409;
+			Match(T__24);
+			State = 410;
+			type();
+			State = 411;
+			Match(T__25);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class RouteTypeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext[] qualifiedID() {
+			return GetRuleContexts<QualifiedIDContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID(int i) {
+			return GetRuleContext<QualifiedIDContext>(i);
+		}
+		public RouteTypeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_routeType; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitRouteType(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public RouteTypeContext routeType() {
+		RouteTypeContext _localctx = new RouteTypeContext(Context, State);
+		EnterRule(_localctx, 72, RULE_routeType);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 413;
+			qualifiedID();
+			State = 414;
+			Match(T__23);
+			State = 415;
+			qualifiedID();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class QualifiedIdListContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext[] qualifiedID() {
+			return GetRuleContexts<QualifiedIDContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIDContext qualifiedID(int i) {
+			return GetRuleContext<QualifiedIDContext>(i);
+		}
+		public QualifiedIdListContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_qualifiedIdList; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitQualifiedIdList(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public QualifiedIdListContext qualifiedIdList() {
+		QualifiedIdListContext _localctx = new QualifiedIdListContext(Context, State);
+		EnterRule(_localctx, 74, RULE_qualifiedIdList);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 417;
+			qualifiedID();
+			State = 422;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==T__9) {
+				{
+				{
+				State = 418;
+				Match(T__9);
+				State = 419;
+				qualifiedID();
+				}
+				}
+				State = 424;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -2667,30 +2706,87 @@ public partial class AQLParser : Parser {
 	[RuleVersion(0)]
 	public QualifiedIDContext qualifiedID() {
 		QualifiedIDContext _localctx = new QualifiedIDContext(Context, State);
-		EnterRule(_localctx, 68, RULE_qualifiedID);
+		EnterRule(_localctx, 76, RULE_qualifiedID);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 438;
+			State = 425;
 			Match(ID);
-			State = 443;
+			State = 430;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,35,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,34,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 439;
-					Match(T__57);
-					State = 440;
+					State = 426;
+					Match(T__53);
+					State = 427;
 					Match(ID);
 					}
 					} 
 				}
-				State = 445;
+				State = 432;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,35,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,34,Context);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class IdListContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ID() { return GetTokens(AQLParser.ID); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID(int i) {
+			return GetToken(AQLParser.ID, i);
+		}
+		public IdListContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_idList; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAQLVisitor<TResult> typedVisitor = visitor as IAQLVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIdList(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public IdListContext idList() {
+		IdListContext _localctx = new IdListContext(Context, State);
+		EnterRule(_localctx, 78, RULE_idList);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 433;
+			Match(ID);
+			State = 438;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==T__9) {
+				{
+				{
+				State = 434;
+				Match(T__9);
+				State = 435;
+				Match(ID);
+				}
+				}
+				State = 440;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
 			}
 			}
 		}
@@ -2707,11 +2803,11 @@ public partial class AQLParser : Parser {
 
 	public override bool Sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 26: return expr_sempred((ExprContext)_localctx, predIndex);
+		case 28: return expression_sempred((ExpressionContext)_localctx, predIndex);
 		}
 		return true;
 	}
-	private bool expr_sempred(ExprContext _localctx, int predIndex) {
+	private bool expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0: return Precpred(Context, 6);
 		case 1: return Precpred(Context, 5);
@@ -2724,151 +2820,148 @@ public partial class AQLParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,64,447,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		4,1,61,442,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
 		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
-		2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,1,0,1,0,5,
-		0,73,8,0,10,0,12,0,76,9,0,1,1,1,1,1,1,1,1,3,1,82,8,1,1,2,1,2,1,2,1,2,1,
-		2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,
-		1,2,1,2,1,2,1,2,1,2,3,2,111,8,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
-		3,1,3,3,3,124,8,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,
-		138,8,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,147,8,3,1,3,3,3,150,8,3,1,3,1,
-		3,3,3,154,8,3,1,4,1,4,1,4,5,4,159,8,4,10,4,12,4,162,9,4,1,5,1,5,1,5,5,
-		5,167,8,5,10,5,12,5,170,9,5,1,6,1,6,1,6,1,6,1,6,1,7,1,7,1,7,5,7,180,8,
-		7,10,7,12,7,183,9,7,1,7,3,7,186,8,7,1,7,3,7,189,8,7,1,8,1,8,1,8,1,8,1,
-		9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,3,9,207,8,9,1,10,1,10,1,
-		10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,224,
-		8,10,1,11,1,11,1,11,1,11,1,12,1,12,1,12,1,12,1,12,1,12,3,12,236,8,12,1,
-		13,1,13,1,13,1,13,1,13,1,14,1,14,1,14,1,14,3,14,247,8,14,1,15,1,15,1,15,
-		1,15,1,15,3,15,254,8,15,1,16,1,16,1,17,1,17,1,17,1,17,1,17,3,17,263,8,
-		17,1,18,1,18,1,18,1,18,1,18,3,18,270,8,18,1,19,1,19,1,19,1,19,1,19,1,19,
-		3,19,278,8,19,1,20,1,20,1,20,1,20,1,20,1,21,1,21,1,21,1,21,3,21,289,8,
-		21,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,
-		22,1,22,1,22,1,22,1,22,1,22,1,22,3,22,311,8,22,1,23,1,23,1,23,1,23,3,23,
-		317,8,23,1,24,1,24,1,24,1,24,1,24,3,24,324,8,24,1,25,1,25,1,25,1,25,1,
-		25,1,25,1,25,1,25,3,25,334,8,25,1,26,1,26,1,26,1,26,1,26,3,26,341,8,26,
-		1,26,1,26,1,26,1,26,1,26,1,26,1,26,1,26,1,26,1,26,1,26,1,26,1,26,1,26,
-		1,26,1,26,1,26,1,26,5,26,361,8,26,10,26,12,26,364,9,26,1,27,1,27,1,27,
-		1,27,1,27,1,27,1,27,1,27,3,27,374,8,27,1,28,1,28,1,28,1,28,1,28,1,28,1,
-		28,3,28,383,8,28,1,29,1,29,1,29,1,29,1,29,1,29,1,29,1,29,1,29,3,29,394,
-		8,29,1,30,1,30,1,30,1,30,1,30,1,31,1,31,1,31,1,31,1,31,1,31,1,31,1,31,
-		1,31,1,31,1,31,1,31,1,31,1,31,1,31,3,31,416,8,31,1,32,1,32,5,32,420,8,
-		32,10,32,12,32,423,9,32,1,32,1,32,5,32,427,8,32,10,32,12,32,430,9,32,1,
-		32,1,32,1,33,1,33,1,33,1,33,1,33,1,34,1,34,1,34,5,34,442,8,34,10,34,12,
-		34,445,9,34,1,34,0,1,52,35,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,
-		32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,0,6,1,0,27,32,
-		1,0,41,42,1,0,43,44,2,0,42,42,45,45,1,0,46,49,1,0,50,51,471,0,70,1,0,0,
-		0,2,81,1,0,0,0,4,110,1,0,0,0,6,153,1,0,0,0,8,155,1,0,0,0,10,163,1,0,0,
-		0,12,171,1,0,0,0,14,188,1,0,0,0,16,190,1,0,0,0,18,206,1,0,0,0,20,223,1,
-		0,0,0,22,225,1,0,0,0,24,235,1,0,0,0,26,237,1,0,0,0,28,246,1,0,0,0,30,253,
-		1,0,0,0,32,255,1,0,0,0,34,262,1,0,0,0,36,269,1,0,0,0,38,277,1,0,0,0,40,
-		279,1,0,0,0,42,288,1,0,0,0,44,310,1,0,0,0,46,316,1,0,0,0,48,323,1,0,0,
-		0,50,333,1,0,0,0,52,340,1,0,0,0,54,373,1,0,0,0,56,382,1,0,0,0,58,393,1,
-		0,0,0,60,395,1,0,0,0,62,415,1,0,0,0,64,417,1,0,0,0,66,433,1,0,0,0,68,438,
-		1,0,0,0,70,74,3,2,1,0,71,73,3,4,2,0,72,71,1,0,0,0,73,76,1,0,0,0,74,72,
-		1,0,0,0,74,75,1,0,0,0,75,1,1,0,0,0,76,74,1,0,0,0,77,78,5,1,0,0,78,79,5,
-		63,0,0,79,82,3,2,1,0,80,82,1,0,0,0,81,77,1,0,0,0,81,80,1,0,0,0,82,3,1,
-		0,0,0,83,84,5,2,0,0,84,85,3,62,31,0,85,86,3,40,20,0,86,111,1,0,0,0,87,
-		88,5,3,0,0,88,89,3,62,31,0,89,90,5,59,0,0,90,91,5,4,0,0,91,92,3,36,18,
-		0,92,93,5,5,0,0,93,94,5,6,0,0,94,95,3,42,21,0,95,96,5,7,0,0,96,111,1,0,
-		0,0,97,111,3,6,3,0,98,99,5,8,0,0,99,100,5,6,0,0,100,101,5,9,0,0,101,102,
-		3,68,34,0,102,103,5,10,0,0,103,104,5,11,0,0,104,105,3,52,26,0,105,106,
-		5,10,0,0,106,107,5,12,0,0,107,108,3,52,26,0,108,109,5,7,0,0,109,111,1,
-		0,0,0,110,83,1,0,0,0,110,87,1,0,0,0,110,97,1,0,0,0,110,98,1,0,0,0,111,
-		5,1,0,0,0,112,113,5,13,0,0,113,114,5,59,0,0,114,115,5,6,0,0,115,116,3,
-		34,17,0,116,117,5,14,0,0,117,118,3,54,27,0,118,119,5,10,0,0,119,120,5,
-		15,0,0,120,123,3,54,27,0,121,122,5,10,0,0,122,124,3,26,13,0,123,121,1,
-		0,0,0,123,124,1,0,0,0,124,125,1,0,0,0,125,126,5,7,0,0,126,154,1,0,0,0,
-		127,128,5,16,0,0,128,129,5,59,0,0,129,130,5,6,0,0,130,131,5,17,0,0,131,
-		132,3,8,4,0,132,133,5,18,0,0,133,134,5,19,0,0,134,137,3,8,4,0,135,136,
-		5,18,0,0,136,138,3,12,6,0,137,135,1,0,0,0,137,138,1,0,0,0,138,139,1,0,
-		0,0,139,140,5,18,0,0,140,141,5,20,0,0,141,142,5,6,0,0,142,143,3,18,9,0,
-		143,146,5,7,0,0,144,145,5,18,0,0,145,147,3,26,13,0,146,144,1,0,0,0,146,
-		147,1,0,0,0,147,149,1,0,0,0,148,150,5,18,0,0,149,148,1,0,0,0,149,150,1,
-		0,0,0,150,151,1,0,0,0,151,152,5,7,0,0,152,154,1,0,0,0,153,112,1,0,0,0,
-		153,127,1,0,0,0,154,7,1,0,0,0,155,160,5,59,0,0,156,157,5,10,0,0,157,159,
-		5,59,0,0,158,156,1,0,0,0,159,162,1,0,0,0,160,158,1,0,0,0,160,161,1,0,0,
-		0,161,9,1,0,0,0,162,160,1,0,0,0,163,168,3,68,34,0,164,165,5,10,0,0,165,
-		167,3,68,34,0,166,164,1,0,0,0,167,170,1,0,0,0,168,166,1,0,0,0,168,169,
-		1,0,0,0,169,11,1,0,0,0,170,168,1,0,0,0,171,172,5,21,0,0,172,173,5,6,0,
-		0,173,174,3,14,7,0,174,175,5,7,0,0,175,13,1,0,0,0,176,181,3,16,8,0,177,
-		178,5,18,0,0,178,180,3,16,8,0,179,177,1,0,0,0,180,183,1,0,0,0,181,179,
-		1,0,0,0,181,182,1,0,0,0,182,185,1,0,0,0,183,181,1,0,0,0,184,186,5,18,0,
-		0,185,184,1,0,0,0,185,186,1,0,0,0,186,189,1,0,0,0,187,189,1,0,0,0,188,
-		176,1,0,0,0,188,187,1,0,0,0,189,15,1,0,0,0,190,191,3,68,34,0,191,192,5,
-		22,0,0,192,193,3,8,4,0,193,17,1,0,0,0,194,195,3,68,34,0,195,196,5,23,0,
-		0,196,197,3,68,34,0,197,198,3,20,10,0,198,207,1,0,0,0,199,200,3,68,34,
-		0,200,201,5,23,0,0,201,202,5,24,0,0,202,203,3,22,11,0,203,204,5,25,0,0,
-		204,205,3,20,10,0,205,207,1,0,0,0,206,194,1,0,0,0,206,199,1,0,0,0,207,
-		19,1,0,0,0,208,209,5,10,0,0,209,210,3,68,34,0,210,211,5,23,0,0,211,212,
-		3,68,34,0,212,213,3,20,10,0,213,224,1,0,0,0,214,215,5,10,0,0,215,216,3,
-		68,34,0,216,217,5,23,0,0,217,218,5,24,0,0,218,219,3,22,11,0,219,220,5,
-		25,0,0,220,221,3,20,10,0,221,224,1,0,0,0,222,224,1,0,0,0,223,208,1,0,0,
-		0,223,214,1,0,0,0,223,222,1,0,0,0,224,21,1,0,0,0,225,226,3,52,26,0,226,
-		227,3,68,34,0,227,228,3,24,12,0,228,23,1,0,0,0,229,230,5,10,0,0,230,231,
-		3,52,26,0,231,232,3,68,34,0,232,233,3,24,12,0,233,236,1,0,0,0,234,236,
-		1,0,0,0,235,229,1,0,0,0,235,234,1,0,0,0,236,25,1,0,0,0,237,238,5,26,0,
-		0,238,239,5,24,0,0,239,240,3,28,14,0,240,241,5,25,0,0,241,27,1,0,0,0,242,
-		243,3,32,16,0,243,244,3,30,15,0,244,247,1,0,0,0,245,247,1,0,0,0,246,242,
-		1,0,0,0,246,245,1,0,0,0,247,29,1,0,0,0,248,249,5,10,0,0,249,250,3,32,16,
-		0,250,251,3,30,15,0,251,254,1,0,0,0,252,254,1,0,0,0,253,248,1,0,0,0,253,
-		252,1,0,0,0,254,31,1,0,0,0,255,256,7,0,0,0,256,33,1,0,0,0,257,258,5,33,
-		0,0,258,259,3,52,26,0,259,260,5,10,0,0,260,263,1,0,0,0,261,263,1,0,0,0,
-		262,257,1,0,0,0,262,261,1,0,0,0,263,35,1,0,0,0,264,265,3,62,31,0,265,266,
-		3,68,34,0,266,267,3,38,19,0,267,270,1,0,0,0,268,270,1,0,0,0,269,264,1,
-		0,0,0,269,268,1,0,0,0,270,37,1,0,0,0,271,272,5,10,0,0,272,273,3,62,31,
-		0,273,274,3,68,34,0,274,275,3,38,19,0,275,278,1,0,0,0,276,278,1,0,0,0,
-		277,271,1,0,0,0,277,276,1,0,0,0,278,39,1,0,0,0,279,280,5,59,0,0,280,281,
-		5,34,0,0,281,282,3,52,26,0,282,283,5,18,0,0,283,41,1,0,0,0,284,285,3,44,
-		22,0,285,286,3,42,21,0,286,289,1,0,0,0,287,289,1,0,0,0,288,284,1,0,0,0,
-		288,287,1,0,0,0,289,43,1,0,0,0,290,291,5,35,0,0,291,292,3,52,26,0,292,
-		293,5,36,0,0,293,294,3,42,21,0,294,311,1,0,0,0,295,311,3,40,20,0,296,297,
-		3,62,31,0,297,298,3,40,20,0,298,311,1,0,0,0,299,300,5,37,0,0,300,301,3,
-		52,26,0,301,302,5,6,0,0,302,303,3,42,21,0,303,304,5,7,0,0,304,305,3,46,
-		23,0,305,311,1,0,0,0,306,307,5,38,0,0,307,308,3,52,26,0,308,309,5,18,0,
-		0,309,311,1,0,0,0,310,290,1,0,0,0,310,295,1,0,0,0,310,296,1,0,0,0,310,
-		299,1,0,0,0,310,306,1,0,0,0,311,45,1,0,0,0,312,313,3,50,25,0,313,314,3,
-		48,24,0,314,317,1,0,0,0,315,317,1,0,0,0,316,312,1,0,0,0,316,315,1,0,0,
-		0,317,47,1,0,0,0,318,319,5,39,0,0,319,320,3,42,21,0,320,321,5,7,0,0,321,
-		324,1,0,0,0,322,324,1,0,0,0,323,318,1,0,0,0,323,322,1,0,0,0,324,49,1,0,
-		0,0,325,326,5,40,0,0,326,327,3,52,26,0,327,328,5,6,0,0,328,329,3,42,21,
-		0,329,330,5,7,0,0,330,331,3,50,25,0,331,334,1,0,0,0,332,334,1,0,0,0,333,
-		325,1,0,0,0,333,332,1,0,0,0,334,51,1,0,0,0,335,336,6,26,-1,0,336,341,3,
-		54,27,0,337,341,3,18,9,0,338,339,7,1,0,0,339,341,3,52,26,7,340,335,1,0,
-		0,0,340,337,1,0,0,0,340,338,1,0,0,0,341,362,1,0,0,0,342,343,10,6,0,0,343,
-		344,7,2,0,0,344,361,3,52,26,7,345,346,10,5,0,0,346,347,7,3,0,0,347,361,
-		3,52,26,6,348,349,10,4,0,0,349,350,7,4,0,0,350,361,3,52,26,5,351,352,10,
-		3,0,0,352,353,7,5,0,0,353,361,3,52,26,4,354,355,10,2,0,0,355,356,5,52,
-		0,0,356,361,3,52,26,3,357,358,10,1,0,0,358,359,5,53,0,0,359,361,3,52,26,
-		2,360,342,1,0,0,0,360,345,1,0,0,0,360,348,1,0,0,0,360,351,1,0,0,0,360,
-		354,1,0,0,0,360,357,1,0,0,0,361,364,1,0,0,0,362,360,1,0,0,0,362,363,1,
-		0,0,0,363,53,1,0,0,0,364,362,1,0,0,0,365,374,3,60,30,0,366,374,3,68,34,
-		0,367,374,5,63,0,0,368,374,5,62,0,0,369,374,5,61,0,0,370,374,5,60,0,0,
-		371,374,3,64,32,0,372,374,3,66,33,0,373,365,1,0,0,0,373,366,1,0,0,0,373,
-		367,1,0,0,0,373,368,1,0,0,0,373,369,1,0,0,0,373,370,1,0,0,0,373,371,1,
-		0,0,0,373,372,1,0,0,0,374,55,1,0,0,0,375,376,3,68,34,0,376,377,3,38,19,
-		0,377,383,1,0,0,0,378,379,3,54,27,0,379,380,3,38,19,0,380,383,1,0,0,0,
-		381,383,1,0,0,0,382,375,1,0,0,0,382,378,1,0,0,0,382,381,1,0,0,0,383,57,
-		1,0,0,0,384,385,5,10,0,0,385,386,3,68,34,0,386,387,3,38,19,0,387,394,1,
-		0,0,0,388,389,5,10,0,0,389,390,3,54,27,0,390,391,3,38,19,0,391,394,1,0,
-		0,0,392,394,1,0,0,0,393,384,1,0,0,0,393,388,1,0,0,0,393,392,1,0,0,0,394,
-		59,1,0,0,0,395,396,3,68,34,0,396,397,5,4,0,0,397,398,3,56,28,0,398,399,
-		5,5,0,0,399,61,1,0,0,0,400,416,5,54,0,0,401,416,5,55,0,0,402,416,5,56,
-		0,0,403,416,5,57,0,0,404,416,5,16,0,0,405,406,5,24,0,0,406,407,3,62,31,
-		0,407,408,5,25,0,0,408,416,1,0,0,0,409,410,5,4,0,0,410,411,3,62,31,0,411,
-		412,5,23,0,0,412,413,3,62,31,0,413,414,5,5,0,0,414,416,1,0,0,0,415,400,
-		1,0,0,0,415,401,1,0,0,0,415,402,1,0,0,0,415,403,1,0,0,0,415,404,1,0,0,
-		0,415,405,1,0,0,0,415,409,1,0,0,0,416,63,1,0,0,0,417,421,5,6,0,0,418,420,
-		3,54,27,0,419,418,1,0,0,0,420,423,1,0,0,0,421,419,1,0,0,0,421,422,1,0,
-		0,0,422,428,1,0,0,0,423,421,1,0,0,0,424,425,5,10,0,0,425,427,3,54,27,0,
-		426,424,1,0,0,0,427,430,1,0,0,0,428,426,1,0,0,0,428,429,1,0,0,0,429,431,
-		1,0,0,0,430,428,1,0,0,0,431,432,5,7,0,0,432,65,1,0,0,0,433,434,3,68,34,
-		0,434,435,5,24,0,0,435,436,3,52,26,0,436,437,5,25,0,0,437,67,1,0,0,0,438,
-		443,5,59,0,0,439,440,5,58,0,0,440,442,5,59,0,0,441,439,1,0,0,0,442,445,
-		1,0,0,0,443,441,1,0,0,0,443,444,1,0,0,0,444,69,1,0,0,0,445,443,1,0,0,0,
-		36,74,81,110,123,137,146,149,153,160,168,181,185,188,206,223,235,246,253,
-		262,269,277,288,310,316,323,333,340,360,362,373,382,393,415,421,428,443
+		2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,2,35,7,35,
+		2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,1,0,1,0,5,0,83,8,0,10,0,12,0,86,
+		9,0,1,1,5,1,89,8,1,10,1,12,1,92,9,1,1,2,1,2,1,2,1,3,1,3,1,3,1,3,3,3,101,
+		8,3,1,4,1,4,1,4,1,4,1,5,1,5,1,5,1,5,1,5,3,5,112,8,5,1,5,1,5,1,5,1,5,1,
+		5,1,6,1,6,3,6,121,8,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,3,7,
+		134,8,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,3,8,143,8,8,1,9,1,9,1,9,1,9,1,9,1,
+		9,1,9,1,9,1,9,1,9,3,9,155,8,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,3,9,164,8,9,
+		1,9,3,9,167,8,9,1,9,1,9,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,
+		10,1,10,1,10,1,11,1,11,1,11,1,11,1,11,1,12,1,12,1,12,5,12,191,8,12,10,
+		12,12,12,194,9,12,1,12,3,12,197,8,12,1,12,3,12,200,8,12,1,13,1,13,1,13,
+		1,13,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,3,14,
+		218,8,14,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,
+		15,1,15,1,15,3,15,235,8,15,1,16,1,16,1,16,1,16,1,17,1,17,1,17,1,17,1,17,
+		1,17,3,17,247,8,17,1,18,1,18,1,18,1,18,1,18,1,19,1,19,1,19,5,19,257,8,
+		19,10,19,12,19,260,9,19,1,19,3,19,263,8,19,1,20,1,20,1,21,1,21,1,21,1,
+		21,3,21,271,8,21,1,22,1,22,1,22,1,22,1,22,1,23,1,23,1,23,1,23,3,23,282,
+		8,23,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,
+		1,24,1,24,1,24,1,24,1,24,1,24,1,24,3,24,304,8,24,1,25,1,25,1,25,1,25,3,
+		25,310,8,25,1,26,1,26,1,26,1,26,1,26,3,26,317,8,26,1,27,1,27,1,27,1,27,
+		1,27,1,27,1,27,1,27,3,27,327,8,27,1,28,1,28,1,28,1,28,1,28,3,28,334,8,
+		28,1,28,1,28,1,28,1,28,1,28,1,28,1,28,1,28,1,28,1,28,1,28,1,28,1,28,1,
+		28,1,28,1,28,1,28,1,28,5,28,354,8,28,10,28,12,28,357,9,28,1,29,1,29,1,
+		29,1,29,1,29,1,29,1,29,1,29,3,29,367,8,29,1,30,1,30,1,30,5,30,372,8,30,
+		10,30,12,30,375,9,30,1,31,1,31,1,31,3,31,380,8,31,1,31,1,31,1,32,1,32,
+		1,32,3,32,387,8,32,1,33,1,33,5,33,391,8,33,10,33,12,33,394,9,33,1,33,1,
+		33,5,33,398,8,33,10,33,12,33,401,9,33,1,33,1,33,1,34,1,34,1,34,1,34,1,
+		34,1,35,1,35,1,35,1,35,1,36,1,36,1,36,1,36,1,37,1,37,1,37,5,37,421,8,37,
+		10,37,12,37,424,9,37,1,38,1,38,1,38,5,38,429,8,38,10,38,12,38,432,9,38,
+		1,39,1,39,1,39,5,39,437,8,39,10,39,12,39,440,9,39,1,39,0,1,56,40,0,2,4,
+		6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,
+		54,56,58,60,62,64,66,68,70,72,74,76,78,0,6,1,0,28,33,1,0,41,42,1,0,43,
+		44,2,0,42,42,45,45,1,0,46,49,1,0,50,51,455,0,80,1,0,0,0,2,90,1,0,0,0,4,
+		93,1,0,0,0,6,100,1,0,0,0,8,102,1,0,0,0,10,106,1,0,0,0,12,120,1,0,0,0,14,
+		122,1,0,0,0,16,142,1,0,0,0,18,144,1,0,0,0,20,170,1,0,0,0,22,182,1,0,0,
+		0,24,199,1,0,0,0,26,201,1,0,0,0,28,217,1,0,0,0,30,234,1,0,0,0,32,236,1,
+		0,0,0,34,246,1,0,0,0,36,248,1,0,0,0,38,262,1,0,0,0,40,264,1,0,0,0,42,266,
+		1,0,0,0,44,272,1,0,0,0,46,281,1,0,0,0,48,303,1,0,0,0,50,309,1,0,0,0,52,
+		316,1,0,0,0,54,326,1,0,0,0,56,333,1,0,0,0,58,366,1,0,0,0,60,368,1,0,0,
+		0,62,376,1,0,0,0,64,386,1,0,0,0,66,388,1,0,0,0,68,404,1,0,0,0,70,409,1,
+		0,0,0,72,413,1,0,0,0,74,417,1,0,0,0,76,425,1,0,0,0,78,433,1,0,0,0,80,84,
+		3,2,1,0,81,83,3,6,3,0,82,81,1,0,0,0,83,86,1,0,0,0,84,82,1,0,0,0,84,85,
+		1,0,0,0,85,1,1,0,0,0,86,84,1,0,0,0,87,89,3,4,2,0,88,87,1,0,0,0,89,92,1,
+		0,0,0,90,88,1,0,0,0,90,91,1,0,0,0,91,3,1,0,0,0,92,90,1,0,0,0,93,94,5,1,
+		0,0,94,95,5,60,0,0,95,5,1,0,0,0,96,101,3,8,4,0,97,101,3,10,5,0,98,101,
+		3,12,6,0,99,101,3,20,10,0,100,96,1,0,0,0,100,97,1,0,0,0,100,98,1,0,0,0,
+		100,99,1,0,0,0,101,7,1,0,0,0,102,103,5,2,0,0,103,104,3,64,32,0,104,105,
+		3,44,22,0,105,9,1,0,0,0,106,107,5,3,0,0,107,108,3,64,32,0,108,109,5,56,
+		0,0,109,111,5,4,0,0,110,112,3,42,21,0,111,110,1,0,0,0,111,112,1,0,0,0,
+		112,113,1,0,0,0,113,114,5,5,0,0,114,115,5,6,0,0,115,116,3,46,23,0,116,
+		117,5,7,0,0,117,11,1,0,0,0,118,121,3,14,7,0,119,121,3,18,9,0,120,118,1,
+		0,0,0,120,119,1,0,0,0,121,13,1,0,0,0,122,123,5,8,0,0,123,124,5,56,0,0,
+		124,125,5,6,0,0,125,126,3,16,8,0,126,127,5,9,0,0,127,128,3,58,29,0,128,
+		129,5,10,0,0,129,130,5,11,0,0,130,133,3,58,29,0,131,132,5,10,0,0,132,134,
+		3,36,18,0,133,131,1,0,0,0,133,134,1,0,0,0,134,135,1,0,0,0,135,136,5,7,
+		0,0,136,15,1,0,0,0,137,138,5,12,0,0,138,139,3,56,28,0,139,140,5,10,0,0,
+		140,143,1,0,0,0,141,143,1,0,0,0,142,137,1,0,0,0,142,141,1,0,0,0,143,17,
+		1,0,0,0,144,145,5,13,0,0,145,146,5,56,0,0,146,147,5,6,0,0,147,148,5,14,
+		0,0,148,149,3,78,39,0,149,150,5,15,0,0,150,151,5,16,0,0,151,154,3,78,39,
+		0,152,153,5,15,0,0,153,155,3,22,11,0,154,152,1,0,0,0,154,155,1,0,0,0,155,
+		156,1,0,0,0,156,157,5,15,0,0,157,158,5,17,0,0,158,159,5,6,0,0,159,160,
+		3,28,14,0,160,163,5,7,0,0,161,162,5,15,0,0,162,164,3,36,18,0,163,161,1,
+		0,0,0,163,164,1,0,0,0,164,166,1,0,0,0,165,167,5,15,0,0,166,165,1,0,0,0,
+		166,167,1,0,0,0,167,168,1,0,0,0,168,169,5,7,0,0,169,19,1,0,0,0,170,171,
+		5,18,0,0,171,172,5,6,0,0,172,173,5,19,0,0,173,174,3,76,38,0,174,175,5,
+		10,0,0,175,176,5,20,0,0,176,177,3,56,28,0,177,178,5,10,0,0,178,179,5,21,
+		0,0,179,180,3,56,28,0,180,181,5,7,0,0,181,21,1,0,0,0,182,183,5,22,0,0,
+		183,184,5,6,0,0,184,185,3,24,12,0,185,186,5,7,0,0,186,23,1,0,0,0,187,192,
+		3,26,13,0,188,189,5,15,0,0,189,191,3,26,13,0,190,188,1,0,0,0,191,194,1,
+		0,0,0,192,190,1,0,0,0,192,193,1,0,0,0,193,196,1,0,0,0,194,192,1,0,0,0,
+		195,197,5,15,0,0,196,195,1,0,0,0,196,197,1,0,0,0,197,200,1,0,0,0,198,200,
+		1,0,0,0,199,187,1,0,0,0,199,198,1,0,0,0,200,25,1,0,0,0,201,202,3,76,38,
+		0,202,203,5,23,0,0,203,204,3,78,39,0,204,27,1,0,0,0,205,206,3,76,38,0,
+		206,207,5,24,0,0,207,208,3,76,38,0,208,209,3,30,15,0,209,218,1,0,0,0,210,
+		211,3,76,38,0,211,212,5,24,0,0,212,213,5,25,0,0,213,214,3,32,16,0,214,
+		215,5,26,0,0,215,216,3,30,15,0,216,218,1,0,0,0,217,205,1,0,0,0,217,210,
+		1,0,0,0,218,29,1,0,0,0,219,220,5,10,0,0,220,221,3,76,38,0,221,222,5,24,
+		0,0,222,223,3,76,38,0,223,224,3,30,15,0,224,235,1,0,0,0,225,226,5,10,0,
+		0,226,227,3,76,38,0,227,228,5,24,0,0,228,229,5,25,0,0,229,230,3,32,16,
+		0,230,231,5,26,0,0,231,232,3,30,15,0,232,235,1,0,0,0,233,235,1,0,0,0,234,
+		219,1,0,0,0,234,225,1,0,0,0,234,233,1,0,0,0,235,31,1,0,0,0,236,237,3,56,
+		28,0,237,238,3,76,38,0,238,239,3,34,17,0,239,33,1,0,0,0,240,241,5,10,0,
+		0,241,242,3,56,28,0,242,243,3,76,38,0,243,244,3,34,17,0,244,247,1,0,0,
+		0,245,247,1,0,0,0,246,240,1,0,0,0,246,245,1,0,0,0,247,35,1,0,0,0,248,249,
+		5,27,0,0,249,250,5,25,0,0,250,251,3,38,19,0,251,252,5,26,0,0,252,37,1,
+		0,0,0,253,258,3,40,20,0,254,255,5,10,0,0,255,257,3,38,19,0,256,254,1,0,
+		0,0,257,260,1,0,0,0,258,256,1,0,0,0,258,259,1,0,0,0,259,263,1,0,0,0,260,
+		258,1,0,0,0,261,263,1,0,0,0,262,253,1,0,0,0,262,261,1,0,0,0,263,39,1,0,
+		0,0,264,265,7,0,0,0,265,41,1,0,0,0,266,267,3,64,32,0,267,270,5,56,0,0,
+		268,269,5,10,0,0,269,271,3,42,21,0,270,268,1,0,0,0,270,271,1,0,0,0,271,
+		43,1,0,0,0,272,273,5,56,0,0,273,274,5,34,0,0,274,275,3,56,28,0,275,276,
+		5,15,0,0,276,45,1,0,0,0,277,278,3,48,24,0,278,279,3,46,23,0,279,282,1,
+		0,0,0,280,282,1,0,0,0,281,277,1,0,0,0,281,280,1,0,0,0,282,47,1,0,0,0,283,
+		284,5,35,0,0,284,285,3,56,28,0,285,286,5,36,0,0,286,287,3,46,23,0,287,
+		304,1,0,0,0,288,304,3,44,22,0,289,290,3,64,32,0,290,291,3,44,22,0,291,
+		304,1,0,0,0,292,293,5,37,0,0,293,294,3,56,28,0,294,295,5,6,0,0,295,296,
+		3,46,23,0,296,297,5,7,0,0,297,298,3,50,25,0,298,304,1,0,0,0,299,300,5,
+		38,0,0,300,301,3,56,28,0,301,302,5,15,0,0,302,304,1,0,0,0,303,283,1,0,
+		0,0,303,288,1,0,0,0,303,289,1,0,0,0,303,292,1,0,0,0,303,299,1,0,0,0,304,
+		49,1,0,0,0,305,306,3,54,27,0,306,307,3,52,26,0,307,310,1,0,0,0,308,310,
+		1,0,0,0,309,305,1,0,0,0,309,308,1,0,0,0,310,51,1,0,0,0,311,312,5,39,0,
+		0,312,313,3,46,23,0,313,314,5,7,0,0,314,317,1,0,0,0,315,317,1,0,0,0,316,
+		311,1,0,0,0,316,315,1,0,0,0,317,53,1,0,0,0,318,319,5,40,0,0,319,320,3,
+		56,28,0,320,321,5,6,0,0,321,322,3,46,23,0,322,323,5,7,0,0,323,324,3,54,
+		27,0,324,327,1,0,0,0,325,327,1,0,0,0,326,318,1,0,0,0,326,325,1,0,0,0,327,
+		55,1,0,0,0,328,329,6,28,-1,0,329,334,3,58,29,0,330,334,3,28,14,0,331,332,
+		7,1,0,0,332,334,3,56,28,7,333,328,1,0,0,0,333,330,1,0,0,0,333,331,1,0,
+		0,0,334,355,1,0,0,0,335,336,10,6,0,0,336,337,7,2,0,0,337,354,3,56,28,7,
+		338,339,10,5,0,0,339,340,7,3,0,0,340,354,3,56,28,6,341,342,10,4,0,0,342,
+		343,7,4,0,0,343,354,3,56,28,5,344,345,10,3,0,0,345,346,7,5,0,0,346,354,
+		3,56,28,4,347,348,10,2,0,0,348,349,5,52,0,0,349,354,3,56,28,3,350,351,
+		10,1,0,0,351,352,5,53,0,0,352,354,3,56,28,2,353,335,1,0,0,0,353,338,1,
+		0,0,0,353,341,1,0,0,0,353,344,1,0,0,0,353,347,1,0,0,0,353,350,1,0,0,0,
+		354,357,1,0,0,0,355,353,1,0,0,0,355,356,1,0,0,0,356,57,1,0,0,0,357,355,
+		1,0,0,0,358,367,3,62,31,0,359,367,3,76,38,0,360,367,5,60,0,0,361,367,5,
+		59,0,0,362,367,5,58,0,0,363,367,5,57,0,0,364,367,3,66,33,0,365,367,3,68,
+		34,0,366,358,1,0,0,0,366,359,1,0,0,0,366,360,1,0,0,0,366,361,1,0,0,0,366,
+		362,1,0,0,0,366,363,1,0,0,0,366,364,1,0,0,0,366,365,1,0,0,0,367,59,1,0,
+		0,0,368,373,5,56,0,0,369,370,5,10,0,0,370,372,5,56,0,0,371,369,1,0,0,0,
+		372,375,1,0,0,0,373,371,1,0,0,0,373,374,1,0,0,0,374,61,1,0,0,0,375,373,
+		1,0,0,0,376,377,3,76,38,0,377,379,5,4,0,0,378,380,3,60,30,0,379,378,1,
+		0,0,0,379,380,1,0,0,0,380,381,1,0,0,0,381,382,5,5,0,0,382,63,1,0,0,0,383,
+		387,5,55,0,0,384,387,3,70,35,0,385,387,3,72,36,0,386,383,1,0,0,0,386,384,
+		1,0,0,0,386,385,1,0,0,0,387,65,1,0,0,0,388,392,5,6,0,0,389,391,3,58,29,
+		0,390,389,1,0,0,0,391,394,1,0,0,0,392,390,1,0,0,0,392,393,1,0,0,0,393,
+		399,1,0,0,0,394,392,1,0,0,0,395,396,5,10,0,0,396,398,3,58,29,0,397,395,
+		1,0,0,0,398,401,1,0,0,0,399,397,1,0,0,0,399,400,1,0,0,0,400,402,1,0,0,
+		0,401,399,1,0,0,0,402,403,5,7,0,0,403,67,1,0,0,0,404,405,3,76,38,0,405,
+		406,5,25,0,0,406,407,3,56,28,0,407,408,5,26,0,0,408,69,1,0,0,0,409,410,
+		5,25,0,0,410,411,3,64,32,0,411,412,5,26,0,0,412,71,1,0,0,0,413,414,3,76,
+		38,0,414,415,5,24,0,0,415,416,3,76,38,0,416,73,1,0,0,0,417,422,3,76,38,
+		0,418,419,5,10,0,0,419,421,3,76,38,0,420,418,1,0,0,0,421,424,1,0,0,0,422,
+		420,1,0,0,0,422,423,1,0,0,0,423,75,1,0,0,0,424,422,1,0,0,0,425,430,5,56,
+		0,0,426,427,5,54,0,0,427,429,5,56,0,0,428,426,1,0,0,0,429,432,1,0,0,0,
+		430,428,1,0,0,0,430,431,1,0,0,0,431,77,1,0,0,0,432,430,1,0,0,0,433,438,
+		5,56,0,0,434,435,5,10,0,0,435,437,5,56,0,0,436,434,1,0,0,0,437,440,1,0,
+		0,0,438,436,1,0,0,0,438,439,1,0,0,0,439,79,1,0,0,0,440,438,1,0,0,0,36,
+		84,90,100,111,120,133,142,154,163,166,192,196,199,217,234,246,258,262,
+		270,281,303,309,316,326,333,353,355,366,373,379,386,392,399,422,430,438
 	};
 
 	public static readonly ATN _ATN =

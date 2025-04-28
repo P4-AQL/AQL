@@ -32,11 +32,11 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.prog"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitProg([NotNull] AQLParser.ProgContext context);
+	Result VisitProgram([NotNull] AQLParser.ProgramContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.importList"/>.
 	/// </summary>
@@ -44,29 +44,59 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitImportList([NotNull] AQLParser.ImportListContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.def"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.importStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitDef([NotNull] AQLParser.DefContext context);
+	Result VisitImportStatement([NotNull] AQLParser.ImportStatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.network"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.definition"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitNetwork([NotNull] AQLParser.NetworkContext context);
+	Result VisitDefinition([NotNull] AQLParser.DefinitionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.idList"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.constDefinition"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitIdList([NotNull] AQLParser.IdListContext context);
+	Result VisitConstDefinition([NotNull] AQLParser.ConstDefinitionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.qualifiedIdList"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.functionDefinition"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitQualifiedIdList([NotNull] AQLParser.QualifiedIdListContext context);
+	Result VisitFunctionDefinition([NotNull] AQLParser.FunctionDefinitionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.networkDefinitions"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNetworkDefinitions([NotNull] AQLParser.NetworkDefinitionsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.queueDefinition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitQueueDefinition([NotNull] AQLParser.QueueDefinitionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.serviceCount"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitServiceCount([NotNull] AQLParser.ServiceCountContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.networkDefinition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNetworkDefinition([NotNull] AQLParser.NetworkDefinitionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.simulateDefinition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSimulateDefinition([NotNull] AQLParser.SimulateDefinitionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.instances"/>.
 	/// </summary>
@@ -122,35 +152,17 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMetricList([NotNull] AQLParser.MetricListContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.metricListA"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitMetricListA([NotNull] AQLParser.MetricListAContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.metric"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitMetric([NotNull] AQLParser.MetricContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.serviceCount"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.formalParameterList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitServiceCount([NotNull] AQLParser.ServiceCountContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.paramList"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitParamList([NotNull] AQLParser.ParamListContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.paramListA"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitParamListA([NotNull] AQLParser.ParamListAContext context);
+	Result VisitFormalParameterList([NotNull] AQLParser.FormalParameterListContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.assign"/>.
 	/// </summary>
@@ -188,11 +200,11 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitElseIf([NotNull] AQLParser.ElseIfContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.expr"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitExpr([NotNull] AQLParser.ExprContext context);
+	Result VisitExpression([NotNull] AQLParser.ExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.value"/>.
 	/// </summary>
@@ -200,17 +212,11 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitValue([NotNull] AQLParser.ValueContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.actualParamList"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.actualParameterList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitActualParamList([NotNull] AQLParser.ActualParamListContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.actualParamListA"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitActualParamListA([NotNull] AQLParser.ActualParamListAContext context);
+	Result VisitActualParameterList([NotNull] AQLParser.ActualParameterListContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.funcCall"/>.
 	/// </summary>
@@ -224,21 +230,45 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitType([NotNull] AQLParser.TypeContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.array"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.arrayInitialization"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitArray([NotNull] AQLParser.ArrayContext context);
+	Result VisitArrayInitialization([NotNull] AQLParser.ArrayInitializationContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.arrayValue"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.arrayIndexing"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitArrayValue([NotNull] AQLParser.ArrayValueContext context);
+	Result VisitArrayIndexing([NotNull] AQLParser.ArrayIndexingContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.arrayType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayType([NotNull] AQLParser.ArrayTypeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.routeType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRouteType([NotNull] AQLParser.RouteTypeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.qualifiedIdList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitQualifiedIdList([NotNull] AQLParser.QualifiedIdListContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.qualifiedID"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitQualifiedID([NotNull] AQLParser.QualifiedIDContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.idList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIdList([NotNull] AQLParser.IdListContext context);
 }
