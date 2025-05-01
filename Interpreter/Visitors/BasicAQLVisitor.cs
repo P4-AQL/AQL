@@ -9,7 +9,7 @@ using Interpreter.Utilities.Types;
 
 public class BasicAQLVisitor : AQLBaseVisitor<object?>
 {
-    ModuleContext moduleContext { get; set; } = new();
+    /*ModuleContext moduleContext { get; set; } = new();
     Dictionary<string, object> Variables => moduleContext.Variables;
     Dictionary<string, object> Functions => moduleContext.Functions;
     Dictionary<string, ModuleContext> ImportedModules => moduleContext.ImportedModules;

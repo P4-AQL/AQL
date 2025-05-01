@@ -1,51 +1,45 @@
 grammar AQL;
 
-program: importList (definition)*;
-importList: (importStatement)*;
-importStatement: 'import' STRING;
+program: importStatement | (definition)*;
+importStatement: 'import' string program;
 definition:
 	constDefinition
 	| functionDefinition
-	| networkDefinitions
+	| networks
 	| simulateDefinition;
 
 constDefinition: 'const' type assign;
-functionDefinition:
-	'function' type ID '(' formalParameterList? ')' '{' stmt '}';
 
-networkDefinitions: queueDefinition | networkDefinition;
+functionDefinition:
+	'function' returnType = type identifier '(' formalParameterList? ')' '{' statement? '}';
+
+formalParameterList: type identifier (',' type identifier)?;
+
+networks: queueDefinition | networkDefinition;
 
 queueDefinition:
-	'queue' ID '{' serviceCount 'service:' value ',' 'capacity:' value (
+	'queue' identifier '{' (
+		'number_of_servers:' numberOfServers = expression ','
+	)? 'service:' service = expression ', capacity:' capacity = expression (
 		',' metrics
 	)? '}';
 
-serviceCount: 'number_of_services:' expression ',' |;
-
 networkDefinition:
-	'network' ID '{' 'inputs:' idList ';' 'outputs:' idList (
-		';' instances
+	'network' identifier '{' 'inputs:' inputs = idList ';' 'outputs:' outputs = idList (
+		';' 'instances:' '{' instances = instanceList? '}'
 	)? ';' 'routes:' '{' routes '}' (';' metrics)? ';'? '}';
 
 simulateDefinition:
-	'simulate' '{' 'run:' qualifiedID ',' 'until:' expression ',' 'times:' expression '}';
+	'simulate' '{' 'run:' network = qualifiedId ',' 'until:' terminationCriteria = expression ','
+		'times:' runs = expression '}';
 
-instances: 'instances:' '{' instancesList '}';
-instancesList: instance (';' instance)* ';'? |;
-instance: qualifiedID ':' idList;
+instanceList: instance (';' instance)* ';'?;
+instance: qualifiedId ':' idList;
 
-routes:
-	qualifiedID '->' qualifiedID routesB
-	| qualifiedID '->' '[' routeIDList ']' routesB;
-routesB:
-	',' qualifiedID '->' qualifiedID routesB
-	| ',' qualifiedID '->' '[' routeIDList ']' routesB
-	|;
-routeIDList: expression qualifiedID routeIDListB;
-routeIDListB: ',' expression qualifiedID routeIDListB |;
+routes: identifier ('->' identifier)+;
 
 metrics: 'metrics:' '[' metricList ']';
-metricList: metric (',' metricList)* |;
+metricList: metric (',' metric)*;
 metric:
 	'mrt'
 	| 'vrt'
@@ -54,22 +48,29 @@ metric:
 	| 'num'
 	| 'avgNum';
 
-formalParameterList: type ID (',' formalParameterList)?;
-
-assign: ID '=' expression ';';
-stmt: stmtA stmt |;
-stmtA:
-	'while' expression 'do' stmt
+assign: <assoc = right> identifier '=' expression ';';
+statement:
+	whileStatement
 	| assign
 	| type assign
-	| 'if' expression '{' stmt '}' else1
-	| 'return' expression ';';
-else1: elseIf else2 |;
-else2: 'else {' stmt '}' |;
-elseIf: 'else if' expression '{' stmt '}' elseIf |;
+	| ifStatement
+	| returnStatement
+	| statement ';' statement;
+
+whileStatement: 'while' expression 'do' block;
+
+ifStatement:
+	'if' expression block elseIfStatement* elseStatement?;
+elseIfStatement: 'else if' expression block;
+elseStatement: 'else' block;
+elseIf: 'else if' expression '{' statement '}' elseIf |;
+
+block: '{' statement? '}';
+
+returnStatement: 'return' expression ';';
+
 expression:
 	value
-	| routes
 	| <assoc = right> ('!' | '-') expression
 	| expression ('*' | '/') expression
 	| expression ('+' | '-') expression
@@ -78,37 +79,45 @@ expression:
 	| expression '&&' expression
 	| expression '||' expression;
 value:
-	funcCall
-	| qualifiedID
-	| STRING
-	| DOUBLE
-	| INT
-	| BOOL
+	functionCall
+	| qualifiedId
+	| string
+	| double
+	| int
+	| bool
 	| arrayInitialization
 	| arrayIndexing;
 
-actualParameterList: ID (',' ID)*;
-funcCall: qualifiedID '(' actualParameterList? ')';
+functionCall:
+	functionIdentifier = qualifiedId '(' parameters = qualifiedIdList? ')';
 
 type: TYPEKEYWORD | arrayType | routeType;
 arrayInitialization: '{' value* (',' value)* '}';
-arrayIndexing: qualifiedID '[' expression ']';
+arrayIndexing: target = qualifiedId '[' index = expression ']';
 
-TYPEKEYWORD: 'bool' | 'int' | 'double' | 'string' | 'network';
+TYPEKEYWORD: 'bool' | 'int' | 'double' | 'string';
 
 arrayType: '[' type ']';
 
-routeType: qualifiedID '->' qualifiedID;
+routeType: qualifiedId '->' qualifiedId;
 
-qualifiedIdList: qualifiedID (',' qualifiedID)*;
-qualifiedID: ID ('.' ID)*;
+qualifiedIdList: qualifiedId (',' qualifiedId)*;
+qualifiedId: identifier ('.' identifier)*;
 
-idList: ID (',' ID)*;
+idList: identifier (',' identifier)*;
+identifier: IDENTIFIER;
+IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
-ID: [a-zA-Z_][a-zA-Z0-9_]*;
+bool: BOOL;
 BOOL: 'true' | 'false';
+
+int: INT;
 INT: '-'? [0-9]+;
+
+double: DOUBLE;
 DOUBLE: '-'? [0-9]* '.' [0-9]+;
+
+string: STRING;
 STRING: '"' ~["\\\r\n]* '"';
 
 WS: (' ' | '\t' | '\n' | '\r')+ -> skip;
