@@ -9,5 +9,15 @@ public class WhileNode(ExpressionNode condition, StatementNode body) : Statement
     public ExpressionNode Condition { get; } = condition;
     public StatementNode Body { get; } = body;
 
-    public override string ToString() => $"while ({Condition}) {{ {Body} }}";
+    public override string ToString() => $"WhileNode({Condition}, {Body})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Condition,
+            Body,
+        ];
+    }
+
 }

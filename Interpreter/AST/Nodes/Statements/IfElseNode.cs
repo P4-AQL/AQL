@@ -11,7 +11,17 @@ public class IfElseNode(ExpressionNode condition, StatementNode ifBody, Statemen
     public StatementNode IfBody { get; } = ifBody;
     public StatementNode ElseBody { get; } = elseBody;
 
-    public override string ToString() => $"IfElseNode({Condition}) {{ {IfBody} }} {{ {ElseBody} }}";
+    public override string ToString() => $"IfElseNode({Condition}, {IfBody}, {ElseBody})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Condition,
+            IfBody,
+            ElseBody,
+        ];
+    }
 
     public IfElseNode(ElseIfReturn elseIfReturn, StatementNode elseBody) : this(condition: elseIfReturn.Condition, ifBody: elseIfReturn.Body, elseBody: elseBody)
     {

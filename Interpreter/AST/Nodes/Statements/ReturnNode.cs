@@ -8,5 +8,14 @@ public class ReturnNode(ExpressionNode expression) : StatementNode
 {
     public ExpressionNode Expression { get; } = expression;
 
-    public override string ToString() => $"return {Expression};";
+    public override string ToString() => $"ReturnNpde({Expression})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Expression,
+        ];
+    }
+
 }

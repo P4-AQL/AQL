@@ -9,4 +9,12 @@ public class DefinitionProgramNode(DefinitionNode definition) : ProgramNode
     public DefinitionNode Definition { get; } = definition;
 
     public override string ToString() => $"DefinitionProgramNode({Definition})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Definition,
+        ];
+    }
 }

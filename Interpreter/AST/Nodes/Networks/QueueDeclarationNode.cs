@@ -11,4 +11,16 @@ public class QueueDeclarationNode(IdentifierNode identifier, ExpressionNode serv
     public ExpressionNode Capacity { get; } = capacity;
     public ExpressionNode NumberOfServers { get; } = numberOfServers;
 
+    public override string ToString() => $"QueueDeclarationNode({Service}, {Capacity}, {NumberOfServers})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Service,
+            Capacity,
+            NumberOfServers,
+        ];
+    }
+
 }

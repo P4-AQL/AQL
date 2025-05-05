@@ -12,4 +12,15 @@ public class ConstDeclarationNode(TypeNode type, IdentifierNode identifier, Expr
     public ExpressionNode Expression { get; } = expression;
 
     public override string ToString() => $"ConstDeclaration({Type} {Identifier} = {Expression})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return
+        [
+            .. base.Children(),
+            Type,
+            Identifier,
+            Expression,
+        ];
+    }
 }

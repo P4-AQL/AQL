@@ -12,4 +12,12 @@ public class NetworkNode(IdentifierNode identifier, IEnumerable<MetricNode> metr
     public IReadOnlyList<MetricNode> Metrics { get; } = [.. metrics];
 
     public override string ToString() => $"NetworkNode({Identifier}, ({string.Join(',', Metrics)}))";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            Identifier,
+            .. Metrics,
+        ];
+    }
 }

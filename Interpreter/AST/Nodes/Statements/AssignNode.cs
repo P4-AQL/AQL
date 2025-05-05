@@ -10,6 +10,15 @@ public class AssignNode(IdentifierNode identifier, ExpressionNode expression) : 
     public IdentifierNode Identifier { get; } = identifier;
     public ExpressionNode Expression { get; } = expression;
 
-    public override string ToString() => $"AssignNode({Identifier} = {Expression});";
+    public override string ToString() => $"AssignNode({Identifier} = {Expression})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Identifier,
+            Expression,
+        ];
+    }
 
 }

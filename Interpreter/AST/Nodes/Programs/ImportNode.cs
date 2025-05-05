@@ -13,5 +13,14 @@ namespace Interpreter.AST.Nodes.Programs
 
         public override string ToString() => $"ImportNode({Namespace}, {Program})";
 
+        public override IEnumerable<Node> Children()
+        {
+            return [
+                .. base.Children(),
+                Namespace,
+                Program
+             ];
+        }
+
     }
 }

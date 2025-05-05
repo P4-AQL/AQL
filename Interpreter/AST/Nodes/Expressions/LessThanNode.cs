@@ -10,4 +10,13 @@ public class LessThanNode(ExpressionNode left, ExpressionNode right) : Expressio
     public ExpressionNode Right { get; } = right;
 
     public override string ToString() => $"LessThanNode({Left}, {Right})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Left,
+            Right,
+        ];
+    }
 }

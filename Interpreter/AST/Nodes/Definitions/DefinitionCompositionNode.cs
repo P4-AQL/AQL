@@ -10,4 +10,13 @@ public class DefinitionCompositionNode(DefinitionNode left, DefinitionNode right
     public DefinitionNode Right { get; } = right;
 
     public override string ToString() => $"DefinitionCompositionNode({Left}, {Right})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Left,
+            Right,
+        ];
+    }
 }

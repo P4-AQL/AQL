@@ -8,8 +8,15 @@ public class FunctionTypeNode(IEnumerable<TypeNode> formalParameterTypes, TypeNo
 {
     public IEnumerable<TypeNode> FormalParameterTypes { get; } = formalParameterTypes.ToList();
     public TypeNode ReturnType { get; } = returnType;
-    public override string ToString()
+    public override string ToString() => $"FunctionTypeNode(({string.Join(", ", FormalParameterTypes)}), {ReturnType})";
+
+    public override IEnumerable<Node> Children()
     {
-        return $"FunctionTypeNode(({string.Join(", ", FormalParameterTypes)}), {ReturnType})";
+        return [
+            .. base.Children(),
+            .. FormalParameterTypes,
+            ReturnType,
+        ];
     }
+
 }

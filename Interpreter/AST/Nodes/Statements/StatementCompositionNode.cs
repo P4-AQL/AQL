@@ -9,5 +9,14 @@ public class StatementCompositionNode(StatementNode left, StatementNode right) :
     public StatementNode Left { get; } = left;
     public StatementNode Right { get; } = right;
 
-    public override string ToString() => $"StatementCompositionNode({Left}; {Right})";
+    public override string ToString() => $"StatementCompositionNode({Left}, {Right})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Left,
+            Right,
+        ];
+    }
 }

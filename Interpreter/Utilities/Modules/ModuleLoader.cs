@@ -11,7 +11,7 @@ public static class ModuleLoader
     /// </summary>
     /// <param name="modulePath">The path to the module.</param>
     /// <returns> The loaded module context.</returns>
-    public static ModuleContext LoadModuleByPath(string modulePath)
+    public static string /*ModuleContext*/ LoadModuleByPath(string modulePath)
     {
         if (string.IsNullOrEmpty(modulePath))
         {
@@ -23,8 +23,9 @@ public static class ModuleLoader
             throw new FileNotFoundException($"Module not found: {modulePath}");
         }
 
-        string moduleContent = File.ReadAllText(modulePath);
-
+        /*string moduleContent =*/
+        return File.ReadAllText(modulePath);
+        /*
         AntlrInputStream inputStream = new(moduleContent);
         AQLLexer lexer = new(inputStream);
         CommonTokenStream commonTokenStream = new(lexer);
@@ -44,7 +45,7 @@ public static class ModuleLoader
         else
         {
             throw new InvalidOperationException("Failed to load module");
-        }
+        }*/
     }
 
     /// <summary>
@@ -52,7 +53,7 @@ public static class ModuleLoader
     /// </summary>
     /// <param name="moduleName">The name of the module.</param>
     /// <returns>The loaded module context.</returns>
-    public static ModuleContext LoadModuleByName(string moduleName)
+    public static string /*ModuleContext*/ LoadModuleByName(string moduleName)
     {
         if (string.IsNullOrEmpty(moduleName))
         {

@@ -10,9 +10,14 @@ public class RouteNode(ExpressionNode from, ExpressionNode to) : Node
     public ExpressionNode From { get; } = from;
     public ExpressionNode To { get; } = to;
 
-    public override string ToString()
+    public override string ToString() => $"Route({From}, {To})";
+
+    public override IEnumerable<Node> Children()
     {
-        return $"Route({From}, {To})";
+        return [
+            From,
+            To,
+        ];
     }
 
 }

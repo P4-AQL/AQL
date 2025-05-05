@@ -13,4 +13,9 @@ public class IdentifierNode(string identifier) : ExpressionNode
     {
         return $"Identifier({Identifier})";
     }
+
+    public override IEnumerable<Node> Children()
+    {
+        return base.Children();
+    }
 }

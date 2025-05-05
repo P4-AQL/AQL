@@ -564,7 +564,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode terminationCriteriaNode = VisitExpression(context.terminationCriteria);
 
         return new(
-            identifier: networkNode,
+            networkIdentifier: networkNode,
             runs: runsNode,
             terminationCriteria: terminationCriteriaNode
         );
@@ -743,7 +743,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.EqualityExpressionContext equalExpressionContext in equalityExpressionContexts)
+                foreach (AQLParser.EqualityExpressionContext equalExpressionContext in equalityExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitEqualityExpression(equalExpressionContext);
                     current = new AndNode(
@@ -789,7 +789,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.RelationalExpressionContext relationalContext in relationalExpressionContexts)
+                foreach (AQLParser.RelationalExpressionContext relationalContext in relationalExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitRelationalExpression(relationalContext);
                     current = new EqualNode(
@@ -819,7 +819,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.RelationalExpressionContext relationalExpressionContext in relationalExpressionContexts)
+                foreach (AQLParser.RelationalExpressionContext relationalExpressionContext in relationalExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitRelationalExpression(relationalExpressionContext);
                     current = new NotNode(
@@ -875,7 +875,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts)
+                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
                     current = new LessThanNode(
@@ -905,7 +905,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts)
+                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
                     current = MakeLessThanOrEqualNode(current, equalityNode);
@@ -947,7 +947,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts)
+                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
                     LessThanNode lessThanOrEqualNode = MakeLessThanOrEqualNode(current, equalityNode);
@@ -977,7 +977,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts)
+                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
                     current = new NotNode(
@@ -1025,7 +1025,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.MultiplicativeExpressionContext multiplicativeExpressionContext in multiplicativeExpressionContexts)
+                foreach (AQLParser.MultiplicativeExpressionContext multiplicativeExpressionContext in multiplicativeExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitMultiplicativeExpression(multiplicativeExpressionContext);
                     current = new AddNode(
@@ -1055,7 +1055,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.MultiplicativeExpressionContext multiplicativeExpressionContext in multiplicativeExpressionContexts)
+                foreach (AQLParser.MultiplicativeExpressionContext multiplicativeExpressionContext in multiplicativeExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitMultiplicativeExpression(multiplicativeExpressionContext);
                     current = new AddNode(
@@ -1103,7 +1103,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.UnaryExpressionContext unaryExpressionContext in unaryExpressionContexts)
+                foreach (AQLParser.UnaryExpressionContext unaryExpressionContext in unaryExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitUnaryExpression(unaryExpressionContext);
                     current = new MultiplyNode(
@@ -1133,7 +1133,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             }
             else
             {
-                foreach (AQLParser.UnaryExpressionContext unaryExpressionContext in unaryExpressionContexts)
+                foreach (AQLParser.UnaryExpressionContext unaryExpressionContext in unaryExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitUnaryExpression(unaryExpressionContext);
                     current = new DivisionNode(

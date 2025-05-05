@@ -10,4 +10,13 @@ public class EqualNode(ExpressionNode left, ExpressionNode right) : ExpressionNo
     public ExpressionNode Right { get; } = right;
 
     public override string ToString() => $"EqualNode({Left}, {Right})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Left,
+            Right,
+        ];
+    }
 }

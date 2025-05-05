@@ -7,4 +7,9 @@ namespace Interpreter.AST.Nodes.Expressions;
 public class DoubleLiteralNode(double value) : ExpressionNode
 {
     public double Value { get; set; } = value;
+
+    public override IEnumerable<Node> Children()
+    {
+        return base.Children();
+    }
 }

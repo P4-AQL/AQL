@@ -3,7 +3,7 @@
 
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Expressions;
-using Interpreter.AST.NonNodes;
+using Interpreter.AST.Nodes.Statements;
 
 namespace Interpreter.AST.Nodes.Definitions;
 public class FunctionNode(TypeNode returnType, IdentifierNode identifier, IEnumerable<TypeAndIdentifier> parameters, StatementNode body) : DefinitionNode
@@ -12,4 +12,17 @@ public class FunctionNode(TypeNode returnType, IdentifierNode identifier, IEnume
     public IdentifierNode Identifier { get; } = identifier;
     public IReadOnlyList<TypeAndIdentifier> Parameters { get; } = [.. parameters];
     public StatementNode Body { get; } = body;
+
+    public override string ToString() => $"FunctionNode({ReturnType}, {Identifier}, ({string.Join(',', Parameters)}), {Body})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            ReturnType,
+            Identifier,
+            .. Parameters,
+            Body,
+        ];
+    }
 }

@@ -9,4 +9,12 @@ public class ArrayLiteralNode(IEnumerable<ExpressionNode> elements) : Expression
     public IReadOnlyList<ExpressionNode> Elements { get; } = [.. elements];
 
     public override string ToString() => $"ArrayTypeNode(Elements: [{string.Join(',', Elements)}])";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            .. Elements
+        ];
+    }
 }

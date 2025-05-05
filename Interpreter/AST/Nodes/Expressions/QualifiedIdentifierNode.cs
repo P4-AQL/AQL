@@ -10,4 +10,13 @@ public class QualifiedIdentifierNode(IdentifierNode identifier, ExpressionNode e
     public ExpressionNode Expression { get; } = expression;
 
     public override string ToString() => $"QualifiedIdentifierNode({Identifier}, {Expression})";
+
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            .. base.Children(),
+            Identifier,
+            Expression,
+        ];
+    }
 }

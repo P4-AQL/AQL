@@ -14,4 +14,12 @@ public class InstanceDeclaration(QualifiedIdentifierNode existingInstance, IEnum
         return $"InstanceDeclaration({ExistingInstance}, ({string.Join(", ", NewInstances)})";
     }
 
+    public override IEnumerable<Node> Children()
+    {
+        return [
+            ExistingInstance,
+            .. NewInstances,
+        ];
+    }
+
 }
