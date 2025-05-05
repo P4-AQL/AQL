@@ -5,7 +5,6 @@
 using Antlr4.Runtime.Misc;
 using Interpreter.Utilities;
 using Interpreter.Utilities.Modules;
-using Interpreter.Utilities.Types;
 
 public class BasicAQLVisitor : AQLBaseVisitor<object?>
 {

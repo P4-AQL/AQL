@@ -2,45 +2,39 @@
 
 
 using Antlr4.Runtime.Misc;
-using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Metrics;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
 using Interpreter.AST.Nodes.Statements;
+using Interpreter.AST.Nodes.Types;
+using Interpreter.AST.NonNodes;
 
 namespace Interpreter.Visitors;
 class ASTAQLVisitor : AQLBaseVisitor<object>
 {
     public override ProgramNode VisitProgram([NotNull] AQLParser.ProgramContext context)
     {
-        var importStatementContext = context.importStatement();
-
-        if (importStatementContext != null)
+        ProgramNode programNode;
+        if (context.importStatement() != null)
         {
-            return VisitImportStatement(importStatementContext);
+            programNode = VisitImportStatement(context.importStatement());
         }
-
-        else if (context.definition().Length > 0)
+        else if (context.definition() != null)
         {
-            List<DefinitionNode> definitions = [];
-            foreach (AQLParser.DefinitionContext definitionContext in context.definition())
-            {
-                object? definition = Visit(definitionContext);
-                if (definition is not DefinitionNode definitionNode)
-                {
-                    throw new Exception("Expected DefinitionNode.");
-                }
-                definitions.Add(definitionNode);
-            }
-            return new DefinitionGroupNode(definitions);
+            DefinitionNode definitionNode = VisitDefinition(context.definition());
+            programNode = new DefinitionProgramNode(
+                definition: definitionNode
+            );
         }
-
         else
         {
-            return new();
+            programNode = new();
         }
+
+        return programNode;
     }
 
     public override ImportNode VisitImportStatement([NotNull] AQLParser.ImportStatementContext context)
@@ -54,19 +48,76 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return new(moduleNameNode, programNode);
     }
 
+    public override DefinitionNode VisitDefinition([NotNull] AQLParser.DefinitionContext context)
+    {
+        if (context.baseDefinition() != null)
+        {
+            return VisitBaseDefinition(context.baseDefinition());
+        }
+        else if (context.definitionComposition() != null)
+        {
+            return VisitDefinitionComposition(context.definitionComposition());
+        }
+        else
+        {
+            throw new("Not a valid definition.");
+        }
+    }
+
+    public override DefinitionCompositionNode VisitDefinitionComposition([NotNull] AQLParser.DefinitionCompositionContext context)
+    {
+        DefinitionNode leftNode = VisitBaseDefinition(context.left);
+        DefinitionNode rightNode = VisitDefinition(context.right);
+
+        return new(
+            left: leftNode,
+            right: rightNode
+        );
+    }
+
+    public override DefinitionNode VisitBaseDefinition([NotNull] AQLParser.BaseDefinitionContext context)
+    {
+        if (context.functionDefinition() != null)
+        {
+            return VisitFunctionDefinition(context.functionDefinition());
+        }
+        else if (context.constDefinition() != null)
+        {
+            return VisitConstDefinition(context.constDefinition());
+        }
+        else if (context.networks() != null)
+        {
+            return VisitNetworks(context.networks());
+        }
+        else if (context.simulateDefinition() != null)
+        {
+            return VisitSimulateDefinition(context.simulateDefinition());
+        }
+        else
+        {
+            throw new("Not a valid definition.");
+        }
+    }
+
+    public override FunctionNode VisitFunctionDefinition([NotNull] AQLParser.FunctionDefinitionContext context)
+    {
+        TypeNode returnTypeNode = VisitType(context.returnType);
+        IdentifierNode identifierNode = VisitIdentifier(context.identifier());
+        IEnumerable<TypeAndIdentifier> parameterNodes = VisitFormalParameterList(context.formalParameterList());
+        StatementNode statementNode = VisitStatement(context.statement());
+
+        return new(
+            returnType: returnTypeNode,
+            identifier: identifierNode,
+            parameters: parameterNodes,
+            body: statementNode
+        );
+    }
+
     public override ConstDeclarationNode VisitConstDefinition([NotNull] AQLParser.ConstDefinitionContext context)
     {
-        object type = Visit(context.type());
-        object assign = Visit(context.assign());
-
-        if (type is not TypeNode typeNode)
-        {
-            throw new Exception("Expected TypeNode.");
-        }
-        if (assign is not AssignNode assignNode)
-        {
-            throw new Exception("Expected AssignmentNode.");
-        }
+        TypeNode typeNode = VisitType(context.type());
+        AssignNode assignNode = VisitAssignStatement(context.assignStatement());
 
         return new(
             type: typeNode,
@@ -75,69 +126,205 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         );
     }
 
-    public override FunctionNode VisitFunctionDefinition([NotNull] AQLParser.FunctionDefinitionContext context)
+    public override StatementNode VisitStatement([NotNull] AQLParser.StatementContext context)
     {
-        object returnType = Visit(context.returnType);
-        IdentifierNode identifier = VisitIdentifier(context.identifier());
-        object formalParameters = VisitFormalParameterList(context.formalParameterList());
-        object statement = Visit(context.statement());
-
-        if (returnType is not TypeNode returnTypeNode)
+        if (context.statementComposition() != null)
         {
-            throw new Exception("Expected TypeNode.");
+            return VisitStatementComposition(context.statementComposition());
         }
-        if (identifier is not IdentifierNode identifierNode)
+        else if (context.baseStatement() != null)
         {
-            throw new Exception("Expected IdentifierNode.");
-        }
-        if (formalParameters is not List<TypedIdentifierNode> parameters)
-        {
-            throw new Exception("Expected List<TypedIdentifierNode>.");
-        }
-        if (statement is not StatementNode statementNode)
-        {
-            throw new Exception("Expected StatementNode.");
-        }
-
-        return new(
-            returnType: returnTypeNode,
-            identifierNode,
-            parameters,
-            statementNode
-        );
-    }
-
-    public override IEnumerable<TypedIdentifierNode> VisitFormalParameterList([NotNull] AQLParser.FormalParameterListContext context)
-    {
-        List<TypedIdentifierNode> parameters = [];
-        AQLParser.TypeContext[] typeContexts = context.type();
-        AQLParser.IdentifierContext[] identifierContexts = context.identifier();
-        for (int i = 0; i < typeContexts.Length; i++)
-        {
-            //TypeNode typeNode = VisitType(typeContexts[i]);
-            IdentifierNode identifierNode = VisitIdentifier(identifierContexts[i]);
-
-            //TypedIdentifierNode typedIdentifierNode = new(typeNode, identifierNode);
-            //parameters.Add(typedIdentifierNode);
-        }
-
-        return parameters;
-    }
-
-    public override NetworkNode VisitNetworks([NotNull] AQLParser.NetworksContext context)
-    {
-        if (context.networkDefinition() != null)
-        {
-            return VisitNetworkDefinition(context.networkDefinition());
-        }
-        else if (context.queueDefinition() != null)
-        {
-            return VisitQueueDefinition(context.queueDefinition());
+            return VisitBaseStatement(context.baseStatement());
         }
         else
         {
-            throw new NotImplementedException("Network definition not implemented.");
+            throw new("Not a valid statement.");
         }
+    }
+
+    public override StatementCompositionNode VisitStatementComposition([NotNull] AQLParser.StatementCompositionContext context)
+    {
+        StatementNode leftNode = VisitBaseStatement(context.left);
+        StatementNode rightNode = VisitStatement(context.right);
+
+        return new(
+            left: leftNode,
+            right: rightNode
+        );
+    }
+
+    public override StatementNode VisitBaseStatement([NotNull] AQLParser.BaseStatementContext context)
+    {
+        if (context.whileStatement() != null)
+        {
+            return VisitWhileStatement(context.whileStatement());
+        }
+        else if (context.variableDeclarationStatement() != null)
+        {
+            return VisitVariableDeclarationStatement(context.variableDeclarationStatement());
+        }
+        else if (context.assignStatement() != null)
+        {
+            return VisitAssignStatement(context.assignStatement());
+        }
+        else if (context.ifStatement() != null)
+        {
+            return VisitIfStatement(context.ifStatement());
+        }
+        else if (context.returnStatement() != null)
+        {
+            return VisitReturnStatement(context.returnStatement());
+        }
+        else
+        {
+            throw new("Not a valid statement.");
+        }
+    }
+
+    public override WhileNode VisitWhileStatement([NotNull] AQLParser.WhileStatementContext context)
+    {
+        ExpressionNode conditionNode = VisitExpression(context.condition);
+        StatementNode bodyNode = VisitBlock(context.body);
+
+        return new(
+            condition: conditionNode,
+            body: bodyNode
+        );
+    }
+
+    public override StatementNode VisitBlock([NotNull] AQLParser.BlockContext context)
+    {
+        return VisitStatement(context.statement());
+    }
+
+    public override StatementCompositionNode VisitVariableDeclarationStatement([NotNull] AQLParser.VariableDeclarationStatementContext context)
+    {
+        TypeNode typeNode = VisitType(context.type());
+        AssignNode assignNode = VisitAssignStatement(context.assignStatement());
+
+        return new(
+            left: new VariableDeclarationNode(
+                type: typeNode,
+                identifier: assignNode.Identifier
+            ),
+            right: assignNode
+        );
+    }
+
+    public override IfElseNode VisitIfStatement([NotNull] AQLParser.IfStatementContext context)
+    {
+        // We handle the 'if elseif* else?' statements in 
+        // reverse.
+
+        // Handling 'else?', if it isn't there semanticly 
+        // means a 'skip' statement has been used.
+        StatementNode elseBody;
+        if (context.elseIfStatement() != null)
+        {
+            elseBody = VisitElseStatement(context.elseStatement());
+        }
+        else
+        {
+            elseBody = new SkipNode();
+        }
+
+        IfElseNode? currentNode = null;
+        if (context._elseIfStatements != null && context._elseIfStatements.Count > 0)
+        {
+            // We handle the 'if elseif* else?' statements in 
+            // reverse in order to create the immutable node 
+            // classes.
+            List<AQLParser.ElseIfStatementContext> elseIfStatementContexts = [.. context._elseIfStatements];
+            elseIfStatementContexts.Reverse();
+
+            ElseIfReturn firstElseIfReturn = VisitElseIfStatement(elseIfStatementContexts.First());
+            currentNode = new(
+                condition: firstElseIfReturn.Condition,
+                ifBody: firstElseIfReturn.Body,
+                elseBody: elseBody
+            );
+            foreach (AQLParser.ElseIfStatementContext elseIfStatementContext in elseIfStatementContexts.Skip(1))
+            {
+                ElseIfReturn elseIfReturn = VisitElseIfStatement(elseIfStatementContext);
+                currentNode = new(
+                    elseIfReturn: elseIfReturn,
+                    elseBody: currentNode
+                );
+            }
+        }
+
+        ExpressionNode mainIfCondition = VisitExpression(context.ifCondition);
+        StatementNode mainIfBody = VisitBlock(context.ifBody);
+
+        // If no 'elseif's where present the 'else' should just 
+        // be the else body, as it is not part of the 'elseif' 
+        // chain.
+
+        // Otherwise the chain is appended to the first if case.
+        if (currentNode == null)
+        {
+            currentNode = new(
+                condition: mainIfCondition,
+                ifBody: mainIfBody,
+                elseBody: elseBody
+            );
+        }
+        else
+        {
+            currentNode = new(
+                condition: mainIfCondition,
+                ifBody: mainIfBody,
+                elseBody: currentNode
+            );
+        }
+
+        return currentNode;
+    }
+
+    public override ElseIfReturn VisitElseIfStatement([NotNull] AQLParser.ElseIfStatementContext context)
+    {
+        ExpressionNode conditionNode = VisitExpression(context.condition);
+        StatementNode bodyNode = VisitBlock(context.body);
+
+        return new ElseIfReturn(
+            condition: conditionNode,
+            body: bodyNode
+        );
+    }
+
+    public override StatementNode VisitElseStatement([NotNull] AQLParser.ElseStatementContext context)
+    {
+        return VisitBlock(context.body);
+    }
+
+    public override ReturnNode VisitReturnStatement([NotNull] AQLParser.ReturnStatementContext context)
+    {
+        ExpressionNode expressionNode = VisitExpression(context.expression());
+
+        return new(
+            expression: expressionNode
+        );
+    }
+
+    public override NetworkDefinitionNode VisitNetworks([NotNull] AQLParser.NetworksContext context)
+    {
+        NetworkNode networkNode;
+        if (context.networkDefinition() != null)
+        {
+            networkNode = VisitNetworkDefinition(context.networkDefinition());
+        }
+        else if (context.queueDefinition() != null)
+        {
+            networkNode = VisitQueueDefinition(context.queueDefinition());
+        }
+        else
+        {
+            throw new("Not a valid network.");
+        }
+
+        return new(
+            network: networkNode
+        );
     }
 
     public override QueueDeclarationNode VisitQueueDefinition([NotNull] AQLParser.QueueDefinitionContext context)
@@ -146,19 +333,14 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode serviceNode = VisitExpression(context.service);
         ExpressionNode capacityNode = VisitExpression(context.capacity);
         ExpressionNode numberOfServersNode = VisitExpression(context.numberOfServers);
-        object metrics = Visit(context.metrics());
-
-        if (metrics is not List<MetricNode> metricsNode)
-        {
-            throw new Exception("Expected List<MetricNode>.");
-        }
+        IEnumerable<MetricNode> metricNodes = VisitMetrics(context.metrics());
 
         return new(
             identifierNode,
             serviceNode,
             capacityNode,
             numberOfServersNode,
-            metricsNode
+            metricNodes
         );
     }
 
@@ -167,14 +349,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         IdentifierNode identifierNode = VisitIdentifier(context.identifier());
         IEnumerable<IdentifierNode> inputNodes = VisitIdList(context.inputs);
         IEnumerable<IdentifierNode> outputNodes = VisitIdList(context.outputs);
-        IEnumerable<ExpressionNode> instanceNodes = VisitInstanceList(context.instances);
+        IEnumerable<InstanceDeclaration> instanceNodes = VisitInstances(context.instances());
         IEnumerable<RouteNode> routeNodes = VisitRoutes(context.routes());
-        IEnumerable<MetricNode> metrics = VisitMetrics(context.metrics());
-
-        if (metrics is not List<MetricNode> metricsNodes)
-        {
-            throw new Exception("Expected List<MetricNode>.");
-        }
+        IEnumerable<MetricNode> metricNodes = VisitMetrics(context.metrics());
 
         return new(
             identifier: identifierNode,
@@ -182,9 +359,112 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             outputs: outputNodes,
             instances: instanceNodes,
             routes: routeNodes,
-            metrics: metricsNodes
+            metrics: metricNodes
         );
     }
+
+    public override AssignNode VisitAssignStatement([NotNull] AQLParser.AssignStatementContext context)
+    {
+        IdentifierNode identifierNode = VisitIdentifier(context.identifier());
+        ExpressionNode expressionNode = VisitExpression(context.expression());
+
+        return new(
+            identifier: identifierNode,
+            expression: expressionNode
+        );
+    }
+
+    public override IEnumerable<TypeAndIdentifier> VisitFormalParameterList([NotNull] AQLParser.FormalParameterListContext context)
+    {
+        List<TypeAndIdentifier> parameters = [];
+
+        AQLParser.IdentifierContext[] identifierContexts = context.identifier();
+        int index = 0;
+        foreach (AQLParser.TypeContext typeContext in context.type())
+        {
+            TypeNode typeNode = VisitType(typeContext);
+            IdentifierNode identifierNode = VisitIdentifier(identifierContexts[index]);
+
+            TypeAndIdentifier typeAndIdentifier = new(
+                type: typeNode,
+                identifier: identifierNode
+            );
+
+            parameters.Add(typeAndIdentifier);
+            index++;
+        }
+
+        return parameters;
+    }
+
+    public override TypeNode VisitType([NotNull] AQLParser.TypeContext context)
+    {
+        if (context.typeKeyword() != null)
+        {
+            return VisitTypeKeyword(context.typeKeyword());
+        }
+        else if (context.arrayType() != null)
+        {
+            return VisitArrayType(context.arrayType());
+        }
+        else
+        {
+            throw new("Not a valid type.");
+        }
+    }
+
+    public override TypeNode VisitTypeKeyword([NotNull] AQLParser.TypeKeywordContext context)
+    {
+        if (context.boolKeyword() != null)
+        {
+            return VisitBoolKeyword(context.boolKeyword());
+        }
+        else if (context.intKeyword() != null)
+        {
+            return VisitIntKeyword(context.intKeyword());
+        }
+        else if (context.doubleKeyword() != null)
+        {
+            return VisitDoubleKeyword(context.doubleKeyword());
+        }
+        else if (context.stringKeyword() != null)
+        {
+            return VisitStringKeyword(context.stringKeyword());
+        }
+        else
+        {
+            throw new("Not a valid type.");
+        }
+    }
+
+    #region Types
+    public override BoolTypeNode VisitBoolKeyword([NotNull] AQLParser.BoolKeywordContext context)
+    {
+        return new();
+    }
+
+    public override IntTypeNode VisitIntKeyword([NotNull] AQLParser.IntKeywordContext context)
+    {
+        return new();
+    }
+
+    public override DoubleTypeNode VisitDoubleKeyword([NotNull] AQLParser.DoubleKeywordContext context)
+    {
+        return new();
+    }
+
+    public override StringTypeNode VisitStringKeyword([NotNull] AQLParser.StringKeywordContext context)
+    {
+        return new();
+    }
+
+    public override ArrayTypeNode VisitArrayType([NotNull] AQLParser.ArrayTypeContext context)
+    {
+        return new(
+            innerType: VisitType(context.type())
+        );
+    }
+    #endregion
 
     public override IEnumerable<IdentifierNode> VisitIdList([NotNull] AQLParser.IdListContext context)
     {
@@ -199,9 +479,27 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return identifiers;
     }
 
-    public override IEnumerable<ExpressionNode> VisitInstanceList([NotNull] AQLParser.InstanceListContext context)
+    public override IEnumerable<InstanceDeclaration> VisitInstances([NotNull] AQLParser.InstancesContext context)
     {
-        throw new NotImplementedException("Instance list not implemented.");
+        List<InstanceDeclaration> instanceDeclarations = [];
+        foreach (AQLParser.InstanceContext instanceContext in context.instance())
+        {
+            InstanceDeclaration instanceDeclaration = VisitInstance(instanceContext);
+            instanceDeclarations.Add(instanceDeclaration);
+        }
+
+        return instanceDeclarations;
+    }
+
+    public override InstanceDeclaration VisitInstance([NotNull] AQLParser.InstanceContext context)
+    {
+        QualifiedIdentifierNode existingInstanceNode = VisitQualifiedId(context.existing);
+        IEnumerable<IdentifierNode> newInstanceNodes = VisitIdList(context.@new);
+
+        return new(
+            existingInstance: existingInstanceNode,
+            newInstances: newInstanceNodes
+        );
     }
 
     public override IEnumerable<RouteNode> VisitRoutes([NotNull] AQLParser.RoutesContext context)
@@ -223,11 +521,6 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override IEnumerable<MetricNode> VisitMetrics([NotNull] AQLParser.MetricsContext context)
     {
-        return VisitMetricList(context.metricList());
-    }
-
-    public override IEnumerable<MetricNode> VisitMetricList([NotNull] AQLParser.MetricListContext context)
-    {
         List<MetricNode> metrics = [];
 
         foreach (AQLParser.MetricContext metricContext in context.metric())
@@ -241,8 +534,26 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override MetricNode VisitMetric([NotNull] AQLParser.MetricContext context)
     {
+        if (context.namedMetric() != null)
+        {
+            return VisitNamedMetric(context.namedMetric());
+        }
+        else if (context.functionMetric != null)
+        {
+            return new FunctionMetricNode(
+                functionCall: VisitFunctionCall(context.functionMetric)
+            );
+        }
+        else
+        {
+            throw new("Not a valid metric.");
+        }
+    }
+
+    public override NamedMetricNode VisitNamedMetric([NotNull] AQLParser.NamedMetricContext context)
+    {
         return new(
-            metricName: context.GetText()
+            name: context.GetText()
         );
     }
 
@@ -295,7 +606,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
         else
         {
-            throw new NotImplementedException("Value not implemented.");
+            throw new("Not a valid value.");
         }
     }
 
@@ -303,18 +614,28 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     {
         ExpressionNode functionIdentifierNode = VisitQualifiedId(context.functionIdentifier);
 
-        if (context.parameters == null)
+        IEnumerable<ExpressionNode>? parameters = null;
+        if (context.parameters != null)
         {
-            throw new Exception("Expected parameters.");
-
+            parameters = VisitExpressionList(context.parameters);
         }
-
-        IEnumerable<ExpressionNode> parameters = VisitQualifiedIdList(context.parameters);
 
         return new(
             identifier: functionIdentifierNode,
-            actualParameters: parameters
+            actualParameters: parameters ?? []
         );
+    }
+
+    public override IEnumerable<ExpressionNode> VisitExpressionList([NotNull] AQLParser.ExpressionListContext context)
+    {
+        List<ExpressionNode> expressionNodes = [];
+        foreach (AQLParser.ExpressionContext expressionContext in context.expression())
+        {
+            ExpressionNode expressionNode = VisitExpression(expressionContext);
+            expressionNodes.Add(expressionNode);
+        }
+
+        return expressionNodes;
     }
 
     public override IEnumerable<QualifiedIdentifierNode> VisitQualifiedIdList([NotNull] AQLParser.QualifiedIdListContext context)
@@ -347,7 +668,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
         if (current is not QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            throw new Exception("Expected QualifiedIdentifierNode.");
+            throw new("Not a valid identifier.");
         }
         return qualifiedIdentifierNode;
     }
@@ -363,10 +684,525 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         );
     }
 
+    #region Expressions
     public override ExpressionNode VisitExpression([NotNull] AQLParser.ExpressionContext context)
     {
-        throw new NotImplementedException("Expression not implemented.");
+        return VisitLogicalOrExpression(context.logicalOrExpression());
     }
+
+    public override ExpressionNode VisitLogicalOrExpression([NotNull] AQLParser.LogicalOrExpressionContext context)
+    {
+        List<AQLParser.LogicalAndExpressionContext> logicalAndExpressionContexts = [.. context.logicalAndExpression()];
+        if (logicalAndExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitLogicalAndExpression(logicalAndExpressionContexts[0]);
+            if (logicalAndExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.LogicalAndExpressionContext logicalAndExpressionContext in logicalAndExpressionContexts.Skip(1))
+                {
+                    ExpressionNode logicalAndNode = VisitLogicalAndExpression(logicalAndExpressionContext);
+                    current = MakeOrUsingDeMorganSubstitution(current, logicalAndNode);
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    private static NotNode MakeOrUsingDeMorganSubstitution(ExpressionNode left, ExpressionNode right)
+    {
+        return new NotNode(
+            inner: new AndNode(
+                left: new NotNode(
+                    inner: left
+                ),
+                right: new NotNode(
+                    inner: right
+                )
+            )
+        );
+    }
+
+    public override ExpressionNode VisitLogicalAndExpression([NotNull] AQLParser.LogicalAndExpressionContext context)
+    {
+        List<AQLParser.EqualityExpressionContext> equalityExpressionContexts = [.. context.equalityExpression()];
+        if (equalityExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitEqualityExpression(equalityExpressionContexts[0]);
+            if (equalityExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.EqualityExpressionContext equalExpressionContext in equalityExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitEqualityExpression(equalExpressionContext);
+                    current = new AndNode(
+                        left: current,
+                        right: equalityNode
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitEqualityExpression([NotNull] AQLParser.EqualityExpressionContext context)
+    {
+        if (context.equalExpression() != null)
+        {
+            return VisitEqualExpression(context.equalExpression());
+        }
+        else if (context.inEqualExpression() != null)
+        {
+            return VisitInEqualExpression(context.inEqualExpression());
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitEqualExpression([NotNull] AQLParser.EqualExpressionContext context)
+    {
+        List<AQLParser.RelationalExpressionContext> relationalExpressionContexts = [.. context.relationalExpression()];
+        if (relationalExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitRelationalExpression(relationalExpressionContexts[0]);
+            if (relationalExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.RelationalExpressionContext relationalContext in relationalExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitRelationalExpression(relationalContext);
+                    current = new EqualNode(
+                        left: current,
+                        right: equalityNode
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitInEqualExpression([NotNull] AQLParser.InEqualExpressionContext context)
+    {
+        List<AQLParser.RelationalExpressionContext> relationalExpressionContexts = [.. context.relationalExpression()];
+        if (relationalExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitRelationalExpression(relationalExpressionContexts[0]);
+            if (relationalExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.RelationalExpressionContext relationalExpressionContext in relationalExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitRelationalExpression(relationalExpressionContext);
+                    current = new NotNode(
+                        inner: new EqualNode(
+                            left: current,
+                            right: equalityNode
+                        )
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitRelationalExpression([NotNull] AQLParser.RelationalExpressionContext context)
+    {
+        if (context.lessThanExpression() != null)
+        {
+            return VisitLessThanExpression(context.lessThanExpression());
+        }
+        else if (context.lessThanOrEqualExpression() != null)
+        {
+            return VisitLessThanOrEqualExpression(context.lessThanOrEqualExpression());
+        }
+        else if (context.greaterThanExpression() != null)
+        {
+            return VisitGreaterThanExpression(context.greaterThanExpression());
+        }
+        else if (context.greaterThanOrEqualExpression() != null)
+        {
+            return VisitGreaterThanOrEqualExpression(context.greaterThanOrEqualExpression());
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitLessThanExpression([NotNull] AQLParser.LessThanExpressionContext context)
+    {
+        List<AQLParser.AdditiveExpressionContext> additiveExpressionContexts = [.. context.additiveExpression()];
+        if (additiveExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitAdditiveExpression(additiveExpressionContexts[0]);
+            if (additiveExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
+                    current = new LessThanNode(
+                        left: current,
+                        right: equalityNode
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitLessThanOrEqualExpression([NotNull] AQLParser.LessThanOrEqualExpressionContext context)
+    {
+        List<AQLParser.AdditiveExpressionContext> additiveExpressionContexts = [.. context.additiveExpression()];
+        if (additiveExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitAdditiveExpression(additiveExpressionContexts[0]);
+            if (additiveExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
+                    current = MakeLessThanOrEqualNode(current, equalityNode);
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    private static LessThanNode MakeLessThanOrEqualNode(ExpressionNode left, ExpressionNode right)
+    {
+        return new LessThanNode(
+            left: new AddNode(
+                left: left,
+                right: new NegativeNode(
+                    inner: new IntLiteralNode(
+                        value: 1
+                    )
+                )
+            ),
+            right: right
+        );
+    }
+
+    public override ExpressionNode VisitGreaterThanExpression([NotNull] AQLParser.GreaterThanExpressionContext context)
+    {
+        List<AQLParser.AdditiveExpressionContext> additiveExpressionContexts = [.. context.additiveExpression()];
+        if (additiveExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitAdditiveExpression(additiveExpressionContexts[0]);
+            if (additiveExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
+                    LessThanNode lessThanOrEqualNode = MakeLessThanOrEqualNode(current, equalityNode);
+                    current = new NotNode(
+                        inner: lessThanOrEqualNode
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitGreaterThanOrEqualExpression([NotNull] AQLParser.GreaterThanOrEqualExpressionContext context)
+    {
+        List<AQLParser.AdditiveExpressionContext> additiveExpressionContexts = [.. context.additiveExpression()];
+        if (additiveExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitAdditiveExpression(additiveExpressionContexts[0]);
+            if (additiveExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
+                    current = new NotNode(
+                        inner: new LessThanNode(
+                            left: current,
+                            right: equalityNode
+                        )
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitAdditiveExpression([NotNull] AQLParser.AdditiveExpressionContext context)
+    {
+        if (context.addExpression() != null)
+        {
+            return VisitAddExpression(context.addExpression());
+        }
+        else if (context.subtractExpression() != null)
+        {
+            return VisitSubtractExpression(context.subtractExpression());
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitAddExpression([NotNull] AQLParser.AddExpressionContext context)
+    {
+        List<AQLParser.MultiplicativeExpressionContext> multiplicativeExpressionContexts = [.. context.multiplicativeExpression()];
+        if (multiplicativeExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitMultiplicativeExpression(multiplicativeExpressionContexts[0]);
+            if (multiplicativeExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.MultiplicativeExpressionContext multiplicativeExpressionContext in multiplicativeExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitMultiplicativeExpression(multiplicativeExpressionContext);
+                    current = new AddNode(
+                        left: current,
+                        right: equalityNode
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitSubtractExpression([NotNull] AQLParser.SubtractExpressionContext context)
+    {
+        List<AQLParser.MultiplicativeExpressionContext> multiplicativeExpressionContexts = [.. context.multiplicativeExpression()];
+        if (multiplicativeExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitMultiplicativeExpression(multiplicativeExpressionContexts[0]);
+            if (multiplicativeExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.MultiplicativeExpressionContext multiplicativeExpressionContext in multiplicativeExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitMultiplicativeExpression(multiplicativeExpressionContext);
+                    current = new AddNode(
+                        left: current,
+                        right: new NegativeNode(
+                            inner: equalityNode
+                        )
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitMultiplicativeExpression([NotNull] AQLParser.MultiplicativeExpressionContext context)
+    {
+        if (context.multiplyExpression() != null)
+        {
+            return VisitMultiplyExpression(context.multiplyExpression());
+        }
+        else if (context.divisionExpression() != null)
+        {
+            return VisitDivisionExpression(context.divisionExpression());
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitMultiplyExpression([NotNull] AQLParser.MultiplyExpressionContext context)
+    {
+        List<AQLParser.UnaryExpressionContext> unaryExpressionContexts = [.. context.unaryExpression()];
+        if (unaryExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitUnaryExpression(unaryExpressionContexts[0]);
+            if (unaryExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.UnaryExpressionContext unaryExpressionContext in unaryExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitUnaryExpression(unaryExpressionContext);
+                    current = new MultiplyNode(
+                        left: current,
+                        right: equalityNode
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitDivisionExpression([NotNull] AQLParser.DivisionExpressionContext context)
+    {
+        List<AQLParser.UnaryExpressionContext> unaryExpressionContexts = [.. context.unaryExpression()];
+        if (unaryExpressionContexts.Count > 0)
+        {
+            ExpressionNode current = VisitUnaryExpression(unaryExpressionContexts[0]);
+            if (unaryExpressionContexts.Count == 1)
+            {
+                return current;
+            }
+            else
+            {
+                foreach (AQLParser.UnaryExpressionContext unaryExpressionContext in unaryExpressionContexts)
+                {
+                    ExpressionNode equalityNode = VisitUnaryExpression(unaryExpressionContext);
+                    current = new DivisionNode(
+                        left: current,
+                        right: equalityNode
+                    );
+                }
+
+                return current;
+            }
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override ExpressionNode VisitUnaryExpression([NotNull] AQLParser.UnaryExpressionContext context)
+    {
+        if (context.negationExpression() != null)
+        {
+            return VisitNegationExpression(context.negationExpression());
+        }
+        else if (context.negativeExpression() != null)
+        {
+            return VisitNegativeExpression(context.negativeExpression());
+        }
+        else if (context.parenthesesExpression() != null)
+        {
+            return VisitParenthesesExpression(context.parenthesesExpression());
+        }
+        else if (context.value() != null)
+        {
+            return VisitValue(context.value());
+        }
+        else
+        {
+            throw new("Not a valid expression.");
+        }
+    }
+
+    public override NotNode VisitNegationExpression([NotNull] AQLParser.NegationExpressionContext context)
+    {
+        ExpressionNode innerNode = VisitExpression(context.expression());
+
+        return new(
+            inner: innerNode
+        );
+    }
+
+    public override NegativeNode VisitNegativeExpression([NotNull] AQLParser.NegativeExpressionContext context)
+    {
+        ExpressionNode innerNode = VisitExpression(context.expression());
+
+        return new(
+            inner: innerNode
+        );
+    }
+
+    public override ParenthesesNode VisitParenthesesExpression([NotNull] AQLParser.ParenthesesExpressionContext context)
+    {
+        ExpressionNode innerNode = VisitExpression(context.expression());
+
+        return new(
+            inner: innerNode
+        );
+    }
+
+    #endregion
 
     #region Literals
     public override IdentifierNode VisitIdentifier([NotNull] AQLParser.IdentifierContext context)

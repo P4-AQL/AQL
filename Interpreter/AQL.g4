@@ -1,19 +1,26 @@
 grammar AQL;
 
-program: importStatement | (definition)*;
+program: importStatement | definition?;
 importStatement: 'import' string program;
-definition:
-	constDefinition
-	| functionDefinition
+
+definition: definitionComposition | baseDefinition;
+
+definitionComposition:
+	left = baseDefinition ';' right = definition;
+
+baseDefinition:
+	functionDefinition
+	| constDefinition
 	| networks
 	| simulateDefinition;
 
-constDefinition: 'const' type assign;
-
 functionDefinition:
-	'function' returnType = type identifier '(' formalParameterList? ')' '{' statement? '}';
+	'function' returnType = type identifier '(' formalParameterList? ')' '{' statement? '}'
+		definition;
 
-formalParameterList: type identifier (',' type identifier)?;
+constDefinition: 'const' type assignStatement;
+
+formalParameterList: type identifier (',' type identifier)*;
 
 networks: queueDefinition | networkDefinition;
 
@@ -21,26 +28,24 @@ queueDefinition:
 	'queue' identifier '{' (
 		'number_of_servers:' numberOfServers = expression ','
 	)? 'service:' service = expression ', capacity:' capacity = expression (
-		',' metrics
+		',' 'metrics:' '[' metrics ']'
 	)? '}';
 
 networkDefinition:
 	'network' identifier '{' 'inputs:' inputs = idList ';' 'outputs:' outputs = idList (
-		';' 'instances:' '{' instances = instanceList? '}'
-	)? ';' 'routes:' '{' routes '}' (';' metrics)? ';'? '}';
+		';' 'instances:' '{' instances? '}'
+	)? ';' 'routes:' '{' routes '}' (
+		';' 'metrics:' '[' metrics ']'
+	)? ';'? '}';
 
-simulateDefinition:
-	'simulate' '{' 'run:' network = qualifiedId ',' 'until:' terminationCriteria = expression ','
-		'times:' runs = expression '}';
-
-instanceList: instance (';' instance)* ';'?;
-instance: qualifiedId ':' idList;
+instances: instance (';' instance)* ';'?;
+instance: existing = qualifiedId ':' new = idList;
 
 routes: identifier ('->' identifier)+;
 
-metrics: 'metrics:' '[' metricList ']';
-metricList: metric (',' metric)*;
-metric:
+metrics: metric (',' metric)*;
+metric: namedMetric | functionMetric = functionCall;
+namedMetric:
 	'mrt'
 	| 'vrt'
 	| 'util'
@@ -48,36 +53,96 @@ metric:
 	| 'num'
 	| 'avgNum';
 
-assign: <assoc = right> identifier '=' expression ';';
-statement:
-	whileStatement
-	| assign
-	| type assign
-	| ifStatement
-	| returnStatement
-	| statement ';' statement;
+simulateDefinition:
+	'simulate' '{' 'run:' network = qualifiedId ',' 'until:' terminationCriteria = expression ','
+		'times:' runs = expression '}';
 
-whileStatement: 'while' expression 'do' block;
+statement: statementComposition | baseStatement;
+
+statementComposition:
+	left = baseStatement ';' right = statement;
+
+baseStatement:
+	whileStatement
+	| variableDeclarationStatement
+	| assignStatement
+	| ifStatement
+	| returnStatement;
+
+whileStatement:
+	'while' condition = expression 'do' body = block;
+
+variableDeclarationStatement: type assignStatement;
+
+assignStatement:
+	<assoc = right> identifier '=' expression ';';
 
 ifStatement:
-	'if' expression block elseIfStatement* elseStatement?;
-elseIfStatement: 'else if' expression block;
-elseStatement: 'else' block;
-elseIf: 'else if' expression '{' statement '}' elseIf |;
+	'if' ifCondition = expression ifBody = block elseIfStatements += elseIfStatement* elseStatement?
+		;
+elseIfStatement: 'else if' condition = expression body = block;
+elseStatement: 'else' body = block;
 
 block: '{' statement? '}';
 
 returnStatement: 'return' expression ';';
 
-expression:
-	value
-	| <assoc = right> ('!' | '-') expression
-	| expression ('*' | '/') expression
-	| expression ('+' | '-') expression
-	| expression ('<' | '<=' | '>' | '>=') expression
-	| expression ('==' | '!=') expression
-	| expression '&&' expression
-	| expression '||' expression;
+expressionList: expression (',' expression)*;
+
+expression: logicalOrExpression;
+
+logicalOrExpression:
+	logicalAndExpression ('||' logicalAndExpression)*;
+
+logicalAndExpression:
+	equalityExpression ('&&' equalityExpression)*;
+
+equalityExpression: equalExpression | inEqualExpression;
+
+equalExpression:
+	relationalExpression ('==' relationalExpression)*;
+inEqualExpression:
+	relationalExpression ('!=' relationalExpression)*;
+
+relationalExpression:
+	lessThanExpression
+	| lessThanOrEqualExpression
+	| greaterThanExpression
+	| greaterThanOrEqualExpression;
+
+lessThanExpression:
+	additiveExpression ('<' additiveExpression)*;
+lessThanOrEqualExpression:
+	additiveExpression ('<=' additiveExpression)*;
+greaterThanExpression:
+	additiveExpression ('>' additiveExpression)*;
+greaterThanOrEqualExpression:
+	additiveExpression ('>=' additiveExpression)*;
+
+additiveExpression: addExpression | subtractExpression;
+
+addExpression:
+	multiplicativeExpression ('+' multiplicativeExpression)*;
+subtractExpression:
+	multiplicativeExpression ('-' multiplicativeExpression)*;
+
+multiplicativeExpression:
+	multiplyExpression
+	| divisionExpression;
+
+multiplyExpression: unaryExpression ('*' unaryExpression)*;
+divisionExpression: unaryExpression ('/' unaryExpression)*;
+
+unaryExpression:
+	negationExpression
+	| negativeExpression
+	| parenthesesExpression
+	| value;
+
+negationExpression: '!' expression;
+negativeExpression: '-' expression;
+parenthesesExpression: '(' expression ')';
+
 value:
 	functionCall
 	| qualifiedId
@@ -89,17 +154,25 @@ value:
 	| arrayIndexing;
 
 functionCall:
-	functionIdentifier = qualifiedId '(' parameters = qualifiedIdList? ')';
+	functionIdentifier = qualifiedId '(' parameters = expressionList? ')';
 
-type: TYPEKEYWORD | arrayType | routeType;
 arrayInitialization: '{' value* (',' value)* '}';
 arrayIndexing: target = qualifiedId '[' index = expression ']';
 
-TYPEKEYWORD: 'bool' | 'int' | 'double' | 'string';
+type: typeKeyword | arrayType;
+
+typeKeyword:
+	boolKeyword
+	| intKeyword
+	| doubleKeyword
+	| stringKeyword;
+
+boolKeyword: 'bool';
+intKeyword: 'int';
+doubleKeyword: 'double';
+stringKeyword: 'string';
 
 arrayType: '[' type ']';
-
-routeType: qualifiedId '->' qualifiedId;
 
 qualifiedIdList: qualifiedId (',' qualifiedId)*;
 qualifiedId: identifier ('.' identifier)*;
