@@ -1,39 +1,45 @@
 grammar AQL;
 
-prog: importList (def)*;
-importList: 'import' STRING importList |; // Epsilon
-def:
-	'const' type assign
-	| 'function' type ID '(' paramList ')' '{' stmt '}'
-	| network
-	| 'simulate' '{' 'run:' qualifiedID ',' 'until:' expr ',' 'times:' expr '}';
-network:
-	'queue' ID '{' serviceCount 'service:' value ',' 'capacity:' value (
+program: importStatement | (definition)*;
+importStatement: 'import' string program;
+definition:
+	constDefinition
+	| functionDefinition
+	| networks
+	| simulateDefinition;
+
+constDefinition: 'const' type assign;
+
+functionDefinition:
+	'function' returnType = type identifier '(' formalParameterList? ')' '{' statement? '}';
+
+formalParameterList: type identifier (',' type identifier)?;
+
+networks: queueDefinition | networkDefinition;
+
+queueDefinition:
+	'queue' identifier '{' (
+		'number_of_servers:' numberOfServers = expression ','
+	)? 'service:' service = expression ', capacity:' capacity = expression (
 		',' metrics
-	)? '}'
-	| 'network' ID '{' 'inputs:' idList ';' 'outputs:' idList (
-		';' instances
+	)? '}';
+
+networkDefinition:
+	'network' identifier '{' 'inputs:' inputs = idList ';' 'outputs:' outputs = idList (
+		';' 'instances:' '{' instances = instanceList? '}'
 	)? ';' 'routes:' '{' routes '}' (';' metrics)? ';'? '}';
 
-idList: ID (',' ID)*;
-qualifiedIdList: qualifiedID (',' qualifiedID)*;
-instances: 'instances:' '{' instancesList '}';
-instancesList: instance (';' instance)* ';'? |; //Epsilon
-instance: qualifiedID ':' idList;
+simulateDefinition:
+	'simulate' '{' 'run:' network = qualifiedId ',' 'until:' terminationCriteria = expression ','
+		'times:' runs = expression '}';
 
-routes:
-	qualifiedID '->' qualifiedID routesB
-	| qualifiedID '->' '[' routeIDList ']' routesB;
-routesB:
-	',' qualifiedID '->' qualifiedID routesB
-	| ',' qualifiedID '->' '[' routeIDList ']' routesB
-	|; //Epsilon
-routeIDList: expr qualifiedID routeIDListB;
-routeIDListB: ',' expr qualifiedID routeIDListB |; //Epsilon
+instanceList: instance (';' instance)* ';'?;
+instance: qualifiedId ':' idList;
+
+routes: identifier ('->' identifier)+;
 
 metrics: 'metrics:' '[' metricList ']';
-metricList: metric metricListA |; //Epsilon
-metricListA: ',' metric metricListA |; //Epsilon
+metricList: metric (',' metric)*;
 metric:
 	'mrt'
 	| 'vrt'
@@ -42,65 +48,76 @@ metric:
 	| 'num'
 	| 'avgNum';
 
-serviceCount: 'number_of_services:' expr ',' |; //Epsilon
-paramList: type qualifiedID paramListA |; //Epsilon
-paramListA: ',' type qualifiedID paramListA |; //Epsilon
-assign: ID '=' expr ';';
-stmt: stmtA stmt |; //Epsilon
-stmtA:
-	'while' expr 'do' stmt
+assign: <assoc = right> identifier '=' expression ';';
+statement:
+	whileStatement
 	| assign
 	| type assign
-	| 'if' expr '{' stmt '}' else1
-	| 'return' expr ';';
-else1: elseIf else2 |; //Epsion
-else2: 'else {' stmt '}' |; //Epsilon
-elseIf: 'else if' expr '{' stmt '}' elseIf |; //Epsilon
-expr:
+	| ifStatement
+	| returnStatement
+	| statement ';' statement;
+
+whileStatement: 'while' expression 'do' block;
+
+ifStatement:
+	'if' expression block elseIfStatement* elseStatement?;
+elseIfStatement: 'else if' expression block;
+elseStatement: 'else' block;
+elseIf: 'else if' expression '{' statement '}' elseIf |;
+
+block: '{' statement? '}';
+
+returnStatement: 'return' expression ';';
+
+expression:
 	value
-	| routes
-	| <assoc = right> ('!' | '-') expr
-	| expr ('*' | '/') expr
-	| expr ('+' | '-') expr
-	| expr ('<' | '<=' | '>' | '>=') expr
-	| expr ('==' | '!=') expr
-	| expr '&&' expr
-	| expr '||' expr;
+	| <assoc = right> ('!' | '-') expression
+	| expression ('*' | '/') expression
+	| expression ('+' | '-') expression
+	| expression ('<' | '<=' | '>' | '>=') expression
+	| expression ('==' | '!=') expression
+	| expression '&&' expression
+	| expression '||' expression;
 value:
-	funcCall
-	| qualifiedID
-	| STRING
-	| DOUBLE
-	| INT
-	| BOOL
-	| array
-	| arrayValue;
+	functionCall
+	| qualifiedId
+	| string
+	| double
+	| int
+	| bool
+	| arrayInitialization
+	| arrayIndexing;
 
-actualParamList:
-	qualifiedID paramListA
-	| value paramListA
-	|; //Epsilon
-actualParamListA:
-	',' qualifiedID paramListA
-	| ',' value paramListA
-	|; //Epsilon
-funcCall: qualifiedID '(' actualParamList ')';
+functionCall:
+	functionIdentifier = qualifiedId '(' parameters = qualifiedIdList? ')';
 
-type:
-	'bool'
-	| 'int'
-	| 'double'
-	| 'string'
-	| 'network'
-	| '[' type ']'
-	| '(' type '->' type ')';
-array: '{' value* (',' value)* '}';
-arrayValue: qualifiedID '[' expr ']';
-ID: [a-zA-Z_][a-zA-Z0-9_]*;
-qualifiedID: ID ('.' ID)*;
+type: TYPEKEYWORD | arrayType | routeType;
+arrayInitialization: '{' value* (',' value)* '}';
+arrayIndexing: target = qualifiedId '[' index = expression ']';
+
+TYPEKEYWORD: 'bool' | 'int' | 'double' | 'string';
+
+arrayType: '[' type ']';
+
+routeType: qualifiedId '->' qualifiedId;
+
+qualifiedIdList: qualifiedId (',' qualifiedId)*;
+qualifiedId: identifier ('.' identifier)*;
+
+idList: identifier (',' identifier)*;
+identifier: IDENTIFIER;
+IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
+
+bool: BOOL;
 BOOL: 'true' | 'false';
+
+int: INT;
 INT: '-'? [0-9]+;
+
+double: DOUBLE;
 DOUBLE: '-'? [0-9]* '.' [0-9]+;
+
+string: STRING;
 STRING: '"' ~["\\\r\n]* '"';
 
 WS: (' ' | '\t' | '\n' | '\r')+ -> skip;
