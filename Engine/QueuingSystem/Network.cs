@@ -56,4 +56,7 @@ public class Network
         public Route(string targetQueueName, double probability)
         {
             TargetQueueName = targetQueueName;
-            Probability =
+            Probability = probability;
+        }
+    }
+}
