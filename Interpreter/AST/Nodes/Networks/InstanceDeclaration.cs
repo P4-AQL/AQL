@@ -2,11 +2,12 @@
 
 
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Networks;
-public class InstanceDeclaration(QualifiedIdentifierNode existingInstance, IEnumerable<IdentifierNode> newInstances) : Node
+public class InstanceDeclaration(ExpressionNode existingInstance, IEnumerable<IdentifierNode> newInstances) : Node
 {
-    public QualifiedIdentifierNode ExistingInstance { get; } = existingInstance;
+    public ExpressionNode ExistingInstance { get; } = existingInstance;
     public IEnumerable<IdentifierNode> NewInstances { get; } = newInstances;
 
     public override string ToString()

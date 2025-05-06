@@ -1,0 +1,24 @@
+digraph G {
+node [shape=circle, style=filled, fillcolor=lightblue];
+  1308630519 [label="ImportNode"];
+  276868079 [label="StringLiteralNode"];
+  1308630519 -> 276868079;
+  2026170161 [label="DefinitionProgramNode"];
+  1308630519 -> 2026170161;
+  -167914210 [label="ConstDeclarationNode"];
+  2026170161 -> -167914210;
+  -172619868 [label="ArrayTypeNode"];
+  -167914210 -> -172619868;
+  -1211514289 [label="IntTypeNode"];
+  -172619868 -> -1211514289;
+  289299078 [label="IdentifierNode"];
+  -167914210 -> 289299078;
+  1105803536 [label="ArrayLiteralNode"];
+  -167914210 -> 1105803536;
+  -460349010 [label="IntLiteralNode"];
+  1105803536 -> -460349010;
+  1425453300 [label="IntLiteralNode"];
+  1105803536 -> 1425453300;
+  1175214456 [label="IntLiteralNode"];
+  1105803536 -> 1175214456;
+}

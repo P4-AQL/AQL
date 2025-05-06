@@ -110,11 +110,23 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInstance([NotNull] AQLParser.InstanceContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.routesList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRoutesList([NotNull] AQLParser.RoutesListContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.routes"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitRoutes([NotNull] AQLParser.RoutesContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.probabilityIdList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitProbabilityIdList([NotNull] AQLParser.ProbabilityIdListContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.metrics"/>.
 	/// </summary>

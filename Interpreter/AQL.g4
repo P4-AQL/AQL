@@ -1,12 +1,11 @@
 grammar AQL;
 
-program: importStatement | definition?;
+program: importStatement | baseDefinition*;
 importStatement: 'import' string program;
 
 definition: definitionComposition | baseDefinition;
 
-definitionComposition:
-	left = baseDefinition ';' right = definition;
+definitionComposition: left = baseDefinition right = definition;
 
 baseDefinition:
 	functionDefinition
@@ -15,8 +14,7 @@ baseDefinition:
 	| simulateDefinition;
 
 functionDefinition:
-	'function' returnType = type identifier '(' formalParameterList? ')' '{' statement? '}'
-		definition;
+	'function' returnType = type identifier '(' formalParameterList? ')' block;
 
 constDefinition: 'const' type assignStatement;
 
@@ -27,21 +25,26 @@ networks: queueDefinition | networkDefinition;
 queueDefinition:
 	'queue' identifier '{' (
 		'number_of_servers:' numberOfServers = expression ','
-	)? 'service:' service = expression ', capacity:' capacity = expression (
-		',' 'metrics:' '[' metrics ']'
+	)? 'service:' service = expression ',' 'capacity:' capacity = expression (
+		',' 'metrics:' '[' metrics? ']'
 	)? '}';
 
 networkDefinition:
 	'network' identifier '{' 'inputs:' inputs = idList ';' 'outputs:' outputs = idList (
 		';' 'instances:' '{' instances? '}'
-	)? ';' 'routes:' '{' routes '}' (
+	)? ';' 'routes:' '{' routesList '}' (
 		';' 'metrics:' '[' metrics ']'
 	)? ';'? '}';
 
 instances: instance (';' instance)* ';'?;
 instance: existing = qualifiedId ':' new = idList;
 
-routes: identifier ('->' identifier)+;
+routesList: routes (',' routes)*;
+routes:
+	identifier '->' (routes | identifier | probabilityIdList);
+
+probabilityIdList:
+	'[' expression qualifiedId (',' expression qualifiedId)* ']';
 
 metrics: metric (',' metric)*;
 metric: namedMetric | functionMetric = functionCall;
@@ -59,8 +62,7 @@ simulateDefinition:
 
 statement: statementComposition | baseStatement;
 
-statementComposition:
-	left = baseStatement ';' right = statement;
+statementComposition: left = baseStatement right = statement;
 
 baseStatement:
 	whileStatement
@@ -179,7 +181,7 @@ qualifiedId: identifier ('.' identifier)*;
 
 idList: identifier (',' identifier)*;
 identifier: IDENTIFIER;
-IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
+IDENTIFIER: [a-zA-Z][a-zA-Z0-9_]*;
 
 bool: BOOL;
 BOOL: 'true' | 'false';
