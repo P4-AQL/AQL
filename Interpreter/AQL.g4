@@ -1,11 +1,7 @@
 grammar AQL;
 
-program: importStatement | baseDefinition*;
+program: (importStatement | baseDefinition*) EOF;
 importStatement: 'import' string program;
-
-definition: definitionComposition | baseDefinition;
-
-definitionComposition: left = baseDefinition right = definition;
 
 baseDefinition:
 	functionDefinition
@@ -41,7 +37,7 @@ instance: existing = qualifiedId ':' new = idList;
 
 routesList: routes (',' routes)*;
 routes:
-	identifier '->' (routes | identifier | probabilityIdList);
+	qualifiedId '->' (routes | qualifiedId | probabilityIdList);
 
 probabilityIdList:
 	'[' expression qualifiedId (',' expression qualifiedId)* ']';
@@ -158,7 +154,7 @@ value:
 functionCall:
 	functionIdentifier = qualifiedId '(' parameters = expressionList? ')';
 
-arrayInitialization: '{' value* (',' value)* '}';
+arrayInitialization: '{' expression* (',' expression)* '}';
 arrayIndexing: target = qualifiedId '[' index = expression ']';
 
 type: typeKeyword | arrayType;

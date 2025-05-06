@@ -44,18 +44,6 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitImportStatement([NotNull] AQLParser.ImportStatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.definition"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitDefinition([NotNull] AQLParser.DefinitionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.definitionComposition"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitDefinitionComposition([NotNull] AQLParser.DefinitionCompositionContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.baseDefinition"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

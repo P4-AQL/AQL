@@ -68,33 +68,6 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return new(moduleNameNode, programNode);
     }
 
-    public override DefinitionNode VisitDefinition([NotNull] AQLParser.DefinitionContext context)
-    {
-        if (context.definitionComposition() != null)
-        {
-            return VisitDefinitionComposition(context.definitionComposition());
-        }
-        else if (context.baseDefinition() != null)
-        {
-            return VisitBaseDefinition(context.baseDefinition());
-        }
-        else
-        {
-            throw new("Not a valid definition.");
-        }
-    }
-
-    public override DefinitionCompositionNode VisitDefinitionComposition([NotNull] AQLParser.DefinitionCompositionContext context)
-    {
-        DefinitionNode leftNode = VisitBaseDefinition(context.left);
-        DefinitionNode rightNode = VisitDefinition(context.right);
-
-        return new(
-            left: leftNode,
-            right: rightNode
-        );
-    }
-
     public override DefinitionNode VisitBaseDefinition([NotNull] AQLParser.BaseDefinitionContext context)
     {
         if (context.functionDefinition() != null)
@@ -398,7 +371,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         IEnumerable<IdentifierNode> inputNodes = VisitIdList(context.inputs);
         IEnumerable<IdentifierNode> outputNodes = VisitIdList(context.outputs);
         IEnumerable<InstanceDeclaration> instanceNodes = VisitInstances(context.instances());
-        IEnumerable<RouteNode> routeNodes = VisitRoutes(context.routesList());
+        IEnumerable<RouteDefinitionNode> routeNodes = VisitRoutesList(context.routesList());
         IEnumerable<MetricNode> metricNodes = VisitMetrics(context.metrics());
 
         return new(
@@ -550,15 +523,20 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         );
     }
 
-    public override IEnumerable<RouteNode> VisitRoutesList([NotNull] AQLParser.RoutesListContext context)
+    public override IEnumerable<RouteDefinitionNode> VisitRoutesList([NotNull] AQLParser.RoutesListContext context)
     {
-        return [];
+        List<RouteDefinitionNode> routeNodes = [];
+        foreach (AQLParser.RoutesContext routesContext in context.routes())
+        {
+            routeNodes.AddRange(VisitRoutes(routesContext));
+        }
+        return routeNodes;
     }
 
     public override List<RouteDefinitionNode> VisitRoutes([NotNull] AQLParser.RoutesContext context)
     {
-        AQLParser.IdentifierContext[] identifierContexts = context.identifier();
-        IdentifierNode fromIdentifierNode = VisitIdentifier(identifierContexts.First());
+        AQLParser.QualifiedIdContext[] qualifiedIdentifierContexts = context.qualifiedId();
+        ExpressionNode fromIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts.First());
 
         if (context.routes() != null)
         {
@@ -571,9 +549,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
             return routeNodes;
         }
-        else if (identifierContexts.Length > 1) // There is always one identifier rule present, but at most two.
+        else if (qualifiedIdentifierContexts.Length > 1) // There is always one identifier rule present, but at most two.
         {
-            IdentifierNode toIdentifierNode = VisitIdentifier(identifierContexts[1]);
+            ExpressionNode toIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts[1]);
 
             return [
                 MakeRouteDefinition(from: fromIdentifierNode, to: toIdentifierNode)
@@ -1357,9 +1335,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override ArrayLiteralNode VisitArrayInitialization([NotNull] AQLParser.ArrayInitializationContext context)
     {
         List<ExpressionNode> elements = [];
-        foreach (AQLParser.ValueContext valueContext in context.value())
+        foreach (AQLParser.ExpressionContext expressionContext in context.expression())
         {
-            ExpressionNode element = VisitValue(valueContext);
+            ExpressionNode element = VisitExpression(expressionContext);
             elements.Add(element);
         }
 
