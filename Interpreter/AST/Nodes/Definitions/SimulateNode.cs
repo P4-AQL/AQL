@@ -12,10 +12,10 @@ public class SimulateNode(ExpressionNode networkIdentifier, ExpressionNode runs,
 
     public override string ToString() => $"SimulateNode({NetworkIdentifier}, {Runs}, {TerminationCriteria})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             NetworkIdentifier,
             Runs,
             TerminationCriteria,

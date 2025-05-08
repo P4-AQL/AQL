@@ -20,18 +20,16 @@ try
 
     AQLParser.ProgramContext progContext = parser.program();
 
-    Console.WriteLine(progContext.ToStringTree());
-
     ASTAQLVisitor visitor = new();
     Node result = visitor.VisitProgram(progContext);
 
-
-
-    string? path = Environment.CurrentDirectory.EndsWith("net9.0") ? new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.Parent?.FullName : Environment.CurrentDirectory;
+    string? path = Environment.CurrentDirectory.EndsWith("net9.0")
+    ? new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.FullName
+    : Environment.CurrentDirectory;
 
     if (path is not null)
     {
-        path = Path.Combine(path, "graphviz.txt");
+        path = Path.Combine(path, "graphviz.dot");
         ASTGraph.GenerateDotFile(root: result, filePath: path);
     }
     else

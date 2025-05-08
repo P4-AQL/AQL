@@ -7,7 +7,7 @@ using Interpreter.AST.Nodes.Programs;
 namespace Interpreter.AST.Nodes.NonTerminals;
 public class ProgramNode : Node
 {
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
 

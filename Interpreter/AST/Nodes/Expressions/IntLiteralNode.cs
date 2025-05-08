@@ -8,8 +8,10 @@ public class IntLiteralNode(int value) : ExpressionNode
 {
     public int Value { get; } = value;
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
-        return base.Children();
+        return base.GetChildren();
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Value}";
 }

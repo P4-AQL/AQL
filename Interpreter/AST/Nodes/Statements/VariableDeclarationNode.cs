@@ -12,13 +12,15 @@ public class VariableDeclarationNode(TypeNode type, IdentifierNode identifier) :
 
     public override string ToString() => $"VariableDeclarationNode({Type}, {Identifier})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Type,
             Identifier,
         ];
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier.Identifier}";
 
 }

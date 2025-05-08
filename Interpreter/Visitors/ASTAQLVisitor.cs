@@ -2,6 +2,7 @@
 
 
 using Antlr4.Runtime.Misc;
+using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.Metrics;
@@ -16,56 +17,41 @@ using Interpreter.AST.NonNodes;
 namespace Interpreter.Visitors;
 class ASTAQLVisitor : AQLBaseVisitor<object>
 {
-    public override ProgramNode VisitProgram([NotNull] AQLParser.ProgramContext context)
+    public override RootNode VisitProgram([NotNull] AQLParser.ProgramContext context)
     {
-        ProgramNode programNode;
+        List<ImportNode> importNodes = [];
+        List<DefinitionNode> definitionNodes = [];
+
         if (context.importStatement() != null)
         {
-            programNode = VisitImportStatement(context.importStatement());
-        }
-        else if (context.baseDefinition().Length > 0)
-        {
-            AQLParser.BaseDefinitionContext[] baseDefinitionContexts = context.baseDefinition();
-
-            DefinitionNode current = VisitBaseDefinition(baseDefinitionContexts.First());
-            if (baseDefinitionContexts.Length == 1)
+            foreach (AQLParser.ImportStatementContext importStatementContext in context.importStatement())
             {
-                programNode = new DefinitionProgramNode(
-                    definition: current
-                );
-            }
-            else
-            {
-                foreach (AQLParser.BaseDefinitionContext baseDefinitionContext in context.baseDefinition())
-                {
-                    DefinitionNode definitionNode = VisitBaseDefinition(baseDefinitionContext);
-                    current = new DefinitionCompositionNode(
-                        left: current,
-                        right: definitionNode
-                    );
-                }
-                programNode = new DefinitionProgramNode(
-                    definition: new() //definitionNode
-                );
+                ImportNode importNode = VisitImportStatement(importStatementContext);
+                importNodes.Add(importNode);
             }
         }
-        else
+
+        if (context.baseDefinition() != null)
         {
-            programNode = new();
+            foreach (AQLParser.BaseDefinitionContext baseDefinitionContext in context.baseDefinition())
+            {
+                DefinitionNode definitionNode = VisitBaseDefinition(baseDefinitionContext);
+                definitionNodes.Add(definitionNode);
+            }
         }
 
-        return programNode;
+        return new(
+            children: [.. importNodes, .. definitionNodes]
+        );
     }
 
     public override ImportNode VisitImportStatement([NotNull] AQLParser.ImportStatementContext context)
     {
-        string moduleName = context.@string().GetText();
-        moduleName = moduleName[1..^1]; // Remove quotes
+        IdentifierNode identifierNode = VisitIdentifier(context.identifier());
 
-        StringLiteralNode moduleNameNode = new(moduleName);
-        ProgramNode programNode = VisitProgram(context.program());
-
-        return new(moduleNameNode, programNode);
+        return new(
+            @namespace: identifierNode
+        );
     }
 
     public override DefinitionNode VisitBaseDefinition([NotNull] AQLParser.BaseDefinitionContext context)
@@ -368,11 +354,39 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override NetworkDeclarationNode VisitNetworkDefinition([NotNull] AQLParser.NetworkDefinitionContext context)
     {
         IdentifierNode identifierNode = VisitIdentifier(context.identifier());
-        IEnumerable<IdentifierNode> inputNodes = VisitIdList(context.inputs);
-        IEnumerable<IdentifierNode> outputNodes = VisitIdList(context.outputs);
-        IEnumerable<InstanceDeclaration> instanceNodes = VisitInstances(context.instances());
-        IEnumerable<RouteDefinitionNode> routeNodes = VisitRoutesList(context.routesList());
-        IEnumerable<MetricNode> metricNodes = VisitMetrics(context.metrics());
+
+        List<IdentifierNode> inputNodes = [];
+        List<IdentifierNode> outputNodes = [];
+        List<InstanceDeclaration> instanceNodes = [];
+        List<RouteDefinitionNode> routeNodes = [];
+        List<MetricNode> metricNodes = [];
+
+        foreach (AQLParser.NetworkExpressionContext networkExpressionContext in context.networkExpression())
+        {
+            IEnumerable<object> networkExpressions = VisitNetworkExpression(networkExpressionContext);
+
+            if (TryCast(networkExpressions, out IEnumerable<NetworkInputOutputNode>? inputOutputCast))
+            {
+                inputNodes.AddRange(inputOutputCast.First().Inputs);
+                outputNodes.AddRange(inputOutputCast.First().Outputs);
+            }
+            else if (TryCast(networkExpressions, out IEnumerable<InstanceDeclaration>? instanceCast))
+            {
+                instanceNodes.AddRange(instanceCast);
+            }
+            else if (TryCast(networkExpressions, out IEnumerable<RouteDefinitionNode>? routeCast))
+            {
+                routeNodes.AddRange(routeCast);
+            }
+            else if (TryCast(networkExpressions, out IEnumerable<MetricNode>? metricCast))
+            {
+                metricNodes.AddRange(metricCast);
+            }
+            else
+            {
+                throw new("Cast failed");
+            }
+        }
 
         return new(
             identifier: identifierNode,
@@ -382,6 +396,76 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             routes: routeNodes,
             metrics: metricNodes
         );
+    }
+
+    public override IEnumerable<object> VisitNetworkExpression([NotNull] AQLParser.NetworkExpressionContext context)
+    {
+        if (context.inputOutputNetworkExpression() != null)
+        {
+            return VisitInputOutputNetworkExpression(context.inputOutputNetworkExpression());
+        }
+        else if (context.instanceNetworkExpression() != null)
+        {
+            return VisitInstanceNetworkExpression(context.instanceNetworkExpression());
+        }
+        else if (context.routes() != null)
+        {
+            return VisitRoutes(context.routes()).Cast<Node>();
+        }
+        else if (context.metrics() != null)
+        {
+            return VisitMetrics(context.metrics());
+        }
+        else
+        {
+            throw new("Not a valid network expression.");
+        }
+    }
+
+    public override IEnumerable<NetworkInputOutputNode> VisitInputOutputNetworkExpression([NotNull] AQLParser.InputOutputNetworkExpressionContext context)
+    {
+        IEnumerable<IdentifierNode> inputNodes = VisitIdList(context.inputs);
+        IEnumerable<IdentifierNode> outputNodes = VisitIdList(context.outputs);
+
+        return [
+            new(
+                inputs: inputNodes,
+                outputs: outputNodes
+            ),
+        ];
+    }
+
+    public override IEnumerable<InstanceDeclaration> VisitInstanceNetworkExpression([NotNull] AQLParser.InstanceNetworkExpressionContext context)
+    {
+        ExpressionNode exisitingInstance = VisitQualifiedId(context.existing);
+        IEnumerable<IdentifierNode> newInstances = VisitIdList(context.@new);
+
+        return [
+            new(
+                existingInstance: exisitingInstance,
+                newInstances: newInstances
+            )
+        ];
+    }
+
+    private static bool TryCast<T>(IEnumerable<object> nodes, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out IEnumerable<T> cast)
+    {
+        if (nodes.Any() == false || nodes.First() is not T)
+        {
+            cast = null;
+            return false;
+        }
+
+        try
+        {
+            cast = nodes.Cast<T>();
+            return true;
+        }
+        catch (InvalidCastException)
+        {
+            cast = null;
+            return false;
+        }
     }
 
     public override AssignNode VisitAssignStatement([NotNull] AQLParser.AssignStatementContext context)
@@ -500,39 +584,6 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return identifiers;
     }
 
-    public override IEnumerable<InstanceDeclaration> VisitInstances([NotNull] AQLParser.InstancesContext context)
-    {
-        List<InstanceDeclaration> instanceDeclarations = [];
-        foreach (AQLParser.InstanceContext instanceContext in context.instance())
-        {
-            InstanceDeclaration instanceDeclaration = VisitInstance(instanceContext);
-            instanceDeclarations.Add(instanceDeclaration);
-        }
-
-        return instanceDeclarations;
-    }
-
-    public override InstanceDeclaration VisitInstance([NotNull] AQLParser.InstanceContext context)
-    {
-        ExpressionNode existingInstanceNode = VisitQualifiedId(context.existing);
-        IEnumerable<IdentifierNode> newInstanceNodes = VisitIdList(context.@new);
-
-        return new(
-            existingInstance: existingInstanceNode,
-            newInstances: newInstanceNodes
-        );
-    }
-
-    public override IEnumerable<RouteDefinitionNode> VisitRoutesList([NotNull] AQLParser.RoutesListContext context)
-    {
-        List<RouteDefinitionNode> routeNodes = [];
-        foreach (AQLParser.RoutesContext routesContext in context.routes())
-        {
-            routeNodes.AddRange(VisitRoutes(routesContext));
-        }
-        return routeNodes;
-    }
-
     public override List<RouteDefinitionNode> VisitRoutes([NotNull] AQLParser.RoutesContext context)
     {
         AQLParser.QualifiedIdContext[] qualifiedIdentifierContexts = context.qualifiedId();
@@ -619,10 +670,13 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     {
         List<MetricNode> metrics = [];
 
-        foreach (AQLParser.MetricContext metricContext in context.metric())
+        if (context.metric() != null)
         {
-            MetricNode metric = VisitMetric(metricContext);
-            metrics.Add(metric);
+            foreach (AQLParser.MetricContext metricContext in context.metric())
+            {
+                MetricNode metric = VisitMetric(metricContext);
+                metrics.Add(metric);
+            }
         }
 
         return metrics;
@@ -637,7 +691,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         else if (context.functionMetric != null)
         {
             return new FunctionMetricNode(
-                functionCall: VisitFunctionCall(context.functionMetric)
+                function: VisitQualifiedId(context.functionMetric)
             );
         }
         else

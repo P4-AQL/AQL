@@ -11,10 +11,10 @@ public class AndNode(ExpressionNode left, ExpressionNode right) : ExpressionNode
 
     public override string ToString() => $"AndNode({Left}, {Right})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Left,
             Right,
         ];

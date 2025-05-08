@@ -8,8 +8,11 @@ public class BoolLiteralNode(bool value) : ExpressionNode
 {
     public bool Value { get; } = value;
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
-        return base.Children();
+        return base.GetChildren();
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Value}";
+
 }

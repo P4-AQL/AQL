@@ -5,17 +5,17 @@ using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Metrics;
-public class FunctionMetricNode(FunctionCallNode functionCall) : MetricNode
+public class FunctionMetricNode(ExpressionNode function) : MetricNode
 {
-    FunctionCallNode FunctionCall { get; } = functionCall;
+    ExpressionNode Function { get; } = function;
 
-    public override string ToString() => $"FunctionMetricNode({FunctionCall})";
+    public override string ToString() => $"FunctionMetricNode({Function})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
-            FunctionCall,
+            .. base.GetChildren(),
+            Function,
         ];
     }
 }

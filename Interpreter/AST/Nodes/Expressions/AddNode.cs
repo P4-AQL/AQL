@@ -11,10 +11,10 @@ public class AddNode(ExpressionNode left, ExpressionNode right) : ExpressionNode
 
     public override string ToString() => $"AddNode({Left}, {Right})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Left,
             Right,
         ];

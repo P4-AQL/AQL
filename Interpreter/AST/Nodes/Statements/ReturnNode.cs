@@ -10,10 +10,10 @@ public class ReturnNode(ExpressionNode expression) : StatementNode
 
     public override string ToString() => $"ReturnNpde({Expression})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Expression,
         ];
     }

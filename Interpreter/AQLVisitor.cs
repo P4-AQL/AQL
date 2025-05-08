@@ -86,17 +86,23 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNetworkDefinition([NotNull] AQLParser.NetworkDefinitionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.instances"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.networkExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitInstances([NotNull] AQLParser.InstancesContext context);
+	Result VisitNetworkExpression([NotNull] AQLParser.NetworkExpressionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.instance"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.inputOutputNetworkExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitInstance([NotNull] AQLParser.InstanceContext context);
+	Result VisitInputOutputNetworkExpression([NotNull] AQLParser.InputOutputNetworkExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.instanceNetworkExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInstanceNetworkExpression([NotNull] AQLParser.InstanceNetworkExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.routesList"/>.
 	/// </summary>

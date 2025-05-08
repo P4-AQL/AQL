@@ -12,13 +12,15 @@ public class AssignNode(IdentifierNode identifier, ExpressionNode expression) : 
 
     public override string ToString() => $"AssignNode({Identifier} = {Expression})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Identifier,
             Expression,
         ];
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier}";
 
 }

@@ -13,14 +13,17 @@ public class ConstDeclarationNode(TypeNode type, IdentifierNode identifier, Expr
 
     public override string ToString() => $"ConstDeclaration({Type} {Identifier} = {Expression})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return
         [
-            .. base.Children(),
+            .. base.GetChildren(),
             Type,
             Identifier,
             Expression,
         ];
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier.Identifier}";
+
 }

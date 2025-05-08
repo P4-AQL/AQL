@@ -7,7 +7,7 @@ public class RouteValuePairNode(ExpressionNode probability, ExpressionNode route
     public ExpressionNode Probability { get; } = probability;
     public ExpressionNode RouteTo { get; } = routeTo;
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
             Probability, RouteTo

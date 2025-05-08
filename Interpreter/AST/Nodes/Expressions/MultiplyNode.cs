@@ -11,10 +11,10 @@ public class MultiplyNode(ExpressionNode left, ExpressionNode right) : Expressio
 
     public override string ToString() => $"MultiplyNode({Left}, {Right})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Left,
             Right,
         ];

@@ -11,10 +11,10 @@ public class NetworkDefinitionNode(NetworkNode network) : DefinitionNode
 
     public override string ToString() => $"NetworkDefinitionNode({Network})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Network
         ];
     }

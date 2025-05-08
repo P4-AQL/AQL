@@ -10,12 +10,14 @@ public class FunctionCallNode(ExpressionNode identifier, IEnumerable<ExpressionN
     public IReadOnlyList<ExpressionNode> ActualParameters { get; } = [.. actualParameters];
     public override string ToString() => $"FunctionCallNode({Identifier}, ({string.Join(", ", ActualParameters)}))";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Identifier,
             .. ActualParameters,
         ];
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{ActualParameters.Count} parameters";
 }

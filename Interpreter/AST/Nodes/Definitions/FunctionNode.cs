@@ -15,14 +15,17 @@ public class FunctionNode(TypeNode returnType, IdentifierNode identifier, IEnume
 
     public override string ToString() => $"FunctionNode({ReturnType}, {Identifier}, ({string.Join(',', Parameters)}), {Body})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             ReturnType,
             Identifier,
             .. Parameters,
             Body,
         ];
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier.Identifier}";
+
 }

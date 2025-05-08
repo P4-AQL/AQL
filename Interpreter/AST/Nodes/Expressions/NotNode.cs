@@ -10,10 +10,10 @@ public class NotNode(ExpressionNode inner) : ExpressionNode
 
     public override string ToString() => $"NotNode({Inner})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Inner,
         ];
     }

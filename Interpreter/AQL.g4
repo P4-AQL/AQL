@@ -1,7 +1,7 @@
 grammar AQL;
 
-program: (importStatement | baseDefinition*) EOF;
-importStatement: 'import' string program;
+program: importStatement* baseDefinition* EOF;
+importStatement: 'import' identifier;
 
 baseDefinition:
 	functionDefinition
@@ -20,20 +20,27 @@ networks: queueDefinition | networkDefinition;
 
 queueDefinition:
 	'queue' identifier '{' (
-		'number_of_servers:' numberOfServers = expression ','
-	)? 'service:' service = expression ',' 'capacity:' capacity = expression (
-		',' 'metrics:' '[' metrics? ']'
+		'servers:' numberOfServers = expression ';'
+	)? 'service:' service = expression ';' 'capacity:' capacity = expression (
+		';' (metrics ';'?)?
 	)? '}';
 
 networkDefinition:
-	'network' identifier '{' 'inputs:' inputs = idList ';' 'outputs:' outputs = idList (
-		';' 'instances:' '{' instances? '}'
-	)? ';' 'routes:' '{' routesList '}' (
-		';' 'metrics:' '[' metrics ']'
-	)? ';'? '}';
+	'network' identifier '{' networkExpression? (
+		';' networkExpression
+	)* ';'? '}';
 
-instances: instance (';' instance)* ';'?;
-instance: existing = qualifiedId ':' new = idList;
+networkExpression:
+	inputOutputNetworkExpression
+	| instanceNetworkExpression
+	| routes
+	| metrics;
+
+inputOutputNetworkExpression:
+	inputs = idList '|' outputs = idList;
+
+instanceNetworkExpression:
+	existing = qualifiedId ':' new = idList;
 
 routesList: routes (',' routes)*;
 routes:
@@ -42,8 +49,8 @@ routes:
 probabilityIdList:
 	'[' expression qualifiedId (',' expression qualifiedId)* ']';
 
-metrics: metric (',' metric)*;
-metric: namedMetric | functionMetric = functionCall;
+metrics: '*' (metric (',' metric)*)? '*';
+metric: namedMetric | functionMetric = qualifiedId;
 namedMetric:
 	'mrt'
 	| 'vrt'
@@ -53,8 +60,8 @@ namedMetric:
 	| 'avgNum';
 
 simulateDefinition:
-	'simulate' '{' 'run:' network = qualifiedId ',' 'until:' terminationCriteria = expression ','
-		'times:' runs = expression '}';
+	'simulate' '{' 'run:' network = qualifiedId ';' 'until:' terminationCriteria = expression ';'
+		'times:' runs = expression ';'? '}';
 
 statement: statementComposition | baseStatement;
 
@@ -191,4 +198,11 @@ DOUBLE: '-'? [0-9]* '.' [0-9]+;
 string: STRING;
 STRING: '"' ~["\\\r\n]* '"';
 
-WS: (' ' | '\t' | '\n' | '\r')+ -> skip;
+WS: (WHITESPACE | TABS | NEWLINES)+ -> skip;
+WHITESPACE: ' ';
+TABS: '\t';
+NEWLINES: '\n' | '\r';
+
+COMMENTS: (ONE_LINE_COMMENT | MULTI_LINE_COMMENT)+ -> skip;
+ONE_LINE_COMMENT: '//' ~[\r\n];
+MULTI_LINE_COMMENT: '/*' .*? '*/';

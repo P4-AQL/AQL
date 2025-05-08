@@ -11,10 +11,10 @@ public class WhileNode(ExpressionNode condition, StatementNode body) : Statement
 
     public override string ToString() => $"WhileNode({Condition}, {Body})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Condition,
             Body,
         ];

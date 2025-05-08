@@ -13,10 +13,10 @@ public class QueueDeclarationNode(IdentifierNode identifier, ExpressionNode serv
 
     public override string ToString() => $"QueueDeclarationNode({Service}, {Capacity}, {NumberOfServers})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Service,
             Capacity,
             NumberOfServers,

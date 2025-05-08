@@ -8,9 +8,9 @@ public class SkipNode : StatementNode
 {
     public override string ToString() => "SkipNode()";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
-        return base.Children();
+        return base.GetChildren();
     }
 
 }

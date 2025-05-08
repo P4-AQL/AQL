@@ -10,10 +10,10 @@ public class ParenthesesNode(ExpressionNode inner) : ExpressionNode
 
     public override string ToString() => $"ParenthesesNode({Inner})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Inner,
         ];
     }

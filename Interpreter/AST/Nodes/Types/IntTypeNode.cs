@@ -6,9 +6,11 @@ using Interpreter.AST.Nodes.NonTerminals;
 namespace Interpreter.AST.Nodes.Types;
 public class IntTypeNode() : TypeNode
 {
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
-        return base.Children();
+        return base.GetChildren();
     }
+
+    public override string GetTypeString() => $"int";
 
 }

@@ -11,10 +11,10 @@ public class IndexingNode(ExpressionNode target, ExpressionNode index) : Express
 
     public override string ToString() => $"IndexingNode({Target},{Index})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Target,
             Index,
         ];

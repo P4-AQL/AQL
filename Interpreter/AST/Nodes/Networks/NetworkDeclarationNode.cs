@@ -14,10 +14,10 @@ public class NetworkDeclarationNode(IdentifierNode identifier, IEnumerable<Ident
 
     public override string ToString() => $"NetworkDeclaration(({string.Join(',', Identifier)}), ({string.Join(',', Inputs)}), ({string.Join(',', Outputs)}), ({string.Join(',', Instances)}), ({string.Join(',', Routes)}), ({string.Join(',', Metrics)}))";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             .. Inputs,
             .. Outputs,
             .. Instances,

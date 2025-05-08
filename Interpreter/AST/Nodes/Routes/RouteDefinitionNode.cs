@@ -12,12 +12,14 @@ public class RouteDefinitionNode(ExpressionNode from, IEnumerable<RouteValuePair
 
     public override string ToString() => $"Route({From}, {To})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
             From,
             .. To,
         ];
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{To.Count} destinations";
 
 }

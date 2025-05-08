@@ -10,11 +10,14 @@ public class ArrayLiteralNode(IEnumerable<ExpressionNode> elements) : Expression
 
     public override string ToString() => $"ArrayTypeNode(Elements: [{string.Join(',', Elements)}])";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             .. Elements
         ];
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n[{Elements.Count}]";
+
 }

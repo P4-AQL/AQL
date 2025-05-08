@@ -11,12 +11,14 @@ public class NetworkType(IdentifierNode identifier) : TypeNode
 
     public override string ToString() => $"NetworkType({Identifier})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Identifier,
         ];
     }
+
+    public override string GetTypeString() => $"{Identifier}";
 
 }

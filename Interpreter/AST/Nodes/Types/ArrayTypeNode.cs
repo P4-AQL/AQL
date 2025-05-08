@@ -9,12 +9,14 @@ public class ArrayTypeNode(TypeNode innerType) : TypeNode
     public TypeNode InnerType { get; } = innerType;
     public override string ToString() => $"ArrayTypeNode({InnerType})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             InnerType,
         ];
     }
+
+    public override string GetTypeString() => $"[{InnerType.GetTypeString}]";
 
 }

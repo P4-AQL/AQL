@@ -14,8 +14,10 @@ public class IdentifierNode(string identifier) : ExpressionNode
         return $"Identifier({Identifier})";
     }
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
-        return base.Children();
+        return base.GetChildren();
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier}";
 }

@@ -13,10 +13,10 @@ public class IfElseNode(ExpressionNode condition, StatementNode ifBody, Statemen
 
     public override string ToString() => $"IfElseNode({Condition}, {IfBody}, {ElseBody})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Condition,
             IfBody,
             ElseBody,

@@ -11,10 +11,10 @@ public class StatementCompositionNode(StatementNode left, StatementNode right) :
 
     public override string ToString() => $"StatementCompositionNode({Left}, {Right})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.Children(),
+            .. base.GetChildren(),
             Left,
             Right,
         ];

@@ -28,7 +28,7 @@ public class ASTGraph
             sb.AppendLine($"  {parentId} -> {nodeId};");
         }
 
-        foreach (var child in node.Children())
+        foreach (var child in node.GetChildren())
         {
             BuildDot(child, sb, nodeId);
         }

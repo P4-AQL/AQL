@@ -12,11 +12,14 @@ public class TypeAndIdentifier(TypeNode type, IdentifierNode identifier) : Node
 
     public override string ToString() => $"TypedIdentifierNode({Type}, {Identifier})";
 
-    public override IEnumerable<Node> Children()
+    public override IEnumerable<Node> GetChildren()
     {
         return [
             Type,
             Identifier,
         ];
     }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier.Identifier}";
+
 }
