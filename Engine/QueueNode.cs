@@ -15,7 +15,6 @@ public class QueueNode
     public List<(QueueNode Node, double Prob)>? NextNodeChoices { get; set; } = null;
 
     private double _runBusyTime = 0.0;
-    private double _runSimulationTime = 0.0;
 
     private int _runArrived = 0;
     private int _runServed = 0;
@@ -27,8 +26,8 @@ public class QueueNode
     public double TotalWaitingTime { get; private set; } = 0.0;
     public int MaxQueueLength { get; private set; } = 0;
     private double TotalBusyTime { get; set; } = 0.0;
-    private double TotalSimulationTime { get; set; } = 0.0;
     private int Runs { get; set; } = 0;
+    private double SimulationTimePerRun { get; set; } = 0.0;
 
     public QueueNode(Simulation sim, string name, int servers, int capacity, Func<double> serviceTimeDist, Func<double>? arrivalDist = null)
     {
@@ -115,41 +114,38 @@ public class QueueNode
         _waitingQueue.Clear();
         _busyServers = 0;
 
-        // accumulate from last run
         TotalArrived += _runArrived;
         TotalServed += _runServed;
         TotalWaitingTime += _runTotalWait;
         TotalBusyTime += _runBusyTime;
-        TotalSimulationTime += _runSimulationTime;
         if (_runMaxQueue > MaxQueueLength)
             MaxQueueLength = _runMaxQueue;
+
         Runs++;
 
-        // reset run-level stats
         _runArrived = 0;
         _runServed = 0;
         _runTotalWait = 0.0;
         _runMaxQueue = 0;
         _runBusyTime = 0.0;
-        _runSimulationTime = 0.0;
     }
 
     public QueueMetrics GetMetrics()
     {
-        double simNow = _sim.Now;
-        _runSimulationTime = simNow;
-        TotalSimulationTime += simNow; // include last run duration
-
+        SimulationTimePerRun = _sim.Now;
+        
         double avgWait = TotalServed > 0 ? TotalWaitingTime / TotalServed : 0;
-        double utilization = TotalSimulationTime > 0 ? TotalBusyTime / (TotalSimulationTime * _servers) : 0;
+        double utilization = (SimulationTimePerRun > 0 && Runs > 0)
+            ? TotalBusyTime / (SimulationTimePerRun * Runs * _servers)
+            : 0;
         double avgThroughput = Runs > 0 ? (double)TotalServed / Runs : TotalServed;
 
         return new QueueMetrics
         {
-            TotalArrived = TotalArrived + _runArrived,
-            TotalServed = TotalServed + _runServed,
+            TotalArrived = TotalArrived,
+            TotalServed = TotalServed,
             AvgWaitTime = avgWait,
-            MaxQueueLength = Math.Max(MaxQueueLength, _runMaxQueue),
+            MaxQueueLength = MaxQueueLength,
             ServerUtilization = utilization,
             Throughput = avgThroughput
         };

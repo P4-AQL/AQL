@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net9.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
