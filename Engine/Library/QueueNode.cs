@@ -76,7 +76,7 @@ public class QueueNode
                 _runMaxQueue = _waitingQueue.Count;
         }
     }
-    
+
     private void StartService(Entity entity)
     {
         _busyServers++;
@@ -139,6 +139,7 @@ public class QueueNode
         _runMaxQueue = 0;
         _runBusyTime = 0.0;
         _runDroppedEntities = 0;
+
     }
 
     public QueueMetrics GetMetrics()

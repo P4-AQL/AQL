@@ -1,7 +1,7 @@
 import "stdlib"
 
-const int x = 5 + 3;
 const [int] arr = {1, 2, 3};
+const int x = 5 + 3;
 const int pls = arr[2];
 
 function bool someFunc (int y) {
