@@ -28,6 +28,8 @@ public class QueueNode
     private double TotalBusyTime { get; set; } = 0.0;
     private int Runs { get; set; } = 0;
     private double SimulationTimePerRun { get; set; } = 0.0;
+    public int MaxDroppedEntities { get; private set; } = 0;
+    public int TotalDroppedEntities { get; private set; } = 0;
 
     public QueueNode(Simulation sim, string name, int servers, int capacity, Func<double> serviceTimeDist, Func<double>? arrivalDist = null)
     {
@@ -123,10 +125,11 @@ public class QueueNode
         TotalServed += _runServed;
         TotalWaitingTime += _runTotalWait;
         TotalBusyTime += _runBusyTime;
+        TotalDroppedEntities += _runDroppedEntities;
         if (_runMaxQueue > MaxQueueLength)
             MaxQueueLength = _runMaxQueue;
         if (_runDroppedEntities > MaxDroppedEntities)
-            DroppedEntities = _runDroppedEntities;
+            MaxDroppedEntities = _runDroppedEntities;
 
         Runs++;
 
@@ -147,6 +150,7 @@ public class QueueNode
             ? TotalBusyTime / (SimulationTimePerRun * Runs * _servers)
             : 0;
         double avgThroughput = Runs > 0 ? (double)TotalServed / Runs : TotalServed;
+        double entitiesDroppedRate = TotalArrived > 0 ? (double)TotalDroppedEntities / TotalArrived : 0;
 
         return new QueueMetrics
         {
@@ -156,7 +160,8 @@ public class QueueNode
             MaxQueueLength = MaxQueueLength,
             ServerUtilization = utilization,
             Throughput = avgThroughput,
-            DroppedEntities = DroppedEntities
+            MaxDroppedEntities = MaxDroppedEntities,
+            EntitiesDroppedRate = entitiesDroppedRate,
         };
     }
 }

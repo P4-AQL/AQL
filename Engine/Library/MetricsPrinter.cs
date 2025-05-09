@@ -14,6 +14,8 @@ public static class MetricsPrinter
             Console.WriteLine($"  Max Queue Length:  {data.MaxQueueLength}");
             Console.WriteLine($"  Utilization:       {data.ServerUtilization:P2}");
             Console.WriteLine($"  Avg Throughput/run:{data.Throughput:F2}");
+            Console.WriteLine($"  Max Dropped:       {data.MaxDroppedEntities}");
+            Console.WriteLine($"  Entity Dropped Rate:   {data.EntitiesDroppedRate:p2}");
         }
     }
 }
