@@ -17,67 +17,87 @@ using Interpreter.AST.NonNodes;
 namespace Interpreter.Visitors;
 class ASTAQLVisitor : AQLBaseVisitor<object>
 {
-    public override CollectionNode VisitProgram([NotNull] AQLParser.ProgramContext context)
+    public override ProgramNode VisitProgramEOF([NotNull] AQLParser.ProgramEOFContext context)
+    {
+        return VisitProgram(context.program());
+    }
+
+    public override ProgramNode VisitProgram([NotNull] AQLParser.ProgramContext context)
     {
         List<ImportNode> importNodes = [];
         List<DefinitionNode> definitionNodes = [];
 
+        ProgramNode? programNode = null;
+
         if (context.importStatement() != null)
         {
-            foreach (AQLParser.ImportStatementContext importStatementContext in context.importStatement())
-            {
-                ImportNode importNode = VisitImportStatement(importStatementContext);
-                importNodes.Add(importNode);
-            }
+            programNode = VisitImportStatement(context.importStatement());
         }
 
-        if (context.baseDefinition() != null)
+        else if (context.definition() != null)
         {
-            foreach (AQLParser.BaseDefinitionContext baseDefinitionContext in context.baseDefinition())
-            {
-                DefinitionNode definitionNode = VisitBaseDefinition(baseDefinitionContext);
-                definitionNodes.Add(definitionNode);
-            }
+            DefinitionNode definitionNode = VisitDefinition(context.definition());
+            programNode = new DefinitionProgramNode(
+                lineNumber: context.Start.Line,
+                definition: definitionNode
+            );
         }
 
-        return new(
-            lineNumber: context.Start.StartIndex,
-            children: [.. importNodes, .. definitionNodes]
-        );
+        if (programNode is null)
+        {
+            return new(
+                lineNumber: context.Start.Line
+            );
+        }
+        else
+        {
+            return programNode;
+        }
+    }
+
+    public override DefinitionNode VisitDefinition([NotNull] AQLParser.DefinitionContext context)
+    {
+        DefinitionNode definitionNode;
+        if (context.functionDefinition() != null)
+        {
+            definitionNode = VisitFunctionDefinition(context.functionDefinition());
+        }
+        else if (context.constDefinition() != null)
+        {
+            definitionNode = VisitConstDefinition(context.constDefinition());
+        }
+        else if (context.networks() != null)
+        {
+            definitionNode = VisitNetworks(context.networks());
+        }
+        else if (context.simulateDefinition() != null)
+        {
+            definitionNode = VisitSimulateDefinition(context.simulateDefinition());
+        }
+        else
+        {
+            throw new("Not a valid definition.");
+        }
+
+        return definitionNode;
     }
 
     public override ImportNode VisitImportStatement([NotNull] AQLParser.ImportStatementContext context)
     {
         IdentifierNode identifierNode = VisitIdentifier(context.identifier());
 
+        ProgramNode? nextProgram = null;
+
+        if (context.program() != null)
+        {
+            nextProgram = VisitProgram(context.program());
+        }
+
         return new(
             lineNumber: context.Start.Line,
+            nextProgram: nextProgram,
             @namespace: identifierNode
         );
-    }
-
-    public override DefinitionNode VisitBaseDefinition([NotNull] AQLParser.BaseDefinitionContext context)
-    {
-        if (context.functionDefinition() != null)
-        {
-            return VisitFunctionDefinition(context.functionDefinition());
-        }
-        else if (context.constDefinition() != null)
-        {
-            return VisitConstDefinition(context.constDefinition());
-        }
-        else if (context.networks() != null)
-        {
-            return VisitNetworks(context.networks());
-        }
-        else if (context.simulateDefinition() != null)
-        {
-            return VisitSimulateDefinition(context.simulateDefinition());
-        }
-        else
-        {
-            throw new("Not a valid definition.");
-        }
     }
 
     public override FunctionNode VisitFunctionDefinition([NotNull] AQLParser.FunctionDefinitionContext context)
@@ -97,8 +117,15 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
         StatementNode statementNode = VisitBlock(context.block());
 
+        DefinitionNode? nextDefinition = null;
+        if (context.definition() != null)
+        {
+            nextDefinition = VisitDefinition(context.nextDefinition);
+        }
+
         return new(
             lineNumber: context.Start.Line,
+            nextDefinition: nextDefinition,
             returnType: returnTypeNode,
             identifier: identifierNode,
             parameters: parameterNodes,
@@ -111,8 +138,15 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         TypeNode typeNode = VisitType(context.type());
         AssignNode assignNode = VisitAssignStatement(context.assignStatement());
 
+        DefinitionNode? nextDefinition = null;
+        if (context.definition() != null)
+        {
+            nextDefinition = VisitDefinition(context.nextDefinition);
+        }
+
         return new(
             lineNumber: context.Start.StartIndex,
+            nextDefinition: nextDefinition,
             type: typeNode,
             identifier: assignNode.Identifier,
             expression: assignNode.Expression
@@ -120,34 +154,6 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     }
 
     public override StatementNode VisitStatement([NotNull] AQLParser.StatementContext context)
-    {
-        if (context.statementComposition() != null)
-        {
-            return VisitStatementComposition(context.statementComposition());
-        }
-        else if (context.baseStatement() != null)
-        {
-            return VisitBaseStatement(context.baseStatement());
-        }
-        else
-        {
-            throw new("Not a valid statement.");
-        }
-    }
-
-    public override StatementCompositionNode VisitStatementComposition([NotNull] AQLParser.StatementCompositionContext context)
-    {
-        StatementNode leftNode = VisitBaseStatement(context.left);
-        StatementNode rightNode = VisitStatement(context.right);
-
-        return new(
-            lineNumber: context.Start.Line,
-            left: leftNode,
-            right: rightNode
-        );
-    }
-
-    public override StatementNode VisitBaseStatement([NotNull] AQLParser.BaseStatementContext context)
     {
         if (context.whileStatement() != null)
         {
@@ -180,8 +186,15 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode conditionNode = VisitExpression(context.condition);
         StatementNode bodyNode = VisitBlock(context.body);
 
+        StatementNode? nextStatement = null;
+        if (context.statement() != null)
+        {
+            nextStatement = VisitStatement(context.nextStatement);
+        }
+
         return new(
             lineNumber: context.Start.Line,
+            nextStatement: nextStatement,
             condition: conditionNode,
             body: bodyNode
         );
@@ -192,24 +205,33 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return VisitStatement(context.statement());
     }
 
-    public override StatementCompositionNode VisitVariableDeclarationStatement([NotNull] AQLParser.VariableDeclarationStatementContext context)
+    public override VariableDeclarationNode VisitVariableDeclarationStatement([NotNull] AQLParser.VariableDeclarationStatementContext context)
     {
         TypeNode typeNode = VisitType(context.type());
         AssignNode assignNode = VisitAssignStatement(context.assignStatement());
 
+        StatementNode? nextStatement = null;
+        if (context.statement() != null)
+        {
+            nextStatement = VisitStatement(context.nextStatement);
+        }
+
         return new(
-            lineNumber: context.Start.Line,
-            left: new VariableDeclarationNode(
                 lineNumber: context.Start.Line,
+                nextStatement: nextStatement,
                 type: typeNode,
                 identifier: assignNode.Identifier
-            ),
-            right: assignNode
-        );
+            );
     }
 
     public override IfElseNode VisitIfStatement([NotNull] AQLParser.IfStatementContext context)
     {
+        StatementNode? nextStatement = null;
+        if (context.statement() != null)
+        {
+            nextStatement = VisitStatement(context.nextStatement);
+        }
+
         // We handle the 'if elseif* else?' statements in 
         // reverse.
 
@@ -237,6 +259,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             ElseIfReturn firstElseIfReturn = VisitElseIfStatement(elseIfStatementContexts.First());
             currentNode = new(
                 lineNumber: context.Start.Line,
+                nextStatement: nextStatement,
                 condition: firstElseIfReturn.Condition,
                 ifBody: firstElseIfReturn.Body,
                 elseBody: elseBody
@@ -246,6 +269,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 ElseIfReturn elseIfReturn = VisitElseIfStatement(elseIfStatementContext);
                 currentNode = new(
                     lineNumber: context.Start.Line,
+                    nextStatement: nextStatement,
                     elseIfReturn: elseIfReturn,
                     elseBody: currentNode
                 );
@@ -264,15 +288,18 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         {
             currentNode = new(
                 lineNumber: context.Start.Line,
+                nextStatement: nextStatement,
                 condition: mainIfCondition,
                 ifBody: mainIfBody,
                 elseBody: elseBody
             );
         }
+
         else
         {
             currentNode = new(
                 lineNumber: context.Start.Line,
+                nextStatement: nextStatement,
                 condition: mainIfCondition,
                 ifBody: mainIfBody,
                 elseBody: currentNode
@@ -324,8 +351,15 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             throw new("Not a valid network.");
         }
 
+        DefinitionNode? nextDefinition = null;
+        if (context.definition() != null)
+        {
+            nextDefinition = VisitDefinition(context.definition());
+        }
+
         return new(
             lineNumber: context.Start.Line,
+            nextDefinition: nextDefinition,
             network: networkNode
         );
     }
@@ -495,6 +529,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
         return new(
             lineNumber: context.Start.Line,
+            nextStatement: null,
             identifier: identifierNode,
             expression: expressionNode
         );

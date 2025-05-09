@@ -32,6 +32,12 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.programEOF"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitProgramEOF([NotNull] AQLParser.ProgramEOFContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

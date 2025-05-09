@@ -6,6 +6,7 @@ using System.Data;
 using Antlr4.Runtime;
 using Interpreter.AST;
 using Interpreter.AST.Nodes;
+using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.Utilities.Modules;
 using Interpreter.Visitors;
 
@@ -21,7 +22,7 @@ try
     AQLParser.ProgramContext progContext = parser.program();
 
     ASTAQLVisitor visitor = new();
-    CollectionNode result = visitor.VisitProgram(progContext);
+    ProgramNode result = visitor.VisitProgram(progContext);
 
     string? path = Environment.CurrentDirectory.EndsWith("net9.0")
     ? new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.FullName

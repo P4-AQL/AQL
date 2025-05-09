@@ -6,6 +6,6 @@ public class TypeChecker
 {
     public bool TypeCheckNode()
     {
-
+        throw new NotImplementedException();
     }
 }

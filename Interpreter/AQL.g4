@@ -1,22 +1,26 @@
 grammar AQL;
 
-program: importStatement* definition? EOF;
-importStatement: 'import' identifier;
+programEOF: program EOF;
+program: importStatement? | definition?;
+
+importStatement: 'import' identifier program;
 
 definition:
-	functionDefinition definition?
-	| constDefinition definition?
-	| networks definition?
+	functionDefinition
+	| constDefinition
+	| networks
 	| simulateDefinition;
 
 functionDefinition:
-	'function' returnType = type identifier '(' formalParameterList? ')' block;
+	'function' returnType = type identifier '(' formalParameterList? ')' block nextDefinition =
+		definition?;
 
-constDefinition: 'const' type assignStatement;
+constDefinition:
+	'const' type assignStatement nextDefinition = definition?;
 
 formalParameterList: type identifier (',' type identifier)*;
 
-networks: queueDefinition | networkDefinition;
+networks: (queueDefinition | networkDefinition) nextDefinition = definition?;
 
 queueDefinition:
 	'queue' identifier '{' (
@@ -64,23 +68,24 @@ simulateDefinition:
 		'times:' runs = expression ';'? '}';
 
 statement:
-	whileStatement statement?
-	| variableDeclarationStatement statement?
-	| assignStatement statement?
-	| ifStatement statement?
+	whileStatement
+	| variableDeclarationStatement
+	| assignStatement
+	| ifStatement
 	| returnStatement;
 
 whileStatement:
-	'while' condition = expression 'do' body = block;
+	'while' condition = expression 'do' body = block nextStatement = statement?;
 
-variableDeclarationStatement: type assignStatement;
+variableDeclarationStatement:
+	type assignStatement nextStatement = statement?;
 
 assignStatement:
-	<assoc = right> identifier '=' expression ';';
+	<assoc = right> identifier '=' expression ';' nextStatement = statement?;
 
 ifStatement:
 	'if' ifCondition = expression ifBody = block elseIfStatements += elseIfStatement* elseStatement?
-		;
+		nextStatement = statement?;
 elseIfStatement: 'else if' condition = expression body = block;
 elseStatement: 'else' body = block;
 
