@@ -4,8 +4,13 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Programs;
-public class SkipNode : StatementNode
+public class SkipNode(int lineNumber) : StatementNode(lineNumber)
 {
-    public override string ToString() => "skip;";
+    public override string ToString() => "SkipNode()";
+
+    public override IEnumerable<Node> GetChildren()
+    {
+        return base.GetChildren();
+    }
 
 }

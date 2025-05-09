@@ -5,7 +5,7 @@ using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Expressions;
 
-public class IdentifierNode(string identifier) : ExpressionNode
+public class IdentifierNode(int lineNumber, string identifier) : ExpressionNode(lineNumber)
 {
     public string Identifier { get; } = identifier;
 
@@ -13,4 +13,11 @@ public class IdentifierNode(string identifier) : ExpressionNode
     {
         return $"Identifier({Identifier})";
     }
+
+    public override IEnumerable<Node> GetChildren()
+    {
+        return base.GetChildren();
+    }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier}";
 }

@@ -2,16 +2,27 @@
 
 
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Networks;
-public class InstanceDeclaration(IdentifierNode existingInstance, IEnumerable<IdentifierNode> newInstances) : Node
+public class InstanceDeclaration(int lineNumber, ExpressionNode existingInstance, IEnumerable<IdentifierNode> newInstances) : Node(lineNumber)
 {
-    public IdentifierNode ExistingInstance { get; } = existingInstance;
-    public IEnumerable<IdentifierNode> NewInstances { get; } = newInstances;
+    public ExpressionNode ExistingInstance { get; } = existingInstance;
+    public IReadOnlyList<IdentifierNode> NewInstances { get; } = [.. newInstances];
 
     public override string ToString()
     {
         return $"InstanceDeclaration({ExistingInstance}, ({string.Join(", ", NewInstances)})";
     }
+
+    public override IEnumerable<Node> GetChildren()
+    {
+        return [
+            ExistingInstance,
+            .. NewInstances,
+        ];
+    }
+
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{NewInstances.Count} instances";
 
 }
