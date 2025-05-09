@@ -8,4 +8,7 @@ public class QueueMetrics
     public int MaxQueueLength { get; init; }
     public double ServerUtilization { get; init; }
     public double Throughput { get; init; }
+    public int MaxDroppedEntities { get; init; }
+    public int TotalDroppedEntities { get; init; } 
+    public double EntitiesDroppedRate { get; init; }
 }

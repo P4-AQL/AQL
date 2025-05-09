@@ -15,11 +15,11 @@ public class QueueNode
     public List<(QueueNode Node, double Prob)>? NextNodeChoices { get; set; } = null;
 
     private double _runBusyTime = 0.0;
-
     private int _runArrived = 0;
     private int _runServed = 0;
     private double _runTotalWait = 0.0;
     private int _runMaxQueue = 0;
+    private int _runDroppedEntities = 0;
 
     public int TotalArrived { get; private set; } = 0;
     public int TotalServed { get; private set; } = 0;
@@ -28,6 +28,8 @@ public class QueueNode
     private double TotalBusyTime { get; set; } = 0.0;
     private int Runs { get; set; } = 0;
     private double SimulationTimePerRun { get; set; } = 0.0;
+    public int MaxDroppedEntities { get; private set; } = 0;
+    public int TotalDroppedEntities { get; private set; } = 0;
 
     public QueueNode(Simulation sim, string name, int servers, int capacity, Func<double> serviceTimeDist, Func<double>? arrivalDist = null)
     {
@@ -58,10 +60,15 @@ public class QueueNode
         _runArrived++;
 
         if (_busyServers + _waitingQueue.Count >= _capacity)
+        {
+            _runDroppedEntities++;
             return;
+        }
 
         if (_busyServers < _servers)
+        {
             StartService(entity);
+        }
         else
         {
             _waitingQueue.Enqueue(entity);
@@ -118,8 +125,11 @@ public class QueueNode
         TotalServed += _runServed;
         TotalWaitingTime += _runTotalWait;
         TotalBusyTime += _runBusyTime;
+        TotalDroppedEntities += _runDroppedEntities;
         if (_runMaxQueue > MaxQueueLength)
             MaxQueueLength = _runMaxQueue;
+        if (_runDroppedEntities > MaxDroppedEntities)
+            MaxDroppedEntities = _runDroppedEntities;
 
         Runs++;
 
@@ -128,6 +138,8 @@ public class QueueNode
         _runTotalWait = 0.0;
         _runMaxQueue = 0;
         _runBusyTime = 0.0;
+        _runDroppedEntities = 0;
+
     }
 
     public QueueMetrics GetMetrics()
@@ -139,6 +151,7 @@ public class QueueNode
             ? TotalBusyTime / (SimulationTimePerRun * Runs * _servers)
             : 0;
         double avgThroughput = Runs > 0 ? (double)TotalServed / Runs : TotalServed;
+        double entitiesDroppedRate = TotalArrived > 0 ? (double)TotalDroppedEntities / TotalArrived : 0;
 
         return new QueueMetrics
         {
@@ -147,7 +160,9 @@ public class QueueNode
             AvgWaitTime = avgWait,
             MaxQueueLength = MaxQueueLength,
             ServerUtilization = utilization,
-            Throughput = avgThroughput
+            Throughput = avgThroughput,
+            MaxDroppedEntities = MaxDroppedEntities,
+            EntitiesDroppedRate = entitiesDroppedRate,
         };
     }
 }
