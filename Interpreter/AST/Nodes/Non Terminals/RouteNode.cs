@@ -1,6 +1,6 @@
 namespace Interpreter.AST.Nodes.NonTerminals;
 
-public class RouteNode : Node
+public class RouteNode(int lineNumber) : Node(lineNumber)
 {
     public override IEnumerable<Node> GetChildren()
     {

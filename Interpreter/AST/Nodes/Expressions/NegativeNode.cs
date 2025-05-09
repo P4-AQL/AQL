@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Expressions;
-public class NegativeNode(ExpressionNode inner) : ExpressionNode
+public class NegativeNode(int lineNumber, ExpressionNode inner) : ExpressionNode(lineNumber)
 {
     ExpressionNode Inner { get; } = inner;
 
@@ -13,8 +13,8 @@ public class NegativeNode(ExpressionNode inner) : ExpressionNode
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             Inner,
+            .. base.GetChildren(),
         ];
     }
 }

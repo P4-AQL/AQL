@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Expressions;
-public class ArrayLiteralNode(IEnumerable<ExpressionNode> elements) : ExpressionNode
+public class ArrayLiteralNode(int lineNumber, IEnumerable<ExpressionNode> elements) : LiteralNode(lineNumber)
 {
     public IReadOnlyList<ExpressionNode> Elements { get; } = [.. elements];
 
@@ -13,8 +13,8 @@ public class ArrayLiteralNode(IEnumerable<ExpressionNode> elements) : Expression
     public override IEnumerable<Node> GetChildren()
     {
         return [
+            .. Elements,
             .. base.GetChildren(),
-            .. Elements
         ];
     }
 

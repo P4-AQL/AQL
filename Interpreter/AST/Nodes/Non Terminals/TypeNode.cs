@@ -3,7 +3,7 @@
 
 
 namespace Interpreter.AST.Nodes.NonTerminals;
-public abstract class TypeNode : Node
+public abstract class TypeNode(int lineNumber) : Node(lineNumber)
 {
     public override IEnumerable<Node> GetChildren()
     {

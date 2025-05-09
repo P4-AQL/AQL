@@ -2,7 +2,7 @@
 
 
 namespace Interpreter.AST.Nodes;
-public class RootNode(IEnumerable<Node> children) : Node
+public class CollectionNode(int lineNumber, IEnumerable<Node> children) : Node(lineNumber)
 {
     public IReadOnlyList<Node> Children { get; } = [.. children];
 

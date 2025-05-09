@@ -5,7 +5,7 @@ using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Expressions;
 
 namespace Interpreter.AST.Nodes.Statements;
-public class TypeAndIdentifier(TypeNode type, IdentifierNode identifier) : Node
+public class TypeAndIdentifier(int lineNumber, TypeNode type, IdentifierNode identifier) : Node(lineNumber)
 {
     public TypeNode Type { get; } = type;
     public IdentifierNode Identifier { get; } = identifier;

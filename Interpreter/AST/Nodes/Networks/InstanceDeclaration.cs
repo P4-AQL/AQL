@@ -5,7 +5,7 @@ using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Networks;
-public class InstanceDeclaration(ExpressionNode existingInstance, IEnumerable<IdentifierNode> newInstances) : Node
+public class InstanceDeclaration(int lineNumber, ExpressionNode existingInstance, IEnumerable<IdentifierNode> newInstances) : Node(lineNumber)
 {
     public ExpressionNode ExistingInstance { get; } = existingInstance;
     public IReadOnlyList<IdentifierNode> NewInstances { get; } = [.. newInstances];

@@ -44,11 +44,11 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitImportStatement([NotNull] AQLParser.ImportStatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.baseDefinition"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.definition"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitBaseDefinition([NotNull] AQLParser.BaseDefinitionContext context);
+	Result VisitDefinition([NotNull] AQLParser.DefinitionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.functionDefinition"/>.
 	/// </summary>
@@ -151,18 +151,6 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitStatement([NotNull] AQLParser.StatementContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.statementComposition"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitStatementComposition([NotNull] AQLParser.StatementCompositionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.baseStatement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitBaseStatement([NotNull] AQLParser.BaseStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.whileStatement"/>.
 	/// </summary>

@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Expressions;
-public class FunctionCallNode(ExpressionNode identifier, IEnumerable<ExpressionNode> actualParameters) : ExpressionNode
+public class FunctionCallNode(int lineNumber, ExpressionNode identifier, IEnumerable<ExpressionNode> actualParameters) : ExpressionNode(lineNumber)
 {
     public ExpressionNode Identifier { get; } = identifier;
     public IReadOnlyList<ExpressionNode> ActualParameters { get; } = [.. actualParameters];
@@ -13,9 +13,9 @@ public class FunctionCallNode(ExpressionNode identifier, IEnumerable<ExpressionN
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             Identifier,
             .. ActualParameters,
+            .. base.GetChildren(),
         ];
     }
 

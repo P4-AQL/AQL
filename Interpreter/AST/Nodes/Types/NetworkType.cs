@@ -5,7 +5,7 @@ using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Types;
-public class NetworkType(IdentifierNode identifier) : TypeNode
+public class NetworkType(int lineNumber, IdentifierNode identifier) : TypeNode(lineNumber)
 {
     public IdentifierNode Identifier { get; } = identifier;
 

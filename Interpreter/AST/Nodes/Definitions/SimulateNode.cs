@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Definitions;
-public class SimulateNode(ExpressionNode networkIdentifier, ExpressionNode runs, ExpressionNode terminationCriteria) : DefinitionNode
+public class SimulateNode(int lineNumber, ExpressionNode networkIdentifier, ExpressionNode runs, ExpressionNode terminationCriteria) : DefinitionNode(lineNumber)
 {
     public ExpressionNode NetworkIdentifier { get; } = networkIdentifier;
     public ExpressionNode Runs { get; } = runs;
@@ -15,10 +15,10 @@ public class SimulateNode(ExpressionNode networkIdentifier, ExpressionNode runs,
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             NetworkIdentifier,
             Runs,
             TerminationCriteria,
+            .. base.GetChildren(),
         ];
     }
 

@@ -4,19 +4,19 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Statements;
-public class StatementCompositionNode(StatementNode left, StatementNode right) : StatementNode
+public abstract class StatementCompositionNode(int lineNumber, StatementNode? nextStatement) : StatementNode(lineNumber)
 {
-    public StatementNode Left { get; } = left;
-    public StatementNode Right { get; } = right;
-
-    public override string ToString() => $"StatementCompositionNode({Left}, {Right})";
+    public StatementNode? NextStatement { get; } = nextStatement;
 
     public override IEnumerable<Node> GetChildren()
     {
-        return [
+        return NextStatement is null
+        ? [
+            .. base.GetChildren()
+        ]
+        : [
+            NextStatement,
             .. base.GetChildren(),
-            Left,
-            Right,
         ];
     }
 }

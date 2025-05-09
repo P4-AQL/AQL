@@ -5,19 +5,19 @@ using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Statements;
-public class AssignNode(IdentifierNode identifier, ExpressionNode expression) : StatementNode
+public class AssignNode(int lineNumber, StatementNode? nextStatement, IdentifierNode identifier, ExpressionNode expression) : StatementCompositionNode(lineNumber, nextStatement)
 {
     public IdentifierNode Identifier { get; } = identifier;
     public ExpressionNode Expression { get; } = expression;
 
-    public override string ToString() => $"AssignNode({Identifier} = {Expression})";
+    public override string ToString() => $"AssignNode({Identifier}, {Expression}, {NextStatement})";
 
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             Identifier,
             Expression,
+            .. base.GetChildren(),
         ];
     }
 

@@ -4,17 +4,17 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Statements;
-public class ReturnNode(ExpressionNode expression) : StatementNode
+public class ReturnNode(int lineNumber, ExpressionNode expression) : StatementNode(lineNumber)
 {
     public ExpressionNode Expression { get; } = expression;
 
-    public override string ToString() => $"ReturnNpde({Expression})";
+    public override string ToString() => $"ReturnNode({Expression})";
 
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             Expression,
+            .. base.GetChildren(),
         ];
     }
 

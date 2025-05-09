@@ -1,12 +1,12 @@
 grammar AQL;
 
-program: importStatement* baseDefinition* EOF;
+program: importStatement* definition? EOF;
 importStatement: 'import' identifier;
 
-baseDefinition:
-	functionDefinition
-	| constDefinition
-	| networks
+definition:
+	functionDefinition definition?
+	| constDefinition definition?
+	| networks definition?
 	| simulateDefinition;
 
 functionDefinition:
@@ -63,15 +63,11 @@ simulateDefinition:
 	'simulate' '{' 'run:' network = qualifiedId ';' 'until:' terminationCriteria = expression ';'
 		'times:' runs = expression ';'? '}';
 
-statement: statementComposition | baseStatement;
-
-statementComposition: left = baseStatement right = statement;
-
-baseStatement:
-	whileStatement
-	| variableDeclarationStatement
-	| assignStatement
-	| ifStatement
+statement:
+	whileStatement statement?
+	| variableDeclarationStatement statement?
+	| assignStatement statement?
+	| ifStatement statement?
 	| returnStatement;
 
 whileStatement:

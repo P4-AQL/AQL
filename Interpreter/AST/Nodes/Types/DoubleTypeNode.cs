@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Types;
-public class DoubleTypeNode() : TypeNode
+public class DoubleTypeNode(int lineNumber) : TypeNode(lineNumber)
 {
     public override IEnumerable<Node> GetChildren()
     {

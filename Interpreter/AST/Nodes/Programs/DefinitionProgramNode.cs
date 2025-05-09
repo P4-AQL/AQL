@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Programs;
-public class DefinitionProgramNode(DefinitionNode definition) : ProgramNode
+public class DefinitionProgramNode(int lineNumber, DefinitionNode definition) : ProgramNode(lineNumber)
 {
     public DefinitionNode Definition { get; } = definition;
 
@@ -13,8 +13,8 @@ public class DefinitionProgramNode(DefinitionNode definition) : ProgramNode
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             Definition,
+            .. base.GetChildren(),
         ];
     }
 }

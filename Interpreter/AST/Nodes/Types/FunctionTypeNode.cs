@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Types;
-public class FunctionTypeNode(IEnumerable<TypeNode> formalParameterTypes, TypeNode returnType) : TypeNode
+public class FunctionTypeNode(int lineNumber, IEnumerable<TypeNode> formalParameterTypes, TypeNode returnType) : TypeNode(lineNumber)
 {
     public IReadOnlyList<TypeNode> FormalParameterTypes { get; } = [.. formalParameterTypes];
     public TypeNode ReturnType { get; } = returnType;

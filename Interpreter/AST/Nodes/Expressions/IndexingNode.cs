@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Expressions;
-public class IndexingNode(ExpressionNode target, ExpressionNode index) : ExpressionNode
+public class IndexingNode(int lineNumber, ExpressionNode target, ExpressionNode index) : ExpressionNode(lineNumber)
 {
     public ExpressionNode Target { get; } = target;
     public ExpressionNode Index { get; } = index;
@@ -14,9 +14,9 @@ public class IndexingNode(ExpressionNode target, ExpressionNode index) : Express
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             Target,
             Index,
+            .. base.GetChildren(),
         ];
     }
 }

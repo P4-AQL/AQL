@@ -4,19 +4,19 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Definitions;
-public class DefinitionCompositionNode(DefinitionNode left, DefinitionNode right) : DefinitionNode
+public abstract class DefinitionCompositionNode(int lineNumber, DefinitionNode? nextDefinition) : DefinitionNode(lineNumber)
 {
-    public DefinitionNode Left { get; } = left;
-    public DefinitionNode Right { get; } = right;
-
-    public override string ToString() => $"DefinitionCompositionNode({Left}, {Right})";
+    public DefinitionNode? NextDefinition { get; } = nextDefinition;
 
     public override IEnumerable<Node> GetChildren()
     {
-        return [
+        return NextDefinition is null
+        ? [
             .. base.GetChildren(),
-            Left,
-            Right,
+        ]
+        : [
+            ..base.GetChildren(),
+            NextDefinition,
         ];
     }
 }

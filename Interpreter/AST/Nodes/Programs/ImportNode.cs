@@ -6,17 +6,19 @@ using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Programs
 {
-    public class ImportNode(IdentifierNode @namespace) : ProgramNode
+    public class ImportNode(int lineNumber, IdentifierNode @namespace, ProgramNode nextProgram) : ProgramNode(lineNumber)
     {
         public IdentifierNode Namespace { get; } = @namespace;
+        public ProgramNode NextProgram { get; } = nextProgram;
 
-        public override string ToString() => $"ImportNode({Namespace})";
+        public override string ToString() => $"ImportNode({Namespace}, {NextProgram})";
 
         public override IEnumerable<Node> GetChildren()
         {
             return [
                 .. base.GetChildren(),
                 Namespace,
+                NextProgram,
              ];
         }
 

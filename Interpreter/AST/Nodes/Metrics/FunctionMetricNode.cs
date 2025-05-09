@@ -5,7 +5,7 @@ using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Metrics;
-public class FunctionMetricNode(ExpressionNode function) : MetricNode
+public class FunctionMetricNode(int lineNumber, ExpressionNode function) : MetricNode(lineNumber)
 {
     ExpressionNode Function { get; } = function;
 
@@ -14,8 +14,8 @@ public class FunctionMetricNode(ExpressionNode function) : MetricNode
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             Function,
+            .. base.GetChildren(),
         ];
     }
 }

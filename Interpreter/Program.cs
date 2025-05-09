@@ -21,7 +21,7 @@ try
     AQLParser.ProgramContext progContext = parser.program();
 
     ASTAQLVisitor visitor = new();
-    Node result = visitor.VisitProgram(progContext);
+    CollectionNode result = visitor.VisitProgram(progContext);
 
     string? path = Environment.CurrentDirectory.EndsWith("net9.0")
     ? new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.FullName

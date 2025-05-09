@@ -5,7 +5,7 @@ using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Networks;
-public class NetworkDeclarationNode(IdentifierNode identifier, IEnumerable<IdentifierNode> inputs, IEnumerable<IdentifierNode> outputs, IEnumerable<InstanceDeclaration> instances, IEnumerable<RouteNode> routes, IEnumerable<MetricNode> metrics) : NetworkNode(identifier, metrics)
+public class NetworkDeclarationNode(int lineNumber, IdentifierNode identifier, IEnumerable<IdentifierNode> inputs, IEnumerable<IdentifierNode> outputs, IEnumerable<InstanceDeclaration> instances, IEnumerable<RouteNode> routes, IEnumerable<MetricNode> metrics) : NetworkNode(lineNumber, identifier, metrics)
 {
     public IReadOnlyList<IdentifierNode> Inputs { get; } = [.. inputs];
     public IReadOnlyList<IdentifierNode> Outputs { get; } = [.. outputs];
@@ -17,11 +17,11 @@ public class NetworkDeclarationNode(IdentifierNode identifier, IEnumerable<Ident
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             .. Inputs,
             .. Outputs,
             .. Instances,
             .. Routes,
+            .. base.GetChildren(),
         ];
     }
 }

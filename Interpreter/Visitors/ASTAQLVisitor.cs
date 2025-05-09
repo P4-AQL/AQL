@@ -17,7 +17,7 @@ using Interpreter.AST.NonNodes;
 namespace Interpreter.Visitors;
 class ASTAQLVisitor : AQLBaseVisitor<object>
 {
-    public override RootNode VisitProgram([NotNull] AQLParser.ProgramContext context)
+    public override CollectionNode VisitProgram([NotNull] AQLParser.ProgramContext context)
     {
         List<ImportNode> importNodes = [];
         List<DefinitionNode> definitionNodes = [];
@@ -41,6 +41,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return new(
+            lineNumber: context.Start.StartIndex,
             children: [.. importNodes, .. definitionNodes]
         );
     }
@@ -50,6 +51,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         IdentifierNode identifierNode = VisitIdentifier(context.identifier());
 
         return new(
+            lineNumber: context.Start.Line,
             @namespace: identifierNode
         );
     }
@@ -96,6 +98,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         StatementNode statementNode = VisitBlock(context.block());
 
         return new(
+            lineNumber: context.Start.Line,
             returnType: returnTypeNode,
             identifier: identifierNode,
             parameters: parameterNodes,
@@ -109,6 +112,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         AssignNode assignNode = VisitAssignStatement(context.assignStatement());
 
         return new(
+            lineNumber: context.Start.StartIndex,
             type: typeNode,
             identifier: assignNode.Identifier,
             expression: assignNode.Expression
@@ -137,6 +141,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         StatementNode rightNode = VisitStatement(context.right);
 
         return new(
+            lineNumber: context.Start.Line,
             left: leftNode,
             right: rightNode
         );
@@ -176,6 +181,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         StatementNode bodyNode = VisitBlock(context.body);
 
         return new(
+            lineNumber: context.Start.Line,
             condition: conditionNode,
             body: bodyNode
         );
@@ -192,7 +198,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         AssignNode assignNode = VisitAssignStatement(context.assignStatement());
 
         return new(
+            lineNumber: context.Start.Line,
             left: new VariableDeclarationNode(
+                lineNumber: context.Start.Line,
                 type: typeNode,
                 identifier: assignNode.Identifier
             ),
@@ -214,7 +222,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
         else
         {
-            elseBody = new SkipNode();
+            elseBody = new SkipNode(lineNumber: context.Start.Line);
         }
 
         IfElseNode? currentNode = null;
@@ -228,6 +236,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
             ElseIfReturn firstElseIfReturn = VisitElseIfStatement(elseIfStatementContexts.First());
             currentNode = new(
+                lineNumber: context.Start.Line,
                 condition: firstElseIfReturn.Condition,
                 ifBody: firstElseIfReturn.Body,
                 elseBody: elseBody
@@ -236,6 +245,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             {
                 ElseIfReturn elseIfReturn = VisitElseIfStatement(elseIfStatementContext);
                 currentNode = new(
+                    lineNumber: context.Start.Line,
                     elseIfReturn: elseIfReturn,
                     elseBody: currentNode
                 );
@@ -253,6 +263,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         if (currentNode == null)
         {
             currentNode = new(
+                lineNumber: context.Start.Line,
                 condition: mainIfCondition,
                 ifBody: mainIfBody,
                 elseBody: elseBody
@@ -261,6 +272,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         else
         {
             currentNode = new(
+                lineNumber: context.Start.Line,
                 condition: mainIfCondition,
                 ifBody: mainIfBody,
                 elseBody: currentNode
@@ -291,6 +303,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode expressionNode = VisitExpression(context.expression());
 
         return new(
+            lineNumber: context.Start.Line,
             expression: expressionNode
         );
     }
@@ -312,6 +325,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return new(
+            lineNumber: context.Start.Line,
             network: networkNode
         );
     }
@@ -325,7 +339,10 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode numberOfServersNode;
         if (context.numberOfServers is null)
         {
-            numberOfServersNode = new IntLiteralNode(value: 1);
+            numberOfServersNode = new IntLiteralNode(
+                lineNumber: context.Start.Line,
+                value: 1
+            );
         }
         else
         {
@@ -343,12 +360,13 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return new(
-                identifierNode,
-                serviceNode,
-                capacityNode,
-                numberOfServersNode,
-                metricNodes
-            );
+            lineNumber: context.Start.Line,
+            identifierNode,
+            serviceNode,
+            capacityNode,
+            numberOfServersNode,
+            metricNodes
+        );
     }
 
     public override NetworkDeclarationNode VisitNetworkDefinition([NotNull] AQLParser.NetworkDefinitionContext context)
@@ -389,6 +407,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return new(
+            lineNumber: context.Start.Line,
             identifier: identifierNode,
             inputs: inputNodes,
             outputs: outputNodes,
@@ -442,6 +461,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
         return [
             new(
+                lineNumber: context.Start.Line,
                 existingInstance: exisitingInstance,
                 newInstances: newInstances
             )
@@ -474,6 +494,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode expressionNode = VisitExpression(context.expression());
 
         return new(
+            lineNumber: context.Start.Line,
             identifier: identifierNode,
             expression: expressionNode
         );
@@ -491,6 +512,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             IdentifierNode identifierNode = VisitIdentifier(identifierContexts[index]);
 
             TypeAndIdentifier typeAndIdentifier = new(
+                lineNumber: context.Start.Line,
                 type: typeNode,
                 identifier: identifierNode
             );
@@ -545,27 +567,28 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     #region Types
     public override BoolTypeNode VisitBoolKeyword([NotNull] AQLParser.BoolKeywordContext context)
     {
-        return new();
+        return new(lineNumber: context.Start.Line);
     }
 
     public override IntTypeNode VisitIntKeyword([NotNull] AQLParser.IntKeywordContext context)
     {
-        return new();
+        return new(lineNumber: context.Start.Line);
     }
 
     public override DoubleTypeNode VisitDoubleKeyword([NotNull] AQLParser.DoubleKeywordContext context)
     {
-        return new();
+        return new(lineNumber: context.Start.Line);
     }
 
     public override StringTypeNode VisitStringKeyword([NotNull] AQLParser.StringKeywordContext context)
     {
-        return new();
+        return new(lineNumber: context.Start.Line);
     }
 
     public override ArrayTypeNode VisitArrayType([NotNull] AQLParser.ArrayTypeContext context)
     {
         return new(
+            lineNumber: context.Start.Line,
             innerType: VisitType(context.type())
         );
     }
@@ -594,7 +617,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             List<RouteDefinitionNode> routeNodes = VisitRoutes(context.routes());
             ExpressionNode routeTo = routeNodes.Last().From;
 
-            RouteDefinitionNode routeNode = MakeRouteDefinition(from: fromIdentifierNode, to: routeTo);
+            RouteDefinitionNode routeNode = MakeRouteDefinition(lineNumber: context.Start.Line, from: fromIdentifierNode, to: routeTo);
 
             routeNodes.Add(routeNode);
 
@@ -605,7 +628,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             ExpressionNode toIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts[1]);
 
             return [
-                MakeRouteDefinition(from: fromIdentifierNode, to: toIdentifierNode)
+                MakeRouteDefinition(lineNumber: context.Start.Line, from: fromIdentifierNode, to: toIdentifierNode)
             ];
         }
         else if (context.probabilityIdList() != null)
@@ -613,6 +636,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             IEnumerable<RouteValuePairNode> routeValuePairNodes = VisitProbabilityIdList(context.probabilityIdList());
             return [
                 new(
+                    lineNumber: context.Start.Line,
                     from: fromIdentifierNode,
                     to: routeValuePairNodes
                 )
@@ -624,13 +648,16 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
     }
 
-    private RouteDefinitionNode MakeRouteDefinition(ExpressionNode from, ExpressionNode to)
+    private RouteDefinitionNode MakeRouteDefinition(int lineNumber, ExpressionNode from, ExpressionNode to)
     {
         return new(
+            lineNumber: lineNumber,
             from: from,
             to: [
                 new(
+                    lineNumber: lineNumber,
                     probability: new IntLiteralNode(
+                        lineNumber: lineNumber,
                         value: 1
                     ),
                     routeTo: to
@@ -654,6 +681,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             ExpressionNode identifierNode = VisitQualifiedId(qualifiedIds[index]);
 
             RouteValuePairNode routeValuePairNode = new(
+                lineNumber: context.Start.Line,
                 probability: probabilityNode,
                 routeTo: identifierNode
             );
@@ -691,6 +719,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         else if (context.functionMetric != null)
         {
             return new FunctionMetricNode(
+                lineNumber: context.Start.Line,
                 function: VisitQualifiedId(context.functionMetric)
             );
         }
@@ -703,6 +732,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override NamedMetricNode VisitNamedMetric([NotNull] AQLParser.NamedMetricContext context)
     {
         return new(
+            lineNumber: context.Start.Line,
             name: context.GetText()
         );
     }
@@ -714,6 +744,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode terminationCriteriaNode = VisitExpression(context.terminationCriteria);
 
         return new(
+            lineNumber: context.Start.Line,
             networkIdentifier: networkNode,
             runs: runsNode,
             terminationCriteria: terminationCriteriaNode
@@ -771,6 +802,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return new(
+            lineNumber: context.Start.Line,
             identifier: functionIdentifierNode,
             actualParameters: parameters ?? []
         );
@@ -811,6 +843,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         {
             IdentifierNode newIdentifierNode = VisitIdentifier(identifierContext);
             current = new QualifiedIdentifierNode(
+                lineNumber: context.Start.Line,
                 identifier: newIdentifierNode,
                 expression: current
             );
@@ -825,6 +858,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode indexNode = VisitExpression(context.index);
 
         return new(
+            lineNumber: context.Start.Line,
             target: targetNode,
             index: indexNode
         );
@@ -851,7 +885,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 foreach (AQLParser.LogicalAndExpressionContext logicalAndExpressionContext in logicalAndExpressionContexts.Skip(1))
                 {
                     ExpressionNode logicalAndNode = VisitLogicalAndExpression(logicalAndExpressionContext);
-                    current = MakeOrUsingDeMorganSubstitution(current, logicalAndNode);
+                    current = MakeOrUsingDeMorganSubstitution(lineNumber: context.Start.Line, current, logicalAndNode);
                 }
 
                 return current;
@@ -863,14 +897,18 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
     }
 
-    private static NotNode MakeOrUsingDeMorganSubstitution(ExpressionNode left, ExpressionNode right)
+    private static NotNode MakeOrUsingDeMorganSubstitution(int lineNumber, ExpressionNode left, ExpressionNode right)
     {
         return new NotNode(
+            lineNumber: lineNumber,
             inner: new AndNode(
+                lineNumber: lineNumber,
                 left: new NotNode(
+                    lineNumber: lineNumber,
                     inner: left
                 ),
                 right: new NotNode(
+                    lineNumber: lineNumber,
                     inner: right
                 )
             )
@@ -893,6 +931,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitEqualityExpression(equalExpressionContext);
                     current = new AndNode(
+                        lineNumber: context.Start.Line,
                         left: current,
                         right: equalityNode
                     );
@@ -939,6 +978,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitRelationalExpression(relationalContext);
                     current = new EqualNode(
+                        lineNumber: context.Start.Line,
                         left: current,
                         right: equalityNode
                     );
@@ -969,7 +1009,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitRelationalExpression(relationalExpressionContext);
                     current = new NotNode(
+                        lineNumber: context.Start.Line,
                         inner: new EqualNode(
+                            lineNumber: context.Start.Line,
                             left: current,
                             right: equalityNode
                         )
@@ -1025,6 +1067,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
                     current = new LessThanNode(
+                        lineNumber: context.Start.Line,
                         left: current,
                         right: equalityNode
                     );
@@ -1054,7 +1097,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
-                    current = MakeLessThanOrEqualNode(current, equalityNode);
+                    current = MakeLessThanOrEqualNode(lineNumber: context.Start.Line, current, equalityNode);
                 }
 
                 return current;
@@ -1066,13 +1109,17 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
     }
 
-    private static LessThanNode MakeLessThanOrEqualNode(ExpressionNode left, ExpressionNode right)
+    private static LessThanNode MakeLessThanOrEqualNode(int lineNumber, ExpressionNode left, ExpressionNode right)
     {
         return new LessThanNode(
+            lineNumber: lineNumber,
             left: new AddNode(
+                lineNumber: lineNumber,
                 left: left,
                 right: new NegativeNode(
+                    lineNumber: lineNumber,
                     inner: new IntLiteralNode(
+                        lineNumber: lineNumber,
                         value: 1
                     )
                 )
@@ -1096,8 +1143,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
                 {
                     ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
-                    LessThanNode lessThanOrEqualNode = MakeLessThanOrEqualNode(current, equalityNode);
+                    LessThanNode lessThanOrEqualNode = MakeLessThanOrEqualNode(lineNumber: context.Start.Line, current, equalityNode);
                     current = new NotNode(
+                        lineNumber: context.Start.Line,
                         inner: lessThanOrEqualNode
                     );
                 }
@@ -1127,7 +1175,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
                     current = new NotNode(
+                        lineNumber: context.Start.Line,
                         inner: new LessThanNode(
+                            lineNumber: context.Start.Line,
                             left: current,
                             right: equalityNode
                         )
@@ -1175,6 +1225,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitMultiplicativeExpression(multiplicativeExpressionContext);
                     current = new AddNode(
+                        lineNumber: context.Start.Line,
                         left: current,
                         right: equalityNode
                     );
@@ -1205,8 +1256,10 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitMultiplicativeExpression(multiplicativeExpressionContext);
                     current = new AddNode(
+                        lineNumber: context.Start.Line,
                         left: current,
                         right: new NegativeNode(
+                            lineNumber: context.Start.Line,
                             inner: equalityNode
                         )
                     );
@@ -1253,6 +1306,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitUnaryExpression(unaryExpressionContext);
                     current = new MultiplyNode(
+                        lineNumber: context.Start.Line,
                         left: current,
                         right: equalityNode
                     );
@@ -1283,6 +1337,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 {
                     ExpressionNode equalityNode = VisitUnaryExpression(unaryExpressionContext);
                     current = new DivisionNode(
+                        lineNumber: context.Start.Line,
                         left: current,
                         right: equalityNode
                     );
@@ -1326,6 +1381,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode innerNode = VisitExpression(context.expression());
 
         return new(
+            lineNumber: context.Start.Line,
             inner: innerNode
         );
     }
@@ -1335,6 +1391,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode innerNode = VisitExpression(context.expression());
 
         return new(
+            lineNumber: context.Start.Line,
             inner: innerNode
         );
     }
@@ -1344,6 +1401,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         ExpressionNode innerNode = VisitExpression(context.expression());
 
         return new(
+            lineNumber: context.Start.Line,
             inner: innerNode
         );
     }
@@ -1354,6 +1412,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override IdentifierNode VisitIdentifier([NotNull] AQLParser.IdentifierContext context)
     {
         return new(
+            lineNumber: context.Start.Line,
             identifier: context.IDENTIFIER().GetText()
         );
     }
@@ -1361,6 +1420,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override BoolLiteralNode VisitBool([NotNull] AQLParser.BoolContext context)
     {
         return new(
+            lineNumber: context.Start.Line,
             value: context.BOOL().GetText() == "true"
         );
     }
@@ -1368,6 +1428,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override IntLiteralNode VisitInt([NotNull] AQLParser.IntContext context)
     {
         return new(
+            lineNumber: context.Start.Line,
             value: int.Parse(context.INT().GetText())
         );
     }
@@ -1375,6 +1436,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override DoubleLiteralNode VisitDouble([NotNull] AQLParser.DoubleContext context)
     {
         return new(
+            lineNumber: context.Start.Line,
             value: double.Parse(context.DOUBLE().GetText())
         );
     }
@@ -1382,6 +1444,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override StringLiteralNode VisitString([NotNull] AQLParser.StringContext context)
     {
         return new(
+            lineNumber: context.Start.Line,
             value: context.STRING().GetText()[1..^1] // Remove quotes
         );
     }
@@ -1396,6 +1459,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return new(
+            lineNumber: context.Start.Line,
             elements: elements
         );
     }

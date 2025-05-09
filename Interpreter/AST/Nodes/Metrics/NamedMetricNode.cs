@@ -4,7 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Metrics;
-public class NamedMetricNode(string name) : MetricNode
+public class NamedMetricNode(int lineNumber, string name) : MetricNode(lineNumber)
 {
     public string Name { get; } = name;
 
