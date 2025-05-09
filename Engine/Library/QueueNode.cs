@@ -15,11 +15,11 @@ public class QueueNode
     public List<(QueueNode Node, double Prob)>? NextNodeChoices { get; set; } = null;
 
     private double _runBusyTime = 0.0;
-
     private int _runArrived = 0;
     private int _runServed = 0;
     private double _runTotalWait = 0.0;
     private int _runMaxQueue = 0;
+    private int _runDroppedEntities = 0;
 
     public int TotalArrived { get; private set; } = 0;
     public int TotalServed { get; private set; } = 0;
@@ -58,10 +58,15 @@ public class QueueNode
         _runArrived++;
 
         if (_busyServers + _waitingQueue.Count >= _capacity)
+        {
+            _runDroppedEntities++;
             return;
+        }
 
         if (_busyServers < _servers)
+        {
             StartService(entity);
+        }
         else
         {
             _waitingQueue.Enqueue(entity);
@@ -69,7 +74,7 @@ public class QueueNode
                 _runMaxQueue = _waitingQueue.Count;
         }
     }
-
+    
     private void StartService(Entity entity)
     {
         _busyServers++;
@@ -120,6 +125,8 @@ public class QueueNode
         TotalBusyTime += _runBusyTime;
         if (_runMaxQueue > MaxQueueLength)
             MaxQueueLength = _runMaxQueue;
+        if (_runDroppedEntities > MaxDroppedEntities)
+            DroppedEntities = _runDroppedEntities;
 
         Runs++;
 
@@ -128,6 +135,7 @@ public class QueueNode
         _runTotalWait = 0.0;
         _runMaxQueue = 0;
         _runBusyTime = 0.0;
+        _runDroppedEntities = 0;
     }
 
     public QueueMetrics GetMetrics()
@@ -147,7 +155,8 @@ public class QueueNode
             AvgWaitTime = avgWait,
             MaxQueueLength = MaxQueueLength,
             ServerUtilization = utilization,
-            Throughput = avgThroughput
+            Throughput = avgThroughput,
+            DroppedEntities = DroppedEntities
         };
     }
 }
