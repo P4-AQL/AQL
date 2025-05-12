@@ -57,6 +57,7 @@ public class QueueNode
                 {
                     CurrentNetworkName = _network
                 };
+                _engine.RecordNetworkEntry(entity, _network, Simulation.Now);
                 ProcessArrival(entity);
                 ScheduleInitialArrival();
             });
@@ -84,6 +85,11 @@ public class QueueNode
             if (_waitingQueue.Count > _runMaxQueue)
                 _runMaxQueue = _waitingQueue.Count;
         }
+        if (entity.CurrentNetworkName != _network)
+        {
+            _engine.RecordNetworkEntry(entity, _network, Simulation.Now);
+            entity.CurrentNetworkName = _network;
+        }
     }
 
     private void StartService(Entity entity)
@@ -91,6 +97,8 @@ public class QueueNode
         _busyServers++;
         double serviceTime = _serviceTimeDist();
         _runBusyTime += serviceTime;
+        entity.ServiceTimesInQueues.Add(serviceTime);
+        entity.WaitingTimesInQueues.Add(Simulation.Now - entity.ArrivalTime);
         Simulation.Schedule(serviceTime, () => ProcessDeparture(entity));
     }
 
@@ -129,6 +137,10 @@ public class QueueNode
             }
 
             Simulation.Schedule(0, () => target.ProcessArrival(entity));
+        }
+        else
+        {
+            _engine.RecordNetworkExit(entity, entity.CurrentNetworkName, Simulation.Now);
         }
     }
 
