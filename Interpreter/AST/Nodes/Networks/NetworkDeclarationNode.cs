@@ -2,13 +2,14 @@
 
 
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Networks;
-public class NetworkDeclarationNode(int lineNumber, IdentifierNode identifier, IEnumerable<IdentifierNode> inputs, IEnumerable<IdentifierNode> outputs, IEnumerable<InstanceDeclaration> instances, IEnumerable<RouteNode> routes, IEnumerable<MetricNode> metrics) : NetworkNode(lineNumber, identifier, metrics)
+public class NetworkDeclarationNode(int lineNumber, SingleIdentifierNode identifier, IEnumerable<SingleIdentifierNode> inputs, IEnumerable<SingleIdentifierNode> outputs, IEnumerable<InstanceDeclaration> instances, IEnumerable<RouteNode> routes, IEnumerable<MetricNode> metrics) : NetworkNode(lineNumber, identifier, metrics)
 {
-    public IReadOnlyList<IdentifierNode> Inputs { get; } = [.. inputs];
-    public IReadOnlyList<IdentifierNode> Outputs { get; } = [.. outputs];
+    public IReadOnlyList<SingleIdentifierNode> Inputs { get; } = [.. inputs];
+    public IReadOnlyList<SingleIdentifierNode> Outputs { get; } = [.. outputs];
     public IReadOnlyList<InstanceDeclaration> Instances { get; } = [.. instances];
     public IReadOnlyList<RouteNode> Routes { get; } = [.. routes];
 

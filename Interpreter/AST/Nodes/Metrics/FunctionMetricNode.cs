@@ -5,9 +5,9 @@ using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Metrics;
-public class FunctionMetricNode(int lineNumber, ExpressionNode function) : MetricNode(lineNumber)
+public class FunctionMetricNode(int lineNumber, IdentifierNode function) : MetricNode(lineNumber)
 {
-    ExpressionNode Function { get; } = function;
+    IdentifierNode Function { get; } = function;
 
     public override string ToString() => $"FunctionMetricNode({Function})";
 

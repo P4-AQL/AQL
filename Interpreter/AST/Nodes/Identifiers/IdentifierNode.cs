@@ -3,9 +3,9 @@
 
 using Interpreter.AST.Nodes.NonTerminals;
 
-namespace Interpreter.AST.Nodes.Expressions;
+namespace Interpreter.AST.Nodes.Identifiers;
 
-public class IdentifierNode(int lineNumber, string identifier) : ExpressionNode(lineNumber)
+public class SingleIdentifierNode(int lineNumber, string identifier) : ExpressionNode(lineNumber)
 {
     public string Identifier { get; } = identifier;
 

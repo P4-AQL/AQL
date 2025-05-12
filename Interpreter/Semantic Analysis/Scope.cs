@@ -9,8 +9,8 @@ namespace Interpreter.SemanticAnalysis;
 public class Scope(Scope parentScope)
 {
     Scope? ParentScope = parentScope;
-    Dictionary<IdentifierNode, Node> VariableTable = [];
-    Dictionary<IdentifierNode, TypeNode> TypeTable = [];
+    Dictionary<SingleIdentifierNode, Node> VariableTable = [];
+    Dictionary<SingleIdentifierNode, TypeNode> TypeTable = [];
 
 
 }

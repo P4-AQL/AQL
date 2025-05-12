@@ -3,11 +3,11 @@
 
 using Interpreter.AST.Nodes.NonTerminals;
 
-namespace Interpreter.AST.Nodes.Expressions;
-public class QualifiedIdentifierNode(int lineNumber, IdentifierNode identifier, ExpressionNode expression) : ExpressionNode(lineNumber)
+namespace Interpreter.AST.Nodes.Identifiers;
+public class QualifiedIdentifierNode(int lineNumber, SingleIdentifierNode leftIdentifier, SingleIdentifierNode rightIdentifier) : IdentifierNode(lineNumber)
 {
-    public IdentifierNode Identifier { get; } = identifier;
-    public ExpressionNode Expression { get; } = expression;
+    public SingleIdentifierNode Identifier { get; } = leftIdentifier;
+    public SingleIdentifierNode Expression { get; } = rightIdentifier;
 
     public override string ToString() => $"QualifiedIdentifierNode({Identifier}, {Expression})";
 

@@ -181,7 +181,7 @@ stringKeyword: 'string';
 arrayType: '[' type ']';
 
 qualifiedIdList: qualifiedId (',' qualifiedId)*;
-qualifiedId: identifier ('.' identifier)*;
+qualifiedId: left = identifier '.' right = identifier;
 
 idList: identifier (',' identifier)*;
 identifier: IDENTIFIER;

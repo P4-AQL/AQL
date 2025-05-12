@@ -4,11 +4,12 @@
 
 
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Identifiers;
 
 namespace Interpreter.AST.Nodes.NonTerminals;
-public class NetworkNode(int lineNumber, IdentifierNode identifier, IEnumerable<MetricNode> metrics) : Node(lineNumber)
+public class NetworkNode(int lineNumber, SingleIdentifierNode identifier, IEnumerable<MetricNode> metrics) : Node(lineNumber)
 {
-    public IdentifierNode Identifier { get; } = identifier;
+    public SingleIdentifierNode Identifier { get; } = identifier;
     public IReadOnlyList<MetricNode> Metrics { get; } = [.. metrics];
 
     public override string ToString() => $"NetworkNode({Identifier}, ({string.Join(',', Metrics)}))";
