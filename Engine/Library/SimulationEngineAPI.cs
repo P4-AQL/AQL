@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using Microsoft.VisualBasic;
 
 public class SimulationEngineAPI
 {
@@ -8,6 +10,7 @@ public class SimulationEngineAPI
     private Dictionary<string, QueueNode> _queues = new();
     private Dictionary<string, QueueNode> _entryPoints = new();
     public Dictionary<string, NetworkStats> _networks = new();
+    public List<Entity> _entities = new();
     private List<QueueNode> _allNodes = new();
     private double _untilTime = 1000;
     private int _runCount = 1;
@@ -88,6 +91,19 @@ public class SimulationEngineAPI
         }
     }
 
+    public EntityMetrics GetEntityMetrics()  
+    {   
+        var exited = _entities.Where(e => e.DepartureTime > 0).ToList();    
+
+        return new EntityMetrics    
+        {   
+            Entered = _entities.Count,  
+            Exited = exited.Count,  
+            AvgTimeInNetwork = exited.Count > 0 ? exited.Average(e => e.TotalTime) : 0.0,   
+            AvgWaitTime = exited.Count > 0 ? exited.Average(e => e.TotalWaitingTime) : 0.0, 
+            AvgServiceTime = exited.Count > 0 ? exited.Average(e => e.TotalServiceTime) : 0.0   
+        };  
+    }
     public Dictionary<string, QueueMetrics> GetMetrics()
     {
         return _queues.ToDictionary(
@@ -97,11 +113,23 @@ public class SimulationEngineAPI
     }
 
     public Dictionary<string, NetworkMetrics> GetNetworkMetrics()
-{
-    return _networks.ToDictionary(
-        kvp => kvp.Key,
-        kvp => kvp.Value.GetMetrics()
-    );
-}
+    {
+        return _networks.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.GetMetrics()
+        );
+    }
+
+    public void PrintMetrics()
+    {
+        MetricsPrinter.Print(GetMetrics());
+        MetricsPrinter.PrintNetworkMetrics(GetNetworkMetrics());
+        MetricsPrinter.PrintEntityMetrics(_entities);
+    }
+
+    public List<Entity> GetEntities()
+    {
+        return _entities;
+    }
 
 }

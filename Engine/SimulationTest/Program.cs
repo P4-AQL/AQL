@@ -17,5 +17,6 @@ class Program
         var results = engine.GetMetrics();
         MetricsPrinter.Print(engine.GetMetrics());
         MetricsPrinter.PrintNetworkMetrics(engine.GetNetworkMetrics());
+        MetricsPrinter.PrintEntityMetrics(engine.GetEntities());
     }
 }
