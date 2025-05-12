@@ -5,7 +5,7 @@ using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Identifiers;
 
-public class SingleIdentifierNode(int lineNumber, string identifier) : ExpressionNode(lineNumber)
+public class SingleIdentifierNode(int lineNumber, string identifier) : IdentifierNode(lineNumber)
 {
     public string Identifier { get; } = identifier;
 

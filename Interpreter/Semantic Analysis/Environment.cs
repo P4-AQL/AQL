@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.NonTerminals;
@@ -10,7 +11,7 @@ public class Environment<T>
     private void Bind(string identifier, T @object) => Table.Add(identifier, @object);
 
 
-    public bool LookUp(string id, out T? @out) => Table.TryGetValue(id, out @out);
+    public bool LookUp(string id, [MaybeNullWhen(false)] out T @out) => Table.TryGetValue(id, out @out);
 
     /// <summary>
     /// Binds a identifier to the type table, if it does not exist.
