@@ -4,9 +4,10 @@ using System.Linq;
 
 public class SimulationEngineAPI
 {
-    private Simulation _simulation = new();
+    public Simulation _simulation = new();
     private Dictionary<string, QueueNode> _queues = new();
     private Dictionary<string, QueueNode> _entryPoints = new();
+    public Dictionary<string, NetworkStats> _networks = new();
     private List<QueueNode> _allNodes = new();
     private double _untilTime = 1000;
     private int _runCount = 1;
@@ -19,7 +20,7 @@ public class SimulationEngineAPI
 
     public void CreateQueue(string name, int servers, int capacity, Func<double> serviceTime, Func<double>? arrivalTime = null)
     {
-        var queue = new QueueNode(_simulation, name, servers, capacity, serviceTime, arrivalTime);
+        var queue = new QueueNode(this, name, servers, capacity, serviceTime, arrivalTime);
         _queues[name] = queue;
         _allNodes.Add(queue);
         if (arrivalTime != null)
@@ -45,8 +46,33 @@ public class SimulationEngineAPI
         }
     }
 
+    public void RecordNetworkEntry(Entity entity, string networkName, double time)
+    {
+        if (_networks.TryGetValue(networkName, out var stats))
+        {
+            stats.RecordEntry(entity, time);
+        }
+    }
+
+    public void RecordNetworkExit(Entity entity, string networkName, double time)
+    {
+        if (_networks.TryGetValue(networkName, out var stats))
+        {
+            stats.RecordExit(entity, time);
+        }
+    }
+
     public void RunSimulation()
     {
+        foreach (var queue in _allNodes)
+        {
+            string networkName = queue.Name.Split('.')[0];
+            if (!_networks.ContainsKey(networkName))
+                _networks[networkName] = new NetworkStats(networkName);
+
+            _networks[networkName].RegisterQueue(queue);
+        }
+
         for (int i = 0; i < _runCount; i++)
         {
             _simulation = new Simulation();
@@ -69,4 +95,13 @@ public class SimulationEngineAPI
             kvp => kvp.Value.GetMetrics()
         );
     }
+
+    public Dictionary<string, NetworkMetrics> GetNetworkMetrics()
+{
+    return _networks.ToDictionary(
+        kvp => kvp.Key,
+        kvp => kvp.Value.GetMetrics()
+    );
+}
+
 }
