@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 public class QueueNode
 {
-    private Simulation _sim;
+    private readonly SimulationEngineAPI _engine;
+    private Simulation Simulation => _engine._simulation;
+
     private readonly string _name;
     private readonly int _capacity;
     private readonly int _servers;
@@ -13,6 +15,7 @@ public class QueueNode
     private readonly Func<double>? _arrivalDist;
     public QueueNode? NextNode { get; set; } = null;
     public List<(QueueNode Node, double Prob)>? NextNodeChoices { get; set; } = null;
+    private string _network { get; set; } = string.Empty;
 
     private double _runBusyTime = 0.0;
     private int _runArrived = 0;
@@ -30,24 +33,30 @@ public class QueueNode
     private double SimulationTimePerRun { get; set; } = 0.0;
     public int MaxDroppedEntities { get; private set; } = 0;
     public int TotalDroppedEntities { get; private set; } = 0;
+    public string Network => _network;
+    public string Name => _name;
 
-    public QueueNode(Simulation sim, string name, int servers, int capacity, Func<double> serviceTimeDist, Func<double>? arrivalDist = null)
+    public QueueNode(SimulationEngineAPI engine, string name, int servers, int capacity, Func<double> serviceTimeDist, Func<double>? arrivalDist = null)
     {
-        _sim = sim;
+        _engine = engine;
         _name = name;
         _servers = servers;
         _capacity = capacity <= 0 ? int.MaxValue : capacity;
         _serviceTimeDist = serviceTimeDist;
         _arrivalDist = arrivalDist;
+        _network = name.Split('.')[0];
     }
 
     public void ScheduleInitialArrival()
     {
         if (_arrivalDist != null)
         {
-            _sim.Schedule(_arrivalDist(), () =>
+            Simulation.Schedule(_arrivalDist(), () =>
             {
-                var entity = new Entity(_sim.Now);
+                var entity = new Entity(Simulation.Now)
+                {
+                    CurrentNetworkName = _network
+                };
                 ProcessArrival(entity);
                 ScheduleInitialArrival();
             });
@@ -56,7 +65,7 @@ public class QueueNode
 
     public void ProcessArrival(Entity entity)
     {
-        entity.ArrivalTime = _sim.Now;
+        entity.ArrivalTime = Simulation.Now;
         _runArrived++;
 
         if (_busyServers + _waitingQueue.Count >= _capacity)
@@ -82,13 +91,13 @@ public class QueueNode
         _busyServers++;
         double serviceTime = _serviceTimeDist();
         _runBusyTime += serviceTime;
-        _sim.Schedule(serviceTime, () => ProcessDeparture(entity));
+        Simulation.Schedule(serviceTime, () => ProcessDeparture(entity));
     }
 
     public void ProcessDeparture(Entity entity)
     {
         _runServed++;
-        _runTotalWait += _sim.Now - entity.ArrivalTime;
+        _runTotalWait += Simulation.Now - entity.ArrivalTime;
         _busyServers--;
 
         if (_waitingQueue.Count > 0)
@@ -111,13 +120,20 @@ public class QueueNode
                     }
                 }
             }
-            _sim.Schedule(0, () => target.ProcessArrival(entity));
+
+            if (entity.CurrentNetworkName != target.Network)
+            {
+                _engine.RecordNetworkExit(entity, entity.CurrentNetworkName, Simulation.Now);
+                _engine.RecordNetworkEntry(entity, target.Network, Simulation.Now);
+                entity.CurrentNetworkName = target.Network;
+            }
+
+            Simulation.Schedule(0, () => target.ProcessArrival(entity));
         }
     }
 
     public void Reset(Simulation simulation)
     {
-        _sim = simulation;
         _waitingQueue.Clear();
         _busyServers = 0;
 
@@ -139,13 +155,12 @@ public class QueueNode
         _runMaxQueue = 0;
         _runBusyTime = 0.0;
         _runDroppedEntities = 0;
-
     }
 
     public QueueMetrics GetMetrics()
     {
-        SimulationTimePerRun = _sim.Now;
-        
+        SimulationTimePerRun = Simulation.Now;
+
         double avgWait = TotalServed > 0 ? TotalWaitingTime / TotalServed : 0;
         double utilization = (SimulationTimePerRun > 0 && Runs > 0)
             ? TotalBusyTime / (SimulationTimePerRun * Runs * _servers)
