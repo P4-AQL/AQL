@@ -396,6 +396,10 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
         return new(
             lineNumber: context.Start.Line,
+            customType: new(
+                lineNumber: context.Start.Line,
+                identifier: identifierNode
+            ),
             identifierNode,
             serviceNode,
             capacityNode,
@@ -443,6 +447,10 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
         return new(
             lineNumber: context.Start.Line,
+            customType: new(
+                lineNumber: context.Start.Line,
+                identifier: identifierNode
+            ),
             identifier: identifierNode,
             inputs: inputNodes,
             outputs: outputNodes,

@@ -11,6 +11,8 @@ using Interpreter.AST.Nodes.Programs;
 namespace Interpreter.SemanticAnalysis;
 public class Interpreter
 {
+    Environment globalEnvironment = new();
+
     public void InterpretProgram(ProgramNode node)
     {
         if (node is ImportNode importNode)
