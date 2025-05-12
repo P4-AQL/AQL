@@ -160,10 +160,10 @@ value:
 	| arrayIndexing;
 
 functionCall:
-	functionIdentifier = qualifiedId '(' parameters = expressionList? ')';
+	functionIdentifier = identifier '(' parameters = expressionList? ')';
 
 arrayInitialization: '{' expression* (',' expression)* '}';
-arrayIndexing: target = qualifiedId '[' index = expression ']';
+arrayIndexing: target = identifier '[' index = expression ']';
 
 type: typeKeyword | arrayType;
 

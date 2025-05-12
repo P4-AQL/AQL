@@ -840,7 +840,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override FunctionCallNode VisitFunctionCall(AQLParser.FunctionCallContext context)
     {
-        IdentifierNode functionIdentifierNode = VisitQualifiedId(context.functionIdentifier);
+        SingleIdentifierNode functionIdentifierNode = VisitIdentifier(context.functionIdentifier);
 
         IEnumerable<ExpressionNode>? parameters = null;
         if (context.parameters != null)
@@ -896,7 +896,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override IndexingNode VisitArrayIndexing([NotNull] AQLParser.ArrayIndexingContext context)
     {
-        IdentifierNode targetNode = VisitQualifiedId(context.target);
+        SingleIdentifierNode targetNode = VisitIdentifier(context.target);
         ExpressionNode indexNode = VisitExpression(context.index);
 
         return new(

@@ -1,17 +1,23 @@
+
+
+
 using System.Diagnostics.CodeAnalysis;
-using Interpreter.AST.Nodes;
-using Interpreter.AST.Nodes.Definitions;
-using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.SemanticAnalysis;
-public class Environment<T>
+public class Table<T>()
 {
     // Identifier -> type
-    private readonly Dictionary<string, T> Table = [];
-    private void Bind(string identifier, T @object) => Table.Add(identifier, @object);
+    private readonly Dictionary<string, T> Dictionary = [];
+
+    public Table(Table<T> copy) : this()
+    {
+        Dictionary = new Dictionary<string, T>(copy.Dictionary);
+    }
+
+    public void ForceBind(string identifier, T @object) => Dictionary[identifier] = @object;
 
 
-    public bool LookUp(string id, [MaybeNullWhen(false)] out T @out) => Table.TryGetValue(id, out @out);
+    public bool Lookup(string id, [MaybeNullWhen(false)] out T @out) => Dictionary.TryGetValue(id, out @out);
 
     /// <summary>
     /// Binds a identifier to the type table, if it does not exist.
@@ -22,10 +28,10 @@ public class Environment<T>
     public bool TryBindIfNotExists(string identifier, T @object)
     {
         //Bind failed - variable already exists
-        if (LookUp(identifier, out T? _)) return false;
+        if (Lookup(identifier, out T? _)) return false;
 
         //Bind succeeded
-        Bind(identifier, @object);
+        ForceBind(identifier, @object);
         return true;
 
     }

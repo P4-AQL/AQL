@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/thoma/Documents/GitHub/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
+// Generated from c:/Users/thoma/Documents/VSCODE/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -3451,10 +3451,10 @@ public partial class AQLParser : Parser {
 	}
 
 	public partial class FunctionCallContext : ParserRuleContext {
-		public QualifiedIdContext functionIdentifier;
+		public IdentifierContext functionIdentifier;
 		public ExpressionListContext parameters;
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIdContext qualifiedId() {
-			return GetRuleContext<QualifiedIdContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
+			return GetRuleContext<IdentifierContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionListContext expressionList() {
 			return GetRuleContext<ExpressionListContext>(0);
@@ -3481,7 +3481,7 @@ public partial class AQLParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 525;
-			_localctx.functionIdentifier = qualifiedId();
+			_localctx.functionIdentifier = identifier();
 			State = 526;
 			Match(T__2);
 			State = 528;
@@ -3585,10 +3585,10 @@ public partial class AQLParser : Parser {
 	}
 
 	public partial class ArrayIndexingContext : ParserRuleContext {
-		public QualifiedIdContext target;
+		public IdentifierContext target;
 		public ExpressionContext index;
-		[System.Diagnostics.DebuggerNonUserCode] public QualifiedIdContext qualifiedId() {
-			return GetRuleContext<QualifiedIdContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
+			return GetRuleContext<IdentifierContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
@@ -3614,7 +3614,7 @@ public partial class AQLParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 548;
-			_localctx.target = qualifiedId();
+			_localctx.target = identifier();
 			State = 549;
 			Match(T__17);
 			State = 550;
@@ -4481,13 +4481,13 @@ public partial class AQLParser : Parser {
 		3,136,68,0,519,524,3,134,67,0,520,524,3,132,66,0,521,524,3,106,53,0,522,
 		524,3,108,54,0,523,515,1,0,0,0,523,516,1,0,0,0,523,517,1,0,0,0,523,518,
 		1,0,0,0,523,519,1,0,0,0,523,520,1,0,0,0,523,521,1,0,0,0,523,522,1,0,0,
-		0,524,103,1,0,0,0,525,526,3,126,63,0,526,528,5,3,0,0,527,529,3,58,29,0,
+		0,524,103,1,0,0,0,525,526,3,130,65,0,526,528,5,3,0,0,527,529,3,58,29,0,
 		528,527,1,0,0,0,528,529,1,0,0,0,529,530,1,0,0,0,530,531,5,4,0,0,531,105,
 		1,0,0,0,532,536,5,8,0,0,533,535,3,60,30,0,534,533,1,0,0,0,535,538,1,0,
 		0,0,536,534,1,0,0,0,536,537,1,0,0,0,537,543,1,0,0,0,538,536,1,0,0,0,539,
 		540,5,6,0,0,540,542,3,60,30,0,541,539,1,0,0,0,542,545,1,0,0,0,543,541,
 		1,0,0,0,543,544,1,0,0,0,544,546,1,0,0,0,545,543,1,0,0,0,546,547,5,13,0,
-		0,547,107,1,0,0,0,548,549,3,126,63,0,549,550,5,18,0,0,550,551,3,60,30,
+		0,547,107,1,0,0,0,548,549,3,130,65,0,549,550,5,18,0,0,550,551,3,60,30,
 		0,551,552,5,19,0,0,552,109,1,0,0,0,553,556,3,112,56,0,554,556,3,122,61,
 		0,555,553,1,0,0,0,555,554,1,0,0,0,556,111,1,0,0,0,557,562,3,114,57,0,558,
 		562,3,116,58,0,559,562,3,118,59,0,560,562,3,120,60,0,561,557,1,0,0,0,561,

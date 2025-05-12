@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "Interpreter\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedProject", "SharedProject\SharedProject.csproj", "{23F5D4EE-D200-4451-979D-9CF15281C156}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{B89C9C63-F926-4226-A9E6-BF6982C5E9DB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Library\Engine.csproj", "{C2E280F8-72D7-427D-93EF-379DE824EDA9}"
 EndProject
 Global
