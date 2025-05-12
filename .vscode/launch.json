@@ -11,6 +11,12 @@
       "cwd": "${workspaceFolder}/Engine/SimulationTest",
       "stopAtEntry": false,
       "console": "internalConsole"
+    },
+    {
+      "name": "C#: Interpreter Debug",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/Interpreter/Interpreter.csproj"
     }
   ]
 }

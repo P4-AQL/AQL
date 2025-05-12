@@ -141,6 +141,7 @@ public class QueueNode
         else
         {
             _engine.RecordNetworkExit(entity, entity.CurrentNetworkName, Simulation.Now);
+            
         }
     }
 
