@@ -17,7 +17,7 @@ public class Interpreter
     {
         if (node is ImportNode importNode)
         {
-
+            Console.WriteLine("We imported" + importNode.Namespace.Identifier);
         }
         else if (node is DefinitionProgramNode definitionNode)
         {
@@ -29,6 +29,7 @@ public class Interpreter
     {
         if (node is FunctionNode functionNode)
         {
+            // bind to
             InterpretStatement(functionNode.Body);
         }
         else if (node is ConstDeclarationNode constNode)
