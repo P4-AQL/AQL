@@ -1,0 +1,44 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET Build & Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build All Projects
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - name: Restore dependencies
+        run: dotnet restore AQL.sln
+
+      - name: Build Engine/Library
+        run: dotnet build Engine/Library/Engine.csproj --configuration Release
+
+      - name: Build SimulationTest
+        run: dotnet build Engine/SimulationTest/SimulationTest.csproj --configuration Release
+
+      - name: Build Interpreter
+        run: dotnet build Interpreter/Interpreter.csproj --configuration Release
+
+      - name: Build SharedProject
+        run: dotnet build SharedProject/SharedProject.csproj --configuration Release
+
+      # OPTIONAL: Run tests if you have any
+      - name: Run tests
+        run: dotnet test Tests/Tests.csproj --configuration Release
+        if: ${{ exists('Tests/Tests.csproj') }}
