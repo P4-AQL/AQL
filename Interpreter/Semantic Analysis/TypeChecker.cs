@@ -5,17 +5,17 @@ using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
 using Interpreter.AST.Nodes.Statements;
+using Interpreter.AST.Nodes.Types;
 
 namespace Interpreter.SemanticAnalysis;
 public class TypeChecker
 {
+    // E
     Table<TypeNode> environment = new();
-    Table<Table<TypeNode>> localNetworkScopesEnvironment = new();
     Table<LiteralNode> constEnvironment = new();
 
-
-
-
+    // Gamma
+    Table<Table<TypeNode>> localNetworkScopesEnvironment = new();
 
     // env for definitions and localEnv for statements? Return localEnv as new so it is not referenced
     public List<string> TypeCheckNode(Node node, List<string> errors)
@@ -32,6 +32,9 @@ public class TypeChecker
 
     
         // Check the node and create localEnv if neccesary
+        if (node is ImportNode importNode) {
+
+        }
         else if (node is DefinitionNode defNode)
         {
             // We don't need localEnv because these definition can only be global.
@@ -77,7 +80,7 @@ public class TypeChecker
                 // E ⊢ e : T 
                 // T is not const- int, doub, or bool
 
-            if ()
+            
 
         }
         else if (statementNode is IfElseNode)
@@ -115,29 +118,29 @@ public class TypeChecker
 
 
 
-    private bool CheckExpressionMatchesLiteral(ExpressionNode expressionNode, LiteralNode expectedLiteral) 
+    private TypeNode FindExpressionType(ExpressionNode expressionNode) 
     {
         return expressionNode switch {
-            // Further expressions
-            AddNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
-            AndNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
-            DivisionNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
-            EqualNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
-            FunctionCallNode node => CheckNodeMatchesLiteral(node, expectedLiteral),
-            IdentifierExpressionNode node => CheckNodeMatchesLiteral(node, expectedLiteral),
-            LessThanNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
-            MultiplyNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
-            NegativeNode node => (CheckExpressionMatchesLiteral(node.Inner, expectedLiteral)),
-            NotNode node => (CheckExpressionMatchesLiteral(node.Inner, expectedLiteral)),
-            ParenthesesNode node => (CheckExpressionMatchesLiteral(node.Inner, expectedLiteral)),
+            // Further expressions. Clearly not optimized
+            AddNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) ? FindExpressionType(node.Left) : throw new("Error: Expression not found")),
+            AndNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) ? FindExpressionType(node.Left) : throw new("Error: Expression not found")),
+            DivisionNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) ? FindExpressionType(node.Left) : throw new("Error: Expression not found")),
+            EqualNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) ? FindExpressionType(node.Left) : throw new("Error: Expression not found")),
+            FunctionCallNode node => FindExpressionType(node),
+            IdentifierExpressionNode node => FindExpressionType(node),
+            LessThanNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) ? FindExpressionType(node.Left) : throw new("Error: Expression not found")),
+            MultiplyNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) ? FindExpressionType(node.Left) : throw new("Error: Expression not found")),
+            NegativeNode node => (FindExpressionType(node.Inner)),
+            NotNode node => (FindExpressionType(node.Inner)),
+            ParenthesesNode node => (FindExpressionType(node.Inner)),
 
             // Literals
-            ArrayLiteralNode node => (node == expectedLiteral),
-            BoolLiteralNode node => (node == expectedLiteral),
-            DoubleLiteralNode node => (node == expectedLiteral),
-            IntLiteralNode node => (node == expectedLiteral),
-            StringLiteralNode node => (node == expectedLiteral),
-            LiteralNode node => (node == expectedLiteral),
+            ArrayLiteralNode node => new ArrayTypeNode(0, FindExpressionType(node.Elements[0])),
+            BoolLiteralNode => new BoolTypeNode(0),
+            DoubleLiteralNode => new DoubleTypeNode(0),
+            IntLiteralNode => new IntTypeNode(0),
+            StringLiteralNode => new StringTypeNode(0),
+            LiteralNode => new StringTypeNode(0),
             _ => throw new("Error: Expression not found")
         };
         throw new NotImplementedException();
@@ -174,16 +177,12 @@ public class TypeChecker
             // x not in domain E
             // e : T
             // E[x -> T]
-            
-            // 
 
             // Check if expression is correct type else add error
-            if (cdNode.GetType() != cdNode.Expression.GetType()) errors.Add("Error: Expression type must match declaration type.");
+            if (FindExpressionType(cdNode.Expression) != cdNode.Type) errors.Add("Error: Expression type must match declaration type.");
 
             // Try binding and error if fail
-            if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Const already declared.");
-
-    
+            if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Identifier already declared.");
         }
         else if (defNode is FunctionNode funcNode)
         {
