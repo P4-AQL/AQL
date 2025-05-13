@@ -12,7 +12,7 @@ public class TypeChecker
 {
     // E
     Table<TypeNode> environment = new();
-    Table<LiteralNode> constEnvironment = new();
+    Table<TypeNode> constEnvironment = new();
 
     // Gamma
     Table<Table<TypeNode>> localNetworkScopesEnvironment = new();
@@ -63,39 +63,61 @@ public class TypeChecker
     }
 
     private void TypeCheckStatementNode(Node statementNode, List<String> errors){
-        if (statementNode is AssignNode){
+        if (statementNode is AssignNode assignNode){
             // E ⊢ x = e : ok   if 
                 // E(x) = T 
                 // E ⊢ e : T 
                 // T is not const- int, doub, or bool
+            environment.Lookup(assignNode.Identifier.Identifier, out TypeNode? nodeType);
+            
+            if (nodeType is null)
+            {
+                errors.Add("This identifier is not found");
+            }
+            else if (FindExpressionType(assignNode.Expression) != nodeType)
+            {
+                errors.Add("The expression type does not match the idetifier");
+            }
+            
+            if(constEnvironment.Lookup(assignNode.Identifier.Identifier, out TypeNode? _))
+            {
+                errors.Add("This idetifier is a const");
+            }
 
+        }
+        else if (statementNode is IfElseNode ifElseNode)
+        {
+            // E ⊢ if e then S_1 else S_2 : ok 
+                // E ⊢ e : bool 
+                // E ⊢ S_1 : ok 
+                // E ⊢ S_2 : ok
             
 
         }
-        else if (statementNode is IfElseNode)
+        else if (statementNode is ReturnNode returnNode)
         {
 
         }
-        else if (statementNode is ReturnNode)
+        else if (statementNode is SkipNode skipNode)
         {
 
         }
-        else if (statementNode is SkipNode)
+        else if (statementNode is StatementCompositionNode statementCompositionNode)
         {
 
         }
-        else if (statementNode is StatementCompositionNode)
+        else if (statementNode is TypeAndIdentifier typeAndIdentifier)
         {
 
         }
-        else if (statementNode is TypeAndIdentifier)
-        {
+        else if (statementNode is VariableDeclarationNode variableDeclarationNode){
+            // E ⊢ Tx = e; S 
+                // x not in dom(E)
+                // E ⊢ e: T
+                // E [x ⊢> T] ⊢ S : ok 
 
         }
-        else if (statementNode is VariableDeclarationNode){
-
-        }
-        else if (statementNode is WhileNode)
+        else if (statementNode is WhileNode whileNode)
         {
 
         }
