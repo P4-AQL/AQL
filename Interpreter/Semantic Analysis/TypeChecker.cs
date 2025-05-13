@@ -1,18 +1,24 @@
 using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Definitions;
+using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.SemanticAnalysis;
 public class TypeChecker
 {
+    Table<TypeNode> environment = new();
+    Table<Table<TypeNode>> localNetworkScopesEnvironment = new();
+    Table<LiteralNode> constEnvironment = new();
+
     // env for definitions and localEnv for statements? Return localEnv as new so it is not referenced
-    public List<string> TypeCheckNode(Node node, Table<TypeNode> globalEnvironment, Table<Table<TypeNode>> localNetworkScopesEnvironment, List<string> errors, Table<TypeNode>? localEnv = null)
+    public List<string> TypeCheckNode(Node node, List<string> errors)
     {
         // Check the node and create localEnv if neccesary
         if (node is DefinitionNode defNode)
         {
             // We don't need localEnv because these definition can only be global.
-            TypeCheckDefinitionNode(defNode, globalEnvironment, localNetworkScopesEnvironment, errors);
+            TypeCheckDefinitionNode(defNode, errors);
 
         }
         else if (node is StatementNode stmtNode)
@@ -20,68 +26,114 @@ public class TypeChecker
 
         }
 
+        // Check children
+        TypeCheckChildren(node, errors);
 
         // Return errors to parent node type check
         return errors;
     }
 
-    private void TypeCheckChildren(Node parentNode, Table<TypeNode> globalEnvironment, Table<Table<TypeNode>> localNetworkScopesEnvironment, List<string> errors, Table<TypeNode>? localEnv = null)
+    private void TypeCheckChildren(Node parentNode, List<string> errors)
     {
         //Type check child nodes
         foreach (Node childNode in parentNode.GetChildren())
         {
-            if (localEnv is null)
-            {
-                // localEnv being null means that we are in global scope
-                errors.AddRange(TypeCheckNode(childNode, globalEnvironment, localNetworkScopesEnvironment, errors, null));
-            }
-            else
-            {
-                errors.AddRange(TypeCheckNode(childNode, globalEnvironment, localNetworkScopesEnvironment, errors, localEnv));
-            }
+            errors.AddRange(TypeCheckNode(childNode, errors));
         }
     }
 
-    private TypeNode GetTypeOfExpression(ExpressionNode expressionNode) {
+    private bool CheckExpressionMatchesLiteral(ExpressionNode expressionNode, LiteralNode expectedLiteral) 
+    {
+        return expressionNode switch {
+            // Further expressions
+            AddNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
+            AndNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
+            DivisionNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
+            EqualNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
+            FunctionCallNode node => CheckNodeMatchesLiteral(node, expectedLiteral),
+            IdentifierExpressionNode node => CheckNodeMatchesLiteral(node, expectedLiteral),
+            LessThanNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
+            MultiplyNode node => (CheckExpressionMatchesLiteral(node.Left, expectedLiteral) && CheckExpressionMatchesLiteral(node.Right, expectedLiteral)),
+            NegativeNode node => (CheckExpressionMatchesLiteral(node.Inner, expectedLiteral)),
+            NotNode node => (CheckExpressionMatchesLiteral(node.Inner, expectedLiteral)),
+            ParenthesesNode node => (CheckExpressionMatchesLiteral(node.Inner, expectedLiteral)),
+
+            // Literals
+            ArrayLiteralNode node => (node == expectedLiteral),
+            BoolLiteralNode node => (node == expectedLiteral),
+            DoubleLiteralNode node => (node == expectedLiteral),
+            IntLiteralNode node => (node == expectedLiteral),
+            StringLiteralNode node => (node == expectedLiteral),
+            LiteralNode node => (node == expectedLiteral),
+            _ => throw new("Error: Expression not found")
+        };
         throw new NotImplementedException();
     }
 
-    private void TypeCheckDefinitionNode(Node defNode, Table<TypeNode> globalEnvironment, Table<Table<TypeNode>> localNetworkScopesEnvironment, List<string> errors)
+    private bool CheckNodeMatchesLiteral(Node node, LiteralNode expectedLiteral) 
+    {
+        if (node is FunctionCallNode funcNode) {
+            environment.Lookup(funcNode.Identifier.Identifier, out TypeNode? returnType);
+
+            if (returnType is null) return false;
+            
+            return returnType.GetType() == expectedLiteral.GetType();
+        }
+        else if (node is IdentifierExpressionNode idNode) {
+            if (idNode.Identifier is SingleIdentifierNode singleIdNode) {
+                environment.Lookup(singleIdNode.Identifier, out TypeNode? type);
+
+                if (type is null) return false;
+                
+                return type.GetType() == expectedLiteral.GetType();
+            }
+            else {
+                throw new NotImplementedException("We only look at single identifiers currently.");
+            }
+        }
+        return false;
+    }
+
+    private void TypeCheckDefinitionNode(Node defNode, List<string> errors)
     {
         if (defNode is ConstDeclarationNode cdNode)
         {
-            // Try binding and error if fail
-            if (!globalEnvironment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Const already declared.");
+            // x not in domain E
+            // e : T
+            // E[x -> T]
+            
+            // 
 
             // Check if expression is correct type else add error
-            TypeNode exprType = GetTypeOfExpression(cdNode.Expression);
-            if (!(cdNode.Type == exprType)) errors.Add("Error: Expression type must match ${cdNode.type}");
+            if (cdNode.GetType() != cdNode.Expression.GetType()) errors.Add("Error: Expression type must match declaration type.");
 
-            // Check children
-            TypeCheckChildren(cdNode, globalEnvironment, localNetworkScopesEnvironment, errors, null);
+            // Try binding and error if fail
+            if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Const already declared.");
+            
+
         }
         else if (defNode is FunctionNode funcNode)
         {
             // Try binding and error if fail
-            if (!globalEnvironment.TryBindIfNotExists(funcNode.Identifier.Identifier, funcNode.ReturnType)) errors.Add("Error: Function already declared.");
+            if (!environment.TryBindIfNotExists(funcNode.Identifier.Identifier, funcNode.ReturnType)) errors.Add("Error: Function already declared.");
 
             // Check children
-            TypeCheckChildren(funcNode, globalEnvironment, localNetworkScopesEnvironment, errors, new Table<TypeNode>());
+            TypeCheckChildren(funcNode, errors);
 
         }
         else if (defNode is NetworkDefinitionNode netNode)
         {
             // Try binding and error if fail
-            if (!globalEnvironment.TryBindIfNotExists(netNode.Network.Identifier.Identifier, netNode.Network.CustomType)) errors.Add("Error: Network already declared.");
+            if (!environment.TryBindIfNotExists(netNode.Network.Identifier.Identifier, netNode.Network.CustomType)) errors.Add("Error: Network already declared.");
             // Check children
-            TypeCheckChildren(netNode, globalEnvironment, localNetworkScopesEnvironment, errors, new Table<TypeNode>());
+            TypeCheckChildren(netNode, errors);
 
         }
         else if (defNode is SimulateNode simNode)
         {
             // Type checking doesn't care about simulate
             // Check children
-            TypeCheckChildren(defNode, globalEnvironment, localNetworkScopesEnvironment, errors, null);
+            TypeCheckChildren(defNode, errors);
 
         }
     }
