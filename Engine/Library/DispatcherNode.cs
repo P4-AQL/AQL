@@ -1,6 +1,6 @@
 using System;
 
-public class DispatcherNode : Node
+public class DispatcherNode : Engine.Node
 {
     private readonly SimulationEngineAPI _engine;
     private Simulation Simulation => _engine._simulation;
