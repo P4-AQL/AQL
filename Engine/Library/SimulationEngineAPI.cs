@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using Microsoft.VisualBasic;
 
 public class SimulationEngineAPI
 {
     public Simulation _simulation = new();
     private Dictionary<string, QueueNode> _queues = new();
-    private Dictionary<string, QueueNode> _entryPoints = new();
+    private Dictionary<string, DispatcherNode> _dispatchers = new();
     public Dictionary<string, NetworkStats> _networks = new();
+    public List<Entity> _entities = new();
     private List<QueueNode> _allNodes = new();
+    private Dictionary<string, Node> _nodes = new();
     private double _untilTime = 1000;
     private int _runCount = 1;
 
@@ -18,31 +22,38 @@ public class SimulationEngineAPI
         _runCount = runCount;
     }
 
-    public void CreateQueue(string name, int servers, int capacity, Func<double> serviceTime, Func<double>? arrivalTime = null)
+    public void CreateDispatcherNode(string name, Func<double> arrivalDist) {
+        var dispatcher = new DispatcherNode(this, name, arrivalDist);
+        _nodes.Add(name, dispatcher);
+        _dispatchers[name] = dispatcher;
+    }
+    public void CreateQueueNode(string name, int servers, int capacity, Func<double> serviceTime, Func<double>? arrivalTime = null)
     {
         var queue = new QueueNode(this, name, servers, capacity, serviceTime, arrivalTime);
+        _nodes.Add(name, queue);
         _queues[name] = queue;
         _allNodes.Add(queue);
-        if (arrivalTime != null)
-            _entryPoints[name] = queue;
     }
 
-    public void ConnectQueues(string from, string to, double probability = 1.0)
+    public void ConnectNode(string from, string to, double probability = 1.0)
     {
-        var fromQueue = _queues[from];
-        var toQueue = _queues[to];
+        if (!_nodes.TryGetValue(from, out var fromNode))
+            throw new ArgumentException($"Node '{from}' not found.");
 
-        if (fromQueue.NextNodeChoices == null && probability < 1.0)
+        if (!_queues.TryGetValue(to, out var toQueue))
+            throw new ArgumentException($"Queue '{to}' not found.");
+
+        if (fromNode.NextNodeChoices == null && probability < 1.0)
         {
-            fromQueue.NextNodeChoices = new List<(QueueNode, double)> { (toQueue, probability) };
+            fromNode.NextNodeChoices = new List<(QueueNode, double)> { (toQueue, probability) };
         }
-        else if (fromQueue.NextNodeChoices != null)
+        else if (fromNode.NextNodeChoices != null)
         {
-            fromQueue.NextNodeChoices.Add((toQueue, probability));
+            fromNode.NextNodeChoices.Add((toQueue, probability));
         }
         else
         {
-            fromQueue.NextNode = toQueue;
+            fromNode.NextNode = toQueue;
         }
     }
 
@@ -76,18 +87,32 @@ public class SimulationEngineAPI
         for (int i = 0; i < _runCount; i++)
         {
             _simulation = new Simulation();
+
+            foreach (var dispatcher in _dispatchers)
+                dispatcher.Value.ScheduleInitialArrival();
+
+            _simulation.Run(_untilTime);
+
             foreach (var q in _allNodes)
             {
                 q.Reset(_simulation);
             }
-
-            foreach (var entry in _entryPoints.Values)
-                entry.ScheduleInitialArrival();
-
-            _simulation.Run(_untilTime);
         }
     }
 
+    public EntityMetrics GetEntityMetrics()  
+    {   
+        var exited = _entities.Where(e => e.DepartureTime > 0).ToList();    
+
+        return new EntityMetrics    
+        {   
+            Entered = _entities.Count,  
+            Exited = exited.Count,  
+            AvgTimeInNetwork = exited.Count > 0 ? exited.Average(e => e.TotalTime) : 0.0,   
+            AvgWaitTime = exited.Count > 0 ? exited.Average(e => e.TotalWaitingTime) : 0.0, 
+            AvgServiceTime = exited.Count > 0 ? exited.Average(e => e.TotalServiceTime) : 0.0   
+        };  
+    }
     public Dictionary<string, QueueMetrics> GetMetrics()
     {
         return _queues.ToDictionary(
@@ -97,11 +122,16 @@ public class SimulationEngineAPI
     }
 
     public Dictionary<string, NetworkMetrics> GetNetworkMetrics()
-{
-    return _networks.ToDictionary(
-        kvp => kvp.Key,
-        kvp => kvp.Value.GetMetrics()
-    );
-}
+    {
+        return _networks.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.GetMetrics()
+        );
+    }
+
+    public List<Entity> GetEntities()
+    {
+        return _entities;
+    }
 
 }
