@@ -384,7 +384,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             numberOfServersNode = VisitExpression(context.numberOfServers);
         }
 
-        IEnumerable<MetricNode> metricNodes;
+        IEnumerable<NamedMetricNode> metricNodes;
         if (context.metrics() is null)
         {
             metricNodes = [];
@@ -738,15 +738,15 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return routeValuePairNodes;
     }
 
-    public override IEnumerable<MetricNode> VisitMetrics([NotNull] AQLParser.MetricsContext context)
+    public override IEnumerable<NamedMetricNode> VisitMetrics([NotNull] AQLParser.MetricsContext context)
     {
-        List<MetricNode> metrics = [];
+        List<NamedMetricNode> metrics = [];
 
         if (context.metric() != null)
         {
             foreach (AQLParser.MetricContext metricContext in context.metric())
             {
-                MetricNode metric = VisitMetric(metricContext);
+                NamedMetricNode metric = VisitMetric(metricContext);
                 metrics.Add(metric);
             }
         }
@@ -754,18 +754,11 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return metrics;
     }
 
-    public override MetricNode VisitMetric([NotNull] AQLParser.MetricContext context)
+    public override NamedMetricNode VisitMetric([NotNull] AQLParser.MetricContext context)
     {
         if (context.namedMetric() != null)
         {
             return VisitNamedMetric(context.namedMetric());
-        }
-        else if (context.functionMetric != null)
-        {
-            return new FunctionMetricNode(
-                lineNumber: context.Start.Line,
-                function: VisitQualifiedId(context.functionMetric)
-            );
         }
         else
         {
