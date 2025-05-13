@@ -32,22 +32,11 @@ public class TypeChecker
         }
         else if (node is StatementNode statementNode)
         {
-            TypeCheckStatementNode(statementNode, errors);
+            TypeCheckStatementNode(statementNode, errors, null);
         }
-
-        // Check children
-        TypeCheckChildren(node, errors);
 
         // Return errors to parent node type check
         return errors;
-    }
-    private void TypeCheckChildren(Node parentNode, List<string> errors)
-    {
-        //Type check child nodes
-        foreach (Node childNode in parentNode.GetChildren())
-        {
-            errors.AddRange(TypeCheckNode(childNode, errors));
-        }
     }
 
     private void TypeCheckProgramNode(Node programNode, List<String> errors)
@@ -62,7 +51,64 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckStatementNode(Node statementNode, List<String> errors){
+    private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
+    {
+        if (defNode is ConstDeclarationNode cdNode)
+        {
+            // x not in domain E
+            // e : T
+            // E[x -> T]
+
+            // Check if expression is correct type else add error
+            if (FindExpressionType(cdNode.Expression) != cdNode.Type) errors.Add("Error: Expression type must match declaration type.");
+
+            // Try binding and error if fail
+            if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Identifier already declared.");
+        }
+        else if (defNode is FunctionNode funcNode)
+        {
+            // x not in dom(E)
+            // bind function identifier to E
+            // bind function parameters to new E and pass them to S
+            // pass new E to next definition (also happens later automatically)
+            
+            // Try binding and error if fail
+            if (!environment.TryBindIfNotExists(funcNode.Identifier.Identifier, funcNode.ReturnType)) errors.Add("Error: Function already declared.");
+
+            // bind function parameters to new E and pass them to S
+            if () {
+                Table<TypeNode> newEnvironment = environment;
+                // bind function identifier
+                newEnvironment.TryBindIfNotExists(funcNode.Identifier.Identifier, funcNode);
+
+                // bind function parameters
+                foreach (TypeAndIdentifier parameter in funcNode.Parameters)
+                {
+                    newEnvironment.TryBindIfNotExists()
+                }
+                
+
+                TypeCheckStatementNode(funcNode.Body, errors, newEnvironment);
+            }
+            
+        }
+        else if (defNode is NetworkDefinitionNode netNode)
+        {
+            // Try binding and error if fail
+            if (!environment.TryBindIfNotExists(netNode.Network.Identifier.Identifier, netNode.Network.CustomType)) errors.Add("Error: Network already declared.");
+
+        }
+        else if (defNode is SimulateNode simNode)
+        {
+            // Type checking doesn't care about simulate
+        }
+    }
+
+    private void TypeCheckStatementNode(StatementNode statementNode, List<String> errors, Table<TypeNode>? localEnvironment){
+        if (localEnvironment is not null) {
+            environment = localEnvironment;
+        }
+
         if (statementNode is AssignNode assignNode){
             // E ⊢ x = e : ok   if 
                 // E(x) = T 
@@ -103,10 +149,6 @@ public class TypeChecker
 
         }
         else if (statementNode is StatementCompositionNode statementCompositionNode)
-        {
-
-        }
-        else if (statementNode is TypeAndIdentifier typeAndIdentifier)
         {
 
         }
@@ -179,45 +221,5 @@ public class TypeChecker
             }
         }
         return false;
-    }
-
-    private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
-    {
-        if (defNode is ConstDeclarationNode cdNode)
-        {
-            // x not in domain E
-            // e : T
-            // E[x -> T]
-
-            // Check if expression is correct type else add error
-            if (FindExpressionType(cdNode.Expression) != cdNode.Type) errors.Add("Error: Expression type must match declaration type.");
-
-            // Try binding and error if fail
-            if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Identifier already declared.");
-        }
-        else if (defNode is FunctionNode funcNode)
-        {
-            // Try binding and error if fail
-            if (!environment.TryBindIfNotExists(funcNode.Identifier.Identifier, funcNode.ReturnType)) errors.Add("Error: Function already declared.");
-
-            // Check children
-            TypeCheckChildren(funcNode, errors);
-
-        }
-        else if (defNode is NetworkDefinitionNode netNode)
-        {
-            // Try binding and error if fail
-            if (!environment.TryBindIfNotExists(netNode.Network.Identifier.Identifier, netNode.Network.CustomType)) errors.Add("Error: Network already declared.");
-            // Check children
-            TypeCheckChildren(netNode, errors);
-
-        }
-        else if (defNode is SimulateNode simNode)
-        {
-            // Type checking doesn't care about simulate
-            // Check children
-            TypeCheckChildren(defNode, errors);
-
-        }
     }
 }
