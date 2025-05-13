@@ -3,6 +3,8 @@ using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.NonTerminals;
+using Interpreter.AST.Nodes.Programs;
+using Interpreter.AST.Nodes.Statements;
 
 namespace Interpreter.SemanticAnalysis;
 public class TypeChecker
@@ -11,11 +13,26 @@ public class TypeChecker
     Table<Table<TypeNode>> localNetworkScopesEnvironment = new();
     Table<LiteralNode> constEnvironment = new();
 
+
+
+
+
     // env for definitions and localEnv for statements? Return localEnv as new so it is not referenced
     public List<string> TypeCheckNode(Node node, List<string> errors)
     {
+
+        if (node is ProgramNode programNode){
+            TypeCheckProgramNode(programNode, errors);
+        }
+
+        else if (node is StatementNode statementNode)
+        {
+            TypeCheckStatementNode(statementNode, errors);
+        }
+
+    
         // Check the node and create localEnv if neccesary
-        if (node is DefinitionNode defNode)
+        else if (node is DefinitionNode defNode)
         {
             // We don't need localEnv because these definition can only be global.
             TypeCheckDefinitionNode(defNode, errors);
@@ -23,7 +40,7 @@ public class TypeChecker
         }
         else if (node is StatementNode stmtNode)
         {
-
+            
         }
 
         // Check children
@@ -32,7 +49,6 @@ public class TypeChecker
         // Return errors to parent node type check
         return errors;
     }
-
     private void TypeCheckChildren(Node parentNode, List<string> errors)
     {
         //Type check child nodes
@@ -41,6 +57,63 @@ public class TypeChecker
             errors.AddRange(TypeCheckNode(childNode, errors));
         }
     }
+
+    private void TypeCheckProgramNode(Node programNode, List<String> errors)
+    {
+        if (programNode is ImportNode)
+        {
+
+        }
+        else if (programNode is DefinitionProgramNode)
+        {
+
+        }
+    }
+
+    private void TypeCheckStatementNode(Node statementNode, List<String> errors){
+        if (statementNode is AssignNode){
+            // E ⊢ x = e : ok   if 
+                // E(x) = T 
+                // E ⊢ e : T 
+                // T is not const- int, doub, or bool
+
+            if ()
+
+        }
+        else if (statementNode is IfElseNode)
+        {
+
+        }
+        else if (statementNode is ReturnNode)
+        {
+
+        }
+        else if (statementNode is SkipNode)
+        {
+
+        }
+        else if (statementNode is StatementCompositionNode)
+        {
+
+        }
+        else if (statementNode is TypeAndIdentifier)
+        {
+
+        }
+        else if (statementNode is VariableDeclarationNode){
+
+        }
+        else if (statementNode is WhileNode)
+        {
+
+        }
+    }
+
+
+
+
+
+
 
     private bool CheckExpressionMatchesLiteral(ExpressionNode expressionNode, LiteralNode expectedLiteral) 
     {
@@ -109,8 +182,8 @@ public class TypeChecker
 
             // Try binding and error if fail
             if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Const already declared.");
-            
 
+    
         }
         else if (defNode is FunctionNode funcNode)
         {
