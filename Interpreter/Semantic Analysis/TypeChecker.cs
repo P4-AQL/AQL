@@ -24,16 +24,9 @@ public class TypeChecker
         if (node is ProgramNode programNode){
             TypeCheckProgramNode(programNode, errors);
         }
-
         else if (node is StatementNode statementNode)
         {
             TypeCheckStatementNode(statementNode, errors);
-        }
-
-    
-        // Check the node and create localEnv if neccesary
-        if (node is ImportNode importNode) {
-
         }
         else if (node is DefinitionNode defNode)
         {
@@ -170,7 +163,7 @@ public class TypeChecker
         return false;
     }
 
-    private void TypeCheckDefinitionNode(Node defNode, List<string> errors)
+    private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
     {
         if (defNode is ConstDeclarationNode cdNode)
         {
