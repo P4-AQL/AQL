@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
 
-public class QueueNode
+public class QueueNode : Node
 {
     private readonly SimulationEngineAPI _engine;
     private Simulation Simulation => _engine._simulation;
-
     private readonly string _name;
     private readonly int _capacity;
     private readonly int _servers;
     private int _busyServers = 0;
     private Queue<Entity> _waitingQueue = new();
     private readonly Func<double> _serviceTimeDist;
-    private readonly Func<double>? _arrivalDist;
-    public QueueNode? NextNode { get; set; } = null;
-    public List<(QueueNode Node, double Prob)>? NextNodeChoices { get; set; } = null;
     private string _network { get; set; } = string.Empty;
 
     private double _runBusyTime = 0.0;
@@ -34,35 +30,16 @@ public class QueueNode
     public int MaxDroppedEntities { get; private set; } = 0;
     public int TotalDroppedEntities { get; private set; } = 0;
     public string Network => _network;
-    public string Name => _name;
 
     public QueueNode(SimulationEngineAPI engine, string name, int servers, int capacity, Func<double> serviceTimeDist, Func<double>? arrivalDist = null)
+        : base(name)
     {
         _engine = engine;
         _name = name;
         _servers = servers;
         _capacity = capacity <= 0 ? int.MaxValue : capacity;
         _serviceTimeDist = serviceTimeDist;
-        _arrivalDist = arrivalDist;
         _network = name.Split('.')[0];
-    }
-
-    public void ScheduleInitialArrival()
-    {
-        if (_arrivalDist != null)
-        {
-            Simulation.Schedule(_arrivalDist(), () =>
-            {
-                var entity = new Entity(Simulation.Now)
-                {
-                    CurrentNetworkName = _network
-                };
-                _engine._entities.Add(entity);
-                _engine.RecordNetworkEntry(entity, _network, Simulation.Now);
-                ProcessArrival(entity);
-                ScheduleInitialArrival();
-            });
-        }
     }
 
     public void ProcessArrival(Entity entity)
@@ -116,17 +93,20 @@ public class QueueNode
         if (NextNode != null || NextNodeChoices != null)
         {
             QueueNode target = NextNode!;
-            if (NextNodeChoices != null)
+            if (NextNodeChoices is not null)
             {
                 double r = Random.Shared.NextDouble();
                 double cumulative = 0;
-                foreach (var (node, prob) in NextNodeChoices)
+                if (NextNodeChoices != null)
                 {
-                    cumulative += prob;
-                    if (r <= cumulative)
+                    foreach ((QueueNode node, double prob) in NextNodeChoices)
                     {
-                        target = node;
-                        break;
+                        cumulative += prob;
+                        if (r <= cumulative)
+                        {
+                            target = node;
+                            break;
+                        }
                     }
                 }
             }

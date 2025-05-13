@@ -32,15 +32,15 @@ public static class MetricsPrinter
     }
 
     public static void PrintEntityMetrics(List<Entity> entities)
-{
-    var exited = entities.Where(e => e.DepartureTime > 0).ToList();
-
-    Console.WriteLine("\nEntity Metrics:");
-    Console.WriteLine($"  Entered:              {entities.Count}");
-    Console.WriteLine($"  Exited:               {exited.Count}");
-    Console.WriteLine($"  Avg Time in Network:  {(exited.Count > 0 ? exited.Average(e => e.TotalTime) : 0.0):F2}");
-    Console.WriteLine($"  Avg Wait Time:        {(exited.Count > 0 ? exited.Average(e => e.TotalWaitingTime) : 0.0):F2}");
-    Console.WriteLine($"  Avg Service Time:     {(exited.Count > 0 ? exited.Average(e => e.TotalServiceTime) : 0.0):F2}");
-}
+    {
+        var exited = entities.Where(e => e.DepartureTime > 0).ToList();
+    
+        Console.WriteLine("\nEntity Metrics:");
+        Console.WriteLine($"  Entered:              {entities.Count}");
+        Console.WriteLine($"  Exited:               {exited.Count}");
+        Console.WriteLine($"  Avg Time in Network:  {(exited.Count > 0 ? exited.Average(e => e.TotalTime) : 0.0):F2}");
+        Console.WriteLine($"  Avg Wait Time:        {(exited.Count > 0 ? exited.Average(e => e.TotalWaitingTime) : 0.0):F2}");
+        Console.WriteLine($"  Avg Service Time:     {(exited.Count > 0 ? exited.Average(e => e.TotalServiceTime) : 0.0):F2}");
+    }
 
 }
