@@ -12,7 +12,7 @@ public class SimulationEngineAPI
     public Dictionary<string, NetworkStats> _networks = new();
     public List<Entity> _entities = new();
     private List<QueueNode> _allNodes = new();
-    private Dictionary<string, Node> _nodes = new();
+    private Dictionary<string, Engine.Node> _nodes = new();
     private double _untilTime = 1000;
     private int _runCount = 1;
 

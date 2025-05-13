@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class QueueNode : Node
+public class QueueNode : Engine.Node
 {
     private readonly SimulationEngineAPI _engine;
     private Simulation Simulation => _engine._simulation;
