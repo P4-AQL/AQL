@@ -97,16 +97,13 @@ public class QueueNode : Node
             {
                 double r = Random.Shared.NextDouble();
                 double cumulative = 0;
-                if (NextNodeChoices != null)
+                foreach ((QueueNode node, double prob) in NextNodeChoices)
                 {
-                    foreach ((QueueNode node, double prob) in NextNodeChoices)
+                    cumulative += prob;
+                    if (r <= cumulative)
                     {
-                        cumulative += prob;
-                        if (r <= cumulative)
-                        {
-                            target = node;
-                            break;
-                        }
+                        target = node;
+                        break;
                     }
                 }
             }
