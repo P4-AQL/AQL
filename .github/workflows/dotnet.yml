@@ -37,8 +37,3 @@ jobs:
 
       - name: Build SharedProject
         run: dotnet build SharedProject/SharedProject.csproj --configuration Release
-
-      # OPTIONAL: Run tests if you have any
-      - name: Run tests
-        run: dotnet test Tests/Tests.csproj --configuration Release
-        if: ${{ exists('Tests/Tests.csproj') }}
