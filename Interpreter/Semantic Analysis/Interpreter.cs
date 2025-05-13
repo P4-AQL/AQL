@@ -2,6 +2,7 @@
 
 
 using System.Diagnostics.CodeAnalysis;
+using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.Identifiers;
@@ -52,7 +53,7 @@ public class Interpreter
         if (node is FunctionNode functionNode)
         {
             FunctionStateTuple functionState = new(function: functionNode, variableState: VariableState);
-            FunctionState.TryBindIfNotExists(functionNode.Identifier.Identifier, functionState);
+            FunctionState.ForceBind(functionNode.Identifier.Identifier, functionState);
         }
         else if (node is ConstDeclarationNode constNode)
         {
@@ -70,9 +71,67 @@ public class Interpreter
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
-    private object InterpretStatement(StatementNode node, Table<object> shadowVariableState)
+    private object? InterpretStatement(StatementNode node, Table<object> shadowVariableState)
     {
-        throw new NotImplementedException();
+        return node switch
+        {
+            StatementCompositionNode castNode => InterpretCompositionStatement(castNode, shadowVariableState),
+            ReturnNode castNode => InterpretExpression(castNode.Expression, shadowVariableState),
+            SkipNode => null,
+            _ => throw new($"{nameof(node)} unhandled (Line {node.LineNumber})"),
+        };
+    }
+
+    private object? InterpretCompositionStatement(StatementCompositionNode node, Table<object> shadowVariableState)
+    {
+
+        object? @return = null;
+        if (node is AssignNode assignNode)
+        {
+            InterpretAssignment(assignNode, shadowVariableState);
+        }
+        else if (node is IfElseNode ifElseNode)
+        {
+            @return = InterpretIfElseNode(ifElseNode, shadowVariableState);
+        }
+        else if (node is WhileNode whileNode)
+        {
+            @return = InterpretWhileNode(whileNode, shadowVariableState);
+        }
+
+        if (@return is not null)
+        {
+            return @return;
+        }
+
+        if (node.NextStatement is not null)
+        {
+            return InterpretStatement(node.NextStatement, shadowVariableState);
+        }
+        return null;
+    }
+
+    private void InterpretAssignment(AssignNode node, Table<object> shadowVariableState)
+    {
+        object value = InterpretExpression(node.Expression, shadowVariableState);
+        shadowVariableState.ForceBind(node.Identifier.Identifier, value);
+    }
+
+    private object? InterpretIfElseNode(IfElseNode node, Table<object> shadowVariableState)
+    {
+        object condition = InterpretExpression(node.Condition, shadowVariableState);
+
+        return (bool)condition
+            ? InterpretStatement(node.IfBody, shadowVariableState)
+            : InterpretStatement(node.ElseBody, shadowVariableState);
+    }
+
+    private object InterpretWhileNode(WhileNode node, Table<object> shadowVariableState)
+    {
+        while ((bool)InterpretExpression(node.Condition, shadowVariableState))
+        {
+
+        }
     }
 
     private void InterpretNetwork(NetworkNode node)
@@ -100,13 +159,13 @@ public class Interpreter
             IndexingNode indexingNode => InterpretIndexingNode(indexingNode, shadowVariableState),
             FunctionCallNode functionCallNode => InterpretFunctionCallNode(functionCallNode, shadowVariableState),
             ParenthesesNode parenthesesNode => InterpretExpression(parenthesesNode.Inner, shadowVariableState),
-            _ => throw new($"Expression could not be interpreted (Line {node.LineNumber})"),
+            _ => throw new($"{nameof(node)} unhandled (Line {node.LineNumber})"),
         };
     }
 
     private double InterpretNegativeNode(NegativeNode negativeNode, Table<object>? shadowVariableState)
     {
-        object innerValue = InterpretExpression(negativeNode.Inner, shadowVariableState);
+        object? innerValue = InterpretExpression(negativeNode.Inner, shadowVariableState);
 
         return innerValue switch
         {
@@ -118,8 +177,8 @@ public class Interpreter
 
     private double InterpretMultiplyNode(MultiplyNode multiplyNode, Table<object>? shadowVariableState)
     {
-        object leftValue = InterpretExpression(multiplyNode.Left, shadowVariableState);
-        object rightValue = InterpretExpression(multiplyNode.Right, shadowVariableState);
+        object? leftValue = InterpretExpression(multiplyNode.Left, shadowVariableState);
+        object? rightValue = InterpretExpression(multiplyNode.Right, shadowVariableState);
 
         return (leftValue, rightValue) switch
         {
@@ -133,8 +192,8 @@ public class Interpreter
 
     private object InterpretDivisionNode(DivisionNode divisionNode, Table<object>? shadowVariableState)
     {
-        object leftValue = InterpretExpression(divisionNode.Left, shadowVariableState);
-        object rightValue = InterpretExpression(divisionNode.Right, shadowVariableState);
+        object? leftValue = InterpretExpression(divisionNode.Left, shadowVariableState);
+        object? rightValue = InterpretExpression(divisionNode.Right, shadowVariableState);
 
         return (leftValue, rightValue) switch
         {
@@ -148,8 +207,8 @@ public class Interpreter
 
     private double InterpretAddNode(AddNode addNode, Table<object>? shadowVariableState)
     {
-        object leftValue = InterpretExpression(addNode.Left, shadowVariableState);
-        object rightValue = InterpretExpression(addNode.Right, shadowVariableState);
+        object? leftValue = InterpretExpression(addNode.Left, shadowVariableState);
+        object? rightValue = InterpretExpression(addNode.Right, shadowVariableState);
 
         return (leftValue, rightValue) switch
         {
@@ -163,8 +222,8 @@ public class Interpreter
 
     private bool InterpretLessThanNode(LessThanNode lessThanNode, Table<object>? shadowVariableState)
     {
-        object leftValue = InterpretExpression(lessThanNode.Left, shadowVariableState);
-        object rightValue = InterpretExpression(lessThanNode.Right, shadowVariableState);
+        object? leftValue = InterpretExpression(lessThanNode.Left, shadowVariableState);
+        object? rightValue = InterpretExpression(lessThanNode.Right, shadowVariableState);
 
         return (leftValue, rightValue) switch
         {
@@ -178,8 +237,8 @@ public class Interpreter
 
     private bool InterpretEqualNode(EqualNode equalNode, Table<object>? shadowVariableState)
     {
-        object leftValue = InterpretExpression(equalNode.Left, shadowVariableState);
-        object rightValue = InterpretExpression(equalNode.Right, shadowVariableState);
+        object? leftValue = InterpretExpression(equalNode.Left, shadowVariableState);
+        object? rightValue = InterpretExpression(equalNode.Right, shadowVariableState);
 
         return (leftValue, rightValue) switch
         {
@@ -192,8 +251,8 @@ public class Interpreter
 
     private bool InterpretAndNode(AndNode andNode, Table<object>? shadowVariableState)
     {
-        object leftValue = InterpretExpression(andNode.Left, shadowVariableState);
-        object rightValue = InterpretExpression(andNode.Right, shadowVariableState);
+        object? leftValue = InterpretExpression(andNode.Left, shadowVariableState);
+        object? rightValue = InterpretExpression(andNode.Right, shadowVariableState);
 
         if (leftValue is bool leftBool)
         {
@@ -210,7 +269,7 @@ public class Interpreter
 
     private bool InterpretNotNode(NotNode notNode, Table<object>? shadowVariableState)
     {
-        object innerValue = InterpretExpression(notNode.Inner, shadowVariableState);
+        object? innerValue = InterpretExpression(notNode.Inner, shadowVariableState);
 
         if (innerValue is bool boolValue)
         {
@@ -220,9 +279,9 @@ public class Interpreter
         throw new($"{nameof(notNode)} unhandled (Line {notNode.LineNumber})");
     }
 
-    private object[] InterpretArrayNode(ArrayLiteralNode arrayNode, Table<object>? shadowVariableState)
+    private object?[] InterpretArrayNode(ArrayLiteralNode arrayNode, Table<object>? shadowVariableState)
     {
-        object[] array = new object[arrayNode.Elements.Count];
+        object?[] array = new object[arrayNode.Elements.Count];
 
         int index = 0;
         foreach (ExpressionNode expression in arrayNode.Elements)
@@ -237,8 +296,8 @@ public class Interpreter
 
     private object InterpretIndexingNode(IndexingNode indexingNode, Table<object>? shadowVariableState)
     {
-        object target = InterpretIdentifier(indexingNode.Target, shadowVariableState);
-        object index = InterpretExpression(indexingNode.Index, shadowVariableState);
+        object? target = InterpretIdentifier(indexingNode.Target, shadowVariableState);
+        object? index = InterpretExpression(indexingNode.Index, shadowVariableState);
 
         return (target, index) switch
         {
@@ -252,13 +311,16 @@ public class Interpreter
         List<object> parameterValues = [];
         foreach (ExpressionNode expression in functionCallNode.ActualParameters)
         {
-            object value = InterpretExpression(expression, shadowVariableState);
-            parameterValues.Add(value);
+            object? value = InterpretExpression(expression, shadowVariableState);
+            if (value is not null)
+            {
+                parameterValues.Add(value);
+            }
         }
 
         if (FunctionState.Lookup(functionCallNode.Identifier.Identifier, out FunctionStateTuple state))
         {
-            Table<object> shadowState = new(VariableState);
+            Table<object>? shadowState = new(VariableState);
 
             int index = 0;
             foreach (TypeAndIdentifier parameter in state.Function.Parameters)
@@ -267,7 +329,11 @@ public class Interpreter
                 index++;
             }
 
-            return InterpretStatement(state.Function.Body, shadowState);
+            object? @return = InterpretStatement(state.Function.Body, shadowState);
+            if (@return is not null)
+            {
+                return @return;
+            }
         }
 
         throw new($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
@@ -286,11 +352,6 @@ public class Interpreter
             {
                 return boundValue;
             }
-            else
-            {
-                string error = $"{singleIdentifierNode.Identifier} does not exist (Line: {singleIdentifierNode.LineNumber})";
-                throw new(error);
-            }
         }
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
@@ -306,7 +367,10 @@ public class Interpreter
         {
             if (shadowVariableState.Lookup(identifier, out @out))
             {
-                return true;
+                if (@out is not null)
+                {
+                    return true;
+                }
             }
         }
 
