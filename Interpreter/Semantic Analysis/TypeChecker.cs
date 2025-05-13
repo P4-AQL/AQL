@@ -24,19 +24,15 @@ public class TypeChecker
         if (node is ProgramNode programNode){
             TypeCheckProgramNode(programNode, errors);
         }
-        else if (node is StatementNode statementNode)
-        {
-            TypeCheckStatementNode(statementNode, errors);
-        }
         else if (node is DefinitionNode defNode)
         {
             // We don't need localEnv because these definition can only be global.
             TypeCheckDefinitionNode(defNode, errors);
 
         }
-        else if (node is StatementNode stmtNode)
+        else if (node is StatementNode statementNode)
         {
-            
+            TypeCheckStatementNode(statementNode, errors);
         }
 
         // Check children
