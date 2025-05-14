@@ -23,7 +23,7 @@ public class TypeChecker
     {
         if (node is ProgramNode programNode){
             TypeCheckProgramNode(programNode, errors);
-        }
+        }   
         else if (node is DefinitionNode defNode)
         {
             // We don't need localEnv because these definition can only be global.
@@ -51,6 +51,14 @@ public class TypeChecker
         }
     }
 
+<<<<<<< HEAD
+
+    private void TypeCheckStatementNode(StatementNode statementNode, List<String> errors, Table<TypeNode>? localEnvironment){
+        if (localEnvironment is not null) {
+            environment = localEnvironment;
+        }
+        //    private void TypeCheckStatementNode(Node statementNode, List<String> errors){        
+=======
     private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
     {
         if (defNode is ConstDeclarationNode cdNode)
@@ -176,6 +184,7 @@ public class TypeChecker
             environment = localEnvironment;
         }
 
+>>>>>>> 47cf0fb94fc43298c582114c3d373f96611ee55f
         if (statementNode is AssignNode assignNode){
             // E ⊢ x = e : ok   if 
                 // E(x) = T 
@@ -204,7 +213,11 @@ public class TypeChecker
                 // E ⊢ e : bool 
                 // E ⊢ S_1 : ok 
                 // E ⊢ S_2 : ok
-            
+            if (FindExpressionType(ifElseNode.Condition) is not BoolTypeNode)
+            {
+                errors.Add("The expression type is not bool");
+            }
+
 
         }
         else if (statementNode is ReturnNode returnNode)
@@ -221,11 +234,26 @@ public class TypeChecker
         }
         else if (statementNode is VariableDeclarationNode variableDeclarationNode){
             // E ⊢ Tx = e; S 
-                // x not in dom(E)
+                // x not in dom(E)      
                 // E ⊢ e: T
                 // E [x ⊢> T] ⊢ S : ok 
 
+            environment.Lookup(variableDeclarationNode.Identifier.Identifier, out TypeNode? nodeType);
+
+            if (!environment.TryBindIfNotExists(variableDeclarationNode.Identifier.Identifier, variableDeclarationNode.Type))
+            {
+                errors.Add("Error: Identifier already exist");
+            } 
+
+            if (FindExpressionType(variableDeclarationNode.Expression) != nodeType)
+            {
+                errors.Add("The expression type does not match that of the idetifier");
+            }
+            
+            // Not sure of this 
+            TypeCheckStatementNode(statementNode, errors, localEnvironment);  
         }
+
         else if (statementNode is WhileNode whileNode)
         {
 
