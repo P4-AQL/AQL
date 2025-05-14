@@ -64,7 +64,7 @@ public class InterpreterClass
         }
         else if (node is SimulateNode simulateNode)
         {
-
+            throw new NotImplementedException("line:" + node.LineNumber);
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
@@ -119,7 +119,11 @@ public class InterpreterClass
     {
 
         object? @return = null;
-        if (node is AssignNode assignNode)
+        if (node is VariableDeclarationNode declarationNode)
+        {
+            InterpretVariableDeclaration(declarationNode, shadowVariableState);
+        }
+        else if (node is AssignNode assignNode)
         {
             InterpretAssignment(assignNode, shadowVariableState);
         }
@@ -142,6 +146,12 @@ public class InterpreterClass
             return InterpretStatement(node.NextStatement, shadowVariableState);
         }
         return null;
+    }
+
+    private void InterpretVariableDeclaration(VariableDeclarationNode node, Table<object> shadowVariableState)
+    {
+        object value = InterpretExpression(node.Expression, shadowVariableState);
+        shadowVariableState.ForceBind(node.Identifier.Identifier, value);
     }
 
     private void InterpretAssignment(AssignNode node, Table<object> shadowVariableState)
@@ -409,11 +419,6 @@ public class InterpreterClass
         }
 
         throw new($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
-    }
-
-    private void InterpretRoute(RouteNode node)
-    {
-
     }
 
     private object InterpretIdentifier(IdentifierNode node, Table<object>? shadowVariableState)
