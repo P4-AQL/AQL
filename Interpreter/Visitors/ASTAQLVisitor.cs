@@ -221,7 +221,8 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 lineNumber: context.Start.Line,
                 nextStatement: nextStatement,
                 type: typeNode,
-                identifier: assignNode.Identifier
+                identifier: assignNode.Identifier,
+                expression: assignNode.Expression
             );
     }
 
@@ -416,7 +417,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         List<SingleIdentifierNode> outputNodes = [];
         List<InstanceDeclaration> instanceNodes = [];
         List<RouteDefinitionNode> routeNodes = [];
-        List<MetricNode> metricNodes = [];
+        List<NamedMetricNode> metricNodes = [];
 
         foreach (AQLParser.NetworkExpressionContext networkExpressionContext in context.networkExpression())
         {
@@ -435,7 +436,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             {
                 routeNodes.AddRange(routeCast);
             }
-            else if (TryCast(networkExpressions, out IEnumerable<MetricNode>? metricCast))
+            else if (TryCast(networkExpressions, out IEnumerable<NamedMetricNode>? metricCast))
             {
                 metricNodes.AddRange(metricCast);
             }

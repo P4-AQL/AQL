@@ -9,28 +9,31 @@ using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
 using Interpreter.AST.Nodes.Statements;
+using Interpreter.Utilities.Modules;
 
 namespace Interpreter.SemanticAnalysis;
-public class Interpreter
+public class InterpreterClass
 {
-    InterpretationEnvironment globalEnvironment = InterpretationEnvironment.Empty;
+    InterpretationEnvironment globalEnvironment;
 
     Table<FunctionStateTuple> FunctionState => globalEnvironment.FunctionState;
     Table<object> VariableState => globalEnvironment.VariableState;
     Table<NetworkDeclarationNode> NetworkState => globalEnvironment.NetworkState;
 
-    readonly List<string> Errors = [];
 
-    public void StartInterpretation(ProgramNode node)
+    public InterpretationEnvironment StartInterpretation(ProgramNode node)
     {
+        globalEnvironment = InterpretationEnvironment.Empty(node);
         try
         {
             InterpretProgram(node);
         }
         catch (Exception ex)
         {
-            Errors.Add(ex.Message);
+            globalEnvironment.Errors.Add(ex.Message);
         }
+
+        return globalEnvironment;
     }
 
     private void InterpretProgram(ProgramNode node)
@@ -45,6 +48,12 @@ public class Interpreter
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+    }
+
+    public void InterpretImport(ImportNode node)
+    {
+        InterpretationEnvironment dependency = ModuleLoader.LoadModuleByName(node.Namespace.Identifier);
+        globalEnvironment.ModuleDependencies.Add(dependency);
     }
 
     private void InterpretDefinition(DefinitionNode node)

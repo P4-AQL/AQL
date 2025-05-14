@@ -2,6 +2,9 @@
 
 
 using Antlr4.Runtime;
+using Interpreter.AST.Nodes.NonTerminals;
+using Interpreter.SemanticAnalysis;
+using Interpreter.Visitors;
 
 namespace Interpreter.Utilities.Modules;
 public static class ModuleLoader
@@ -11,7 +14,7 @@ public static class ModuleLoader
     /// </summary>
     /// <param name="modulePath">The path to the module.</param>
     /// <returns> The loaded module context.</returns>
-    public static string /*ModuleContext*/ LoadModuleByPath(string modulePath)
+    public static InterpretationEnvironment LoadModuleByPath(string modulePath)
     {
         if (string.IsNullOrEmpty(modulePath))
         {
@@ -23,29 +26,22 @@ public static class ModuleLoader
             throw new FileNotFoundException($"Module not found: {modulePath}");
         }
 
-        /*string moduleContent =*/
-        return File.ReadAllText(modulePath);
-        /*
+        string moduleContent = File.ReadAllText(modulePath);
+
         AntlrInputStream inputStream = new(moduleContent);
         AQLLexer lexer = new(inputStream);
         CommonTokenStream commonTokenStream = new(lexer);
         AQLParser parser = new(commonTokenStream);
 
-        AQLParser.ProgramContext progContext = parser.program();
+        AQLParser.ProgramEOFContext progContext = parser.programEOF();
 
-        BasicAQLVisitor visitor = new();
-        object? result = visitor.Visit(progContext);
+        ASTAQLVisitor visitor = new();
+        ProgramNode result = visitor.VisitProgramEOF(progContext);
 
-        if (result is ModuleContext moduleContext)
-        {
-            moduleContext.ModuleName = Path.GetFileNameWithoutExtension(modulePath);
-            moduleContext.ModulePath = modulePath;
-            return moduleContext;
-        }
-        else
-        {
-            throw new InvalidOperationException("Failed to load module");
-        }*/
+        InterpreterClass interpreter = new();
+        InterpretationEnvironment environment = interpreter.StartInterpretation(result);
+
+        return environment;
     }
 
     /// <summary>
@@ -53,7 +49,7 @@ public static class ModuleLoader
     /// </summary>
     /// <param name="moduleName">The name of the module.</param>
     /// <returns>The loaded module context.</returns>
-    public static string /*ModuleContext*/ LoadModuleByName(string moduleName)
+    public static InterpretationEnvironment LoadModuleByName(string moduleName)
     {
         if (string.IsNullOrEmpty(moduleName))
         {
