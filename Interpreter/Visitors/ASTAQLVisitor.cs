@@ -221,7 +221,8 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 lineNumber: context.Start.Line,
                 nextStatement: nextStatement,
                 type: typeNode,
-                identifier: assignNode.Identifier
+                identifier: assignNode.Identifier,
+                expression: assignNode.Expression
             );
     }
 
