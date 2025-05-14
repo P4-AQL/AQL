@@ -55,7 +55,7 @@ public class TypeChecker
             // E[x -> T]
 
             // Check if expression is correct type else add error
-            if (FindExpressionType(cdNode.Expression) != cdNode.Type) errors.Add("Error: Expression type must match declaration type.");
+            if (FindExpressionType(cdNode.Expression, errors) != cdNode.Type) errors.Add("Error: Expression type must match declaration type.");
 
             // Try binding and error if fail
             if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Identifier already declared.");
@@ -109,7 +109,7 @@ public class TypeChecker
             
 
             // Expression is int
-            if (FindExpressionType(simNode.Runs) is not IntTypeNode) errors.Add("Expression for runs must be of type int");
+            if (FindExpressionType(simNode.Runs, errors) is not IntTypeNode) errors.Add("Expression for runs must be of type int");
         }
     }
 
@@ -148,13 +148,13 @@ public class TypeChecker
             if (environment.Lookup(GetIdentifier(queueDeclarationNode.Identifier), out Node? _)) errors.Add("Identifier already declared");
 
             // service expression...
-            if (FindExpressionType(queueDeclarationNode.Service) is not IntTypeNode && FindExpressionType(queueDeclarationNode.Service) is not DoubleTypeNode) errors.Add("Service expression must be int or double");
+            if (FindExpressionType(queueDeclarationNode.Service, errors) is not IntTypeNode && FindExpressionType(queueDeclarationNode.Service, errors) is not DoubleTypeNode) errors.Add("Service expression must be int or double");
 
             // capacity expression...
-            if (FindExpressionType(queueDeclarationNode.Capacity) is not IntTypeNode) errors.Add("Capacity expression must be int");
+            if (FindExpressionType(queueDeclarationNode.Capacity, errors) is not IntTypeNode) errors.Add("Capacity expression must be int");
 
             // servers expression...
-            if (FindExpressionType(queueDeclarationNode.NumberOfServers) is not IntTypeNode) errors.Add("Number of servers expression must be int");
+            if (FindExpressionType(queueDeclarationNode.NumberOfServers, errors) is not IntTypeNode) errors.Add("Number of servers expression must be int");
 
             // capacity expression...
             TypeCheckMetricList(queueDeclarationNode.Metrics, errors);
@@ -192,7 +192,7 @@ public class TypeChecker
             {
                 throw new("This identifier is not found");
             }
-            else if (FindExpressionType(assignNode.Expression) != nodeType)
+            else if (FindExpressionType(assignNode.Expression, errors) != nodeType)
             {
                 errors.Add("The expression type does not match the idetifier");
             }
@@ -209,7 +209,7 @@ public class TypeChecker
                 // E ⊢ e : bool 
                 // E ⊢ S_1 : ok 
                 // E ⊢ S_2 : ok
-            if (FindExpressionType(ifElseNode.Condition) is not BoolTypeNode)
+            if (FindExpressionType(ifElseNode.Condition, errors) is not BoolTypeNode)
             {
                 errors.Add("The expression type is not bool");
             }
@@ -220,7 +220,7 @@ public class TypeChecker
 
         else if (statementNode is ReturnNode returnNode)
         {
-            Node expressionNode = FindExpressionType(returnNode.Expression);
+            Node? expressionNode = FindExpressionType(returnNode.Expression, errors);
 
             if (expressionNode is not TypeNode expressionTypeNode || expressionTypeNode.GetType() != returnType.GetType())
             {
@@ -264,7 +264,7 @@ public class TypeChecker
                 errors.Add("Error: Identifier already exist");
             } 
 
-            if (FindExpressionType(variableDeclarationNode.Expression) != nodeType)
+            if (FindExpressionType(variableDeclarationNode.Expression, errors) != nodeType)
             {
                 errors.Add("The expression type does not match that of the idetifier");
             }
@@ -277,7 +277,7 @@ public class TypeChecker
             // while e do S : ok 
                 // E ⊢ e : bool
                 // E ⊢ S : ok 
-            if (FindExpressionType(whileNode.Condition) is not BoolTypeNode)
+            if (FindExpressionType(whileNode.Condition, errors) is not BoolTypeNode)
             {
                 errors.Add("exression is not of bool type");
             }
@@ -290,56 +290,69 @@ public class TypeChecker
 
 
 
-
-
-    private Node FindExpressionType(ExpressionNode expressionNode) 
+    private Node? FindExpressionType(ExpressionNode topExpression, List<string> errors)
     {
-        return expressionNode switch {
-            // Further expressions. Clearly not optimized
-            AddNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) 
-                ? ((FindExpressionType(node.Left) is DoubleTypeNode || FindExpressionType(node.Right) is DoubleTypeNode)
-                    ? new DoubleTypeNode(node.LineNumber)
-                    : ((FindExpressionType(node.Left) is IntTypeNode || FindExpressionType(node.Right) is IntTypeNode)
-                        ? new IntTypeNode(node.LineNumber)
-                        : throw new("Expression must be int or double")))
-                : throw new("Error: Expression not found")),
-            AndNode node => (FindExpressionType(node.Left) is BoolTypeNode) && (FindExpressionType(node.Right) is BoolTypeNode) ? new BoolTypeNode(node.LineNumber) : throw new("Expressions must evaluate to bool"),
-            DivisionNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) 
-                ? ((FindExpressionType(node.Left) is DoubleTypeNode || FindExpressionType(node.Right) is DoubleTypeNode)
-                    ? new DoubleTypeNode(node.LineNumber)
-                    : ((FindExpressionType(node.Left) is IntTypeNode || FindExpressionType(node.Right) is IntTypeNode)
-                        ? new IntTypeNode(node.LineNumber)
-                        : throw new("Expression must be int or double")))
-                : throw new("Error: Expression not found")),
-            EqualNode node => FindExpressionType(node.Left) == FindExpressionType(node.Right) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
-            FunctionCallNode node => GetReturnTypeOfFunctionCall(node),
-            IdentifierExpressionNode node => environment.Lookup(GetIdentifier(node.Identifier), out Node? typeNode) 
-                ? typeNode 
-                : (constEnvironment.Lookup(GetIdentifier(node.Identifier), out Node? constTypeNode) 
-                    ? constTypeNode 
-                    : throw new("Error: Expression not found")),
-            LessThanNode node => FindExpressionType(node.Left) == FindExpressionType(node.Right) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
-            MultiplyNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) 
-                ? ((FindExpressionType(node.Left) is DoubleTypeNode || FindExpressionType(node.Right) is DoubleTypeNode)
-                    ? new DoubleTypeNode(node.LineNumber)
-                    : ((FindExpressionType(node.Left) is IntTypeNode || FindExpressionType(node.Right) is IntTypeNode)
-                        ? new IntTypeNode(node.LineNumber)
-                        : throw new("Expression must be int or double")))
-                : throw new("Error: Expression not found")),
-            NegativeNode node => (FindExpressionType(node.Inner) is IntTypeNode || FindExpressionType(node.Inner) is DoubleTypeNode) ? node.Inner : throw new("Expression not int or double"),
-            NotNode node => (FindExpressionType(node.Inner) is BoolTypeNode ? node.Inner : throw new("Expression must evaluate to bool")),
-            ParenthesesNode node => (FindExpressionType(node.Inner)),
+        try
+        {
+            return FindExpressionTypeInner(topExpression);
+        }
+        catch (Exception e)
+        {
+            errors.Add(e.Message);
+            return null;
+        }
 
-            // Literals
-            ArrayLiteralNode node => new ArrayTypeNode(node.LineNumber, (TypeNode)FindExpressionType(node.Elements[0])), //Make sure each element is same type
-            BoolLiteralNode node => new BoolTypeNode(node.LineNumber),
-            DoubleLiteralNode node => new DoubleTypeNode(node.LineNumber),
-            IntLiteralNode node => new IntTypeNode(node.LineNumber),
-            LiteralNode node => new StringTypeNode(node.LineNumber),
-            _ => throw new("Error: Expression not found")
-        };
-        throw new NotImplementedException();
+        Node FindExpressionTypeInner(ExpressionNode expressionNode) 
+        {
+            return expressionNode switch {
+                // Further expressions. Clearly not optimized
+                AddNode node => (FindExpressionTypeInner(node.Left) == FindExpressionTypeInner(node.Right) 
+                    ? ((FindExpressionTypeInner(node.Left) is DoubleTypeNode || FindExpressionTypeInner(node.Right) is DoubleTypeNode)
+                        ? new DoubleTypeNode(node.LineNumber)
+                        : ((FindExpressionTypeInner(node.Left) is IntTypeNode || FindExpressionTypeInner(node.Right) is IntTypeNode)
+                            ? new IntTypeNode(node.LineNumber)
+                            : throw new("Expression must be int or double")))
+                    : throw new("Error: Expression not found")),
+                AndNode node => (FindExpressionTypeInner(node.Left) is BoolTypeNode) && (FindExpressionTypeInner(node.Right) is BoolTypeNode) ? new BoolTypeNode(node.LineNumber) : throw new("Expressions must evaluate to bool"),
+                DivisionNode node => (FindExpressionTypeInner(node.Left) == FindExpressionTypeInner(node.Right) 
+                    ? ((FindExpressionTypeInner(node.Left) is DoubleTypeNode || FindExpressionTypeInner(node.Right) is DoubleTypeNode)
+                        ? new DoubleTypeNode(node.LineNumber)
+                        : ((FindExpressionTypeInner(node.Left) is IntTypeNode || FindExpressionTypeInner(node.Right) is IntTypeNode)
+                            ? new IntTypeNode(node.LineNumber)
+                            : throw new("Expression must be int or double")))
+                    : throw new("Error: Expression not found")),
+                EqualNode node => FindExpressionTypeInner(node.Left) == FindExpressionTypeInner(node.Right) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
+                FunctionCallNode node => GetReturnTypeOfFunctionCall(node),
+                IdentifierExpressionNode node => environment.Lookup(GetIdentifier(node.Identifier), out Node? typeNode) 
+                    ? typeNode 
+                    : (constEnvironment.Lookup(GetIdentifier(node.Identifier), out Node? constTypeNode) 
+                        ? constTypeNode 
+                        : throw new("Error: Expression not found")),
+                LessThanNode node => FindExpressionTypeInner(node.Left) == FindExpressionTypeInner(node.Right) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
+                MultiplyNode node => (FindExpressionTypeInner(node.Left) == FindExpressionTypeInner(node.Right) 
+                    ? ((FindExpressionTypeInner(node.Left) is DoubleTypeNode || FindExpressionTypeInner(node.Right) is DoubleTypeNode)
+                        ? new DoubleTypeNode(node.LineNumber)
+                        : ((FindExpressionTypeInner(node.Left) is IntTypeNode || FindExpressionTypeInner(node.Right) is IntTypeNode)
+                            ? new IntTypeNode(node.LineNumber)
+                            : throw new("Expression must be int or double")))
+                    : throw new("Error: Expression not found")),
+                NegativeNode node => (FindExpressionTypeInner(node.Inner) is IntTypeNode || FindExpressionTypeInner(node.Inner) is DoubleTypeNode) ? node.Inner : throw new("Expression not int or double"),
+                NotNode node => (FindExpressionTypeInner(node.Inner) is BoolTypeNode ? node.Inner : throw new("Expression must evaluate to bool")),
+                ParenthesesNode node => (FindExpressionTypeInner(node.Inner)),
+
+                // Literals
+                ArrayLiteralNode node => new ArrayTypeNode(node.LineNumber, (TypeNode)FindExpressionTypeInner(node.Elements[0])), //Make sure each element is same type
+                BoolLiteralNode node => new BoolTypeNode(node.LineNumber),
+                DoubleLiteralNode node => new DoubleTypeNode(node.LineNumber),
+                IntLiteralNode node => new IntTypeNode(node.LineNumber),
+                LiteralNode node => new StringTypeNode(node.LineNumber),
+                _ => throw new("Error: Expression not found")
+            };
+            throw new NotImplementedException();
+        }
     }
+
+    
 
     private TypeNode GetReturnTypeOfFunctionCall(FunctionCallNode node) 
     {
@@ -384,14 +397,6 @@ public class TypeChecker
             }
         }
         return false;
-    }
-
-    private static void TypeCheckMetricList(IReadOnlyList<Node> metricList, List<string> errors)
-    {
-        foreach (var metric in metricList)
-        {
-            if (metric is not MetricNode) errors.Add("metric list must only contain metrics");
-        }
     }
 
     private void TypeCheckInputs(IReadOnlyList<SingleIdentifierNode> io, Table<Node> localNetworkTable, List<string> errors)
