@@ -51,14 +51,7 @@ public class TypeChecker
         }
     }
 
-<<<<<<< HEAD
 
-    private void TypeCheckStatementNode(StatementNode statementNode, List<String> errors, Table<TypeNode>? localEnvironment){
-        if (localEnvironment is not null) {
-            environment = localEnvironment;
-        }
-        //    private void TypeCheckStatementNode(Node statementNode, List<String> errors){        
-=======
     private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
     {
         if (defNode is ConstDeclarationNode cdNode)
@@ -184,7 +177,6 @@ public class TypeChecker
             environment = localEnvironment;
         }
 
->>>>>>> 47cf0fb94fc43298c582114c3d373f96611ee55f
         if (statementNode is AssignNode assignNode){
             // E ⊢ x = e : ok   if 
                 // E(x) = T 
