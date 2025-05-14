@@ -46,7 +46,6 @@ public class TypeChecker
         }
     }
 
-
     private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
     {
         if (defNode is ConstDeclarationNode cdNode)
@@ -127,6 +126,14 @@ public class TypeChecker
             /// Save in network Environment and 
             /// IsValid must be true?
             /// Type check remaining children
+            
+            // x not in dom(E)
+            if (environment.Lookup(GetIdentifier(networkDeclarationNode.Identifier), out Node? _)) errors.Add("Identifier already declared");
+
+            // Make Sigma
+            Table<Node> localNetwork = new Table<Node>();
+            TypeCheckInputs(networkDeclarationNode.Inputs, localNetwork, errors);
+
         }
         else if (networkDefinitionNode.Network is QueueDeclarationNode queueDeclarationNode)
         {
@@ -151,8 +158,11 @@ public class TypeChecker
 
             // capacity expression...
             TypeCheckMetricList(queueDeclarationNode.Metrics, errors);
-
-
+            
+            // bind x to queue
+            environment.TryBindIfNotExists(GetIdentifier(queueDeclarationNode.Identifier), queueDeclarationNode.CustomType);
+            
+            // next definition is being checked in the end of this method
         }
 
         if (networkDefinitionNode.NextDefinition is not null) TypeCheckDefinitionNode(networkDefinitionNode.NextDefinition, errors);
@@ -288,32 +298,32 @@ public class TypeChecker
             // Further expressions. Clearly not optimized
             AddNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) 
                 ? ((FindExpressionType(node.Left) is DoubleTypeNode || FindExpressionType(node.Right) is DoubleTypeNode)
-                    ? new DoubleTypeNode(0)
+                    ? new DoubleTypeNode(node.LineNumber)
                     : ((FindExpressionType(node.Left) is IntTypeNode || FindExpressionType(node.Right) is IntTypeNode)
-                        ? new IntTypeNode(0)
+                        ? new IntTypeNode(node.LineNumber)
                         : throw new("Expression must be int or double")))
                 : throw new("Error: Expression not found")),
-            AndNode node => (FindExpressionType(node.Left) is BoolTypeNode) && (FindExpressionType(node.Right) is BoolTypeNode) ? new BoolTypeNode(0) : throw new("Expressions must evaluate to bool"),
+            AndNode node => (FindExpressionType(node.Left) is BoolTypeNode) && (FindExpressionType(node.Right) is BoolTypeNode) ? new BoolTypeNode(node.LineNumber) : throw new("Expressions must evaluate to bool"),
             DivisionNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) 
                 ? ((FindExpressionType(node.Left) is DoubleTypeNode || FindExpressionType(node.Right) is DoubleTypeNode)
-                    ? new DoubleTypeNode(0)
+                    ? new DoubleTypeNode(node.LineNumber)
                     : ((FindExpressionType(node.Left) is IntTypeNode || FindExpressionType(node.Right) is IntTypeNode)
-                        ? new IntTypeNode(0)
+                        ? new IntTypeNode(node.LineNumber)
                         : throw new("Expression must be int or double")))
                 : throw new("Error: Expression not found")),
-            EqualNode node => FindExpressionType(node.Left) == FindExpressionType(node.Right) ? new BoolTypeNode(0) : new BoolTypeNode(0),
+            EqualNode node => FindExpressionType(node.Left) == FindExpressionType(node.Right) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
             FunctionCallNode node => GetReturnTypeOfFunctionCall(node),
             IdentifierExpressionNode node => environment.Lookup(GetIdentifier(node.Identifier), out Node? typeNode) 
                 ? typeNode 
                 : (constEnvironment.Lookup(GetIdentifier(node.Identifier), out Node? constTypeNode) 
                     ? constTypeNode 
                     : throw new("Error: Expression not found")),
-            LessThanNode node => FindExpressionType(node.Left) == FindExpressionType(node.Right) ? new BoolTypeNode(0) : new BoolTypeNode(0),
+            LessThanNode node => FindExpressionType(node.Left) == FindExpressionType(node.Right) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
             MultiplyNode node => (FindExpressionType(node.Left) == FindExpressionType(node.Right) 
                 ? ((FindExpressionType(node.Left) is DoubleTypeNode || FindExpressionType(node.Right) is DoubleTypeNode)
-                    ? new DoubleTypeNode(0)
+                    ? new DoubleTypeNode(node.LineNumber)
                     : ((FindExpressionType(node.Left) is IntTypeNode || FindExpressionType(node.Right) is IntTypeNode)
-                        ? new IntTypeNode(0)
+                        ? new IntTypeNode(node.LineNumber)
                         : throw new("Expression must be int or double")))
                 : throw new("Error: Expression not found")),
             NegativeNode node => (FindExpressionType(node.Inner) is IntTypeNode || FindExpressionType(node.Inner) is DoubleTypeNode) ? node.Inner : throw new("Expression not int or double"),
@@ -321,11 +331,11 @@ public class TypeChecker
             ParenthesesNode node => (FindExpressionType(node.Inner)),
 
             // Literals
-            ArrayLiteralNode node => new ArrayTypeNode(0, (TypeNode)FindExpressionType(node.Elements[0])), //Make sure each element is same type
-            BoolLiteralNode => new BoolTypeNode(0),
-            DoubleLiteralNode => new DoubleTypeNode(0),
-            IntLiteralNode => new IntTypeNode(0),
-            LiteralNode => new StringTypeNode(0),
+            ArrayLiteralNode node => new ArrayTypeNode(node.LineNumber, (TypeNode)FindExpressionType(node.Elements[0])), //Make sure each element is same type
+            BoolLiteralNode node => new BoolTypeNode(node.LineNumber),
+            DoubleLiteralNode node => new DoubleTypeNode(node.LineNumber),
+            IntLiteralNode node => new IntTypeNode(node.LineNumber),
+            LiteralNode node => new StringTypeNode(node.LineNumber),
             _ => throw new("Error: Expression not found")
         };
         throw new NotImplementedException();
@@ -374,5 +384,26 @@ public class TypeChecker
             }
         }
         return false;
+    }
+
+    private static void TypeCheckMetricList(IReadOnlyList<Node> metricList, List<string> errors)
+    {
+        foreach (var metric in metricList)
+        {
+            if (metric is not MetricNode) errors.Add("metric list must only contain metrics");
+        }
+    }
+
+    private void TypeCheckInputs(IReadOnlyList<SingleIdentifierNode> io, Table<Node> localNetworkTable, List<string> errors)
+    {
+        foreach (SingleIdentifierNode node in io)
+        {
+            // not in dom(E) or dom(Sigma)
+            if (environment.Lookup(node.Identifier, out Node? _) || localNetworkTable.Lookup(node.Identifier, out Node? _)) errors.Add("identifier already declared");
+
+            // i != j => x_i != x_j
+            localNetworkTable.TryBindIfNotExists(node.Identifier, new InputTypeNode(node.LineNumber));
+            // should be checked above, since we do it one identifier at a time, it and makes sure it is not defined before
+        }
     }
 }
