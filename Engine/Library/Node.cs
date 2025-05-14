@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+namespace Engine;
 public abstract class Node
 {
     public string Name { get; }
