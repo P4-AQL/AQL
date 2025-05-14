@@ -30,11 +30,6 @@ public class TypeChecker
             TypeCheckDefinitionNode(defNode, errors);
 
         }
-        else if (node is StatementNode statementNode)
-        {
-            TypeCheckStatementNode(statementNode, errors, null);
-        }
-
         // Return errors to parent node type check
         return errors;
     }
@@ -92,7 +87,7 @@ public class TypeChecker
                 /// type check children
 
                 // pass E1 to S
-                TypeCheckStatementNode(funcNode.Body, errors, newEnvironment);
+                TypeCheckStatementNode(funcNode.Body, errors, funcNode.ReturnType, newEnvironment);
                 // pass E to D
                 if (funcNode.NextDefinition is not null) {
                     TypeCheckDefinitionNode(funcNode.NextDefinition, errors);
@@ -171,22 +166,21 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckStatementNode(StatementNode statementNode, List<String> errors, Table<Node>? localEnvironment)
+    private void TypeCheckStatementNode(StatementNode statementNode, List<String> errors, TypeNode returnType, Table<Node>? localEnvironment)
     {
         if (localEnvironment is not null) {
             environment = localEnvironment;
         }
+        
 
         if (statementNode is AssignNode assignNode){
             // E ⊢ x = e : ok   if 
                 // E(x) = T 
                 // E ⊢ e : T 
                 // T is not const- int, doub, or bool
-            environment.Lookup(assignNode.Identifier.Identifier, out Node? nodeType);
-            
-            if (nodeType is null)
+            if (environment.Lookup(assignNode.Identifier.Identifier, out Node? nodeType) == false)
             {
-                errors.Add("This identifier is not found");
+                throw new("This identifier is not found");
             }
             else if (FindExpressionType(assignNode.Expression) != nodeType)
             {
@@ -197,8 +191,8 @@ public class TypeChecker
             {
                 errors.Add("This idetifier is a const");
             }
-
         }
+
         else if (statementNode is IfElseNode ifElseNode)
         {
             // E ⊢ if e then S_1 else S_2 : ok 
@@ -209,27 +203,50 @@ public class TypeChecker
             {
                 errors.Add("The expression type is not bool");
             }
-
-
+            
+            TypeCheckStatementNode(ifElseNode.IfBody, errors, returnType, localEnvironment); 
+            TypeCheckStatementNode(ifElseNode.ElseBody, errors, returnType, localEnvironment); 
         }
+
         else if (statementNode is ReturnNode returnNode)
         {
+            Node expressionNode = FindExpressionType(returnNode.Expression);
+
+            if (expressionNode is not TypeNode expressionTypeNode || expressionTypeNode.GetType() != returnType.GetType())
+            {
+                errors.Add($"Not a valid type on line {statementNode.LineNumber}");      
+            }
 
         }
         else if (statementNode is SkipNode skipNode)
         {
-
+            // no operations for skip node
         }
         else if (statementNode is StatementCompositionNode statementCompositionNode)
         {
+            // S_1 : OK 
+            // S_2 : OK 
+            StatementNode? current = statementCompositionNode;
 
+            while (current is not null)
+            {
+                TypeCheckStatementNode(current, errors, returnType, localEnvironment);
+
+                if ( current is StatementCompositionNode stmCompositionNode)
+                {
+                    current = stmCompositionNode.NextStatement;
+                }
+                else 
+                {
+                    break; 
+                }
+            }
         }
         else if (statementNode is VariableDeclarationNode variableDeclarationNode){
             // E ⊢ Tx = e; S 
                 // x not in dom(E)      
                 // E ⊢ e: T
                 // E [x ⊢> T] ⊢ S : ok 
-
             environment.Lookup(variableDeclarationNode.Identifier.Identifier, out Node? nodeType);
 
             if (!environment.TryBindIfNotExists(variableDeclarationNode.Identifier.Identifier, variableDeclarationNode.Type))
@@ -241,18 +258,25 @@ public class TypeChecker
             {
                 errors.Add("The expression type does not match that of the idetifier");
             }
-            
-            // Not sure of this 
-            TypeCheckStatementNode(statementNode, errors, localEnvironment);  
+ 
+            TypeCheckStatementNode(statementNode, errors, returnType, localEnvironment);  
         }
 
         else if (statementNode is WhileNode whileNode)
         {
+            // while e do S : ok 
+                // E ⊢ e : bool
+                // E ⊢ S : ok 
+            if (FindExpressionType(whileNode.Condition) is not BoolTypeNode)
+            {
+                errors.Add("exression is not of bool type");
+            }
 
+            TypeCheckStatementNode(whileNode.Body, errors, returnType, localEnvironment);  
         }
+
+
     }
-
-
 
 
 
