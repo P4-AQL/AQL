@@ -503,13 +503,17 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         IdentifierNode exisitingInstance = VisitQualifiedId(context.existing);
         IEnumerable<SingleIdentifierNode> newInstances = VisitIdList(context.@new);
 
-        return [
-            new(
+        List<InstanceDeclaration> instanceDeclarations = [];
+        foreach (SingleIdentifierNode newInstance in newInstances)
+        {
+            InstanceDeclaration instanceDeclaration = new(
                 lineNumber: context.Start.Line,
                 existingInstance: exisitingInstance,
-                newInstances: newInstances
-            )
-        ];
+                newInstances: newInstance
+            );
+        }
+
+        return instanceDeclarations;
     }
 
     private static bool TryCast<T>(IEnumerable<object> nodes, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out IEnumerable<T> cast)

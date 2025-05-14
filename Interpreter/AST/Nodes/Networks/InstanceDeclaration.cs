@@ -6,10 +6,10 @@ using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Networks;
-public class InstanceDeclaration(int lineNumber, IdentifierNode existingInstance, IEnumerable<SingleIdentifierNode> newInstances) : Node(lineNumber)
+public class InstanceDeclaration(int lineNumber, IdentifierNode existingInstance, SingleIdentifierNode newInstances) : Node(lineNumber)
 {
     public IdentifierNode ExistingInstance { get; } = existingInstance;
-    public IReadOnlyList<SingleIdentifierNode> NewInstances { get; } = [.. newInstances];
+    public SingleIdentifierNode NewInstances { get; } = newInstances;
 
     public override string ToString()
     {
@@ -20,10 +20,10 @@ public class InstanceDeclaration(int lineNumber, IdentifierNode existingInstance
     {
         return [
             ExistingInstance,
-            .. NewInstances,
+            NewInstances,
         ];
     }
 
-    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{NewInstances.Count} instances";
+    public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{NewInstances}";
 
 }
