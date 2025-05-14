@@ -3,11 +3,12 @@
 
 using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.Identifiers;
+using Interpreter.AST.Nodes.Metrics;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Types;
 
 namespace Interpreter.AST.Nodes.Networks;
-public class NetworkDeclarationNode(int lineNumber, NetworkTypeNode customType, SingleIdentifierNode identifier, IEnumerable<SingleIdentifierNode> inputs, IEnumerable<SingleIdentifierNode> outputs, IEnumerable<InstanceDeclaration> instances, IEnumerable<RouteNode> routes, IEnumerable<MetricNode> metrics) : NetworkNode(lineNumber, customType, identifier, metrics)
+public class NetworkDeclarationNode(int lineNumber, NetworkTypeNode customType, SingleIdentifierNode identifier, IEnumerable<SingleIdentifierNode> inputs, IEnumerable<SingleIdentifierNode> outputs, IEnumerable<InstanceDeclaration> instances, IEnumerable<RouteNode> routes, IEnumerable<NamedMetricNode> metrics) : NetworkNode(lineNumber, customType, identifier, metrics)
 {
     public IReadOnlyList<SingleIdentifierNode> Inputs { get; } = [.. inputs];
     public IReadOnlyList<SingleIdentifierNode> Outputs { get; } = [.. outputs];
