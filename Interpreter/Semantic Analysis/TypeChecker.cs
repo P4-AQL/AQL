@@ -230,7 +230,7 @@ public class TypeChecker
                 // E ⊢ e: T
                 // E [x ⊢> T] ⊢ S : ok 
 
-            environment.Lookup(variableDeclarationNode.Identifier.Identifier, out TypeNode? nodeType);
+            environment.Lookup(variableDeclarationNode.Identifier.Identifier, out Node? nodeType);
 
             if (!environment.TryBindIfNotExists(variableDeclarationNode.Identifier.Identifier, variableDeclarationNode.Type))
             {
