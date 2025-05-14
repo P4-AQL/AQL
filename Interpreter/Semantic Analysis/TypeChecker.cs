@@ -154,15 +154,21 @@ public class TypeChecker
             if (FindExpressionType(queueDeclarationNode.NumberOfServers) is not IntTypeNode) errors.Add("Number of servers expression must be int");
 
             // capacity expression...
-            if (queueDeclarationNode.Metrics is not List<MetricNode>) errors.Add("Queue metrics must a list of metrics");
-            //TypeCheckMetricList(queueDeclarationNode.Metrics, errors);
+            TypeCheckMetricList(queueDeclarationNode.Metrics, errors);
+
 
         }
 
         if (networkDefinitionNode.NextDefinition is not null) TypeCheckDefinitionNode(networkDefinitionNode.NextDefinition, errors);
     }
 
-    
+    private static void TypeCheckMetricList(IReadOnlyList<Node> metricList, List<string> errors)
+    {
+        foreach (var metric in metricList)
+        {
+            if (metric is not MetricNode) errors.Add("metric list must only contain metrics");
+        }
+    }
 
     private void TypeCheckStatementNode(StatementNode statementNode, List<String> errors, Table<Node>? localEnvironment)
     {
