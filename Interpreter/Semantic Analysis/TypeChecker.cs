@@ -462,7 +462,7 @@ public class TypeChecker
             if (environment.Lookup(GetIdentifier(instance.ExistingInstance), out Node? _) || localNetworkScopesEnvironment.Lookup(GetIdentifier(instance.ExistingInstance), out Table<Node>? _))
             {
                 // bind new to same as existing
-                localNetwork.TryBindIfNotExists(GetIdentifier(instance.NewInstances), instance.ExistingInstance);
+                localNetwork.TryBindIfNotExists(GetIdentifier(instance.NewInstance), instance.ExistingInstance);
             }
             else errors.Add("Error: Instance identifier not found");
         }
