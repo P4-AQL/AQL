@@ -47,8 +47,12 @@ instanceNetworkExpression:
 	existing = qualifiedId ':' new = idList;
 
 routesList: routes (',' routes)*;
-routes:
-	qualifiedId '->' (routes | qualifiedId | probabilityIdList);
+routes: routesId | routesValue;
+
+routesId:
+	qualifiedId '->' (routesId | qualifiedId | probabilityIdList);
+routesValue:
+	value '->' (routesId | qualifiedId | probabilityIdList);
 
 probabilityIdList:
 	'[' expression qualifiedId (',' expression qualifiedId)* ']';
@@ -160,10 +164,10 @@ value:
 	| arrayIndexing;
 
 functionCall:
-	functionIdentifier = qualifiedId '(' parameters = expressionList? ')';
+	functionIdentifier = identifier '(' parameters = expressionList? ')';
 
 arrayInitialization: '{' expression* (',' expression)* '}';
-arrayIndexing: target = qualifiedId '[' index = expression ']';
+arrayIndexing: target = identifier '[' index = expression ']';
 
 type: typeKeyword | arrayType;
 
@@ -181,7 +185,7 @@ stringKeyword: 'string';
 arrayType: '[' type ']';
 
 qualifiedIdList: qualifiedId (',' qualifiedId)*;
-qualifiedId: identifier ('.' identifier)*;
+qualifiedId: left = identifier '.' right = identifier;
 
 idList: identifier (',' identifier)*;
 identifier: IDENTIFIER;

@@ -5,6 +5,7 @@ using Antlr4.Runtime.Misc;
 using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.Metrics;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
@@ -84,7 +85,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override ImportNode VisitImportStatement([NotNull] AQLParser.ImportStatementContext context)
     {
-        IdentifierNode identifierNode = VisitIdentifier(context.identifier());
+        SingleIdentifierNode identifierNode = VisitIdentifier(context.identifier());
 
         ProgramNode? nextProgram = null;
 
@@ -103,7 +104,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override FunctionNode VisitFunctionDefinition([NotNull] AQLParser.FunctionDefinitionContext context)
     {
         TypeNode returnTypeNode = VisitType(context.returnType);
-        IdentifierNode identifierNode = VisitIdentifier(context.identifier());
+        SingleIdentifierNode identifierNode = VisitIdentifier(context.identifier());
 
         IEnumerable<TypeAndIdentifier> parameterNodes;
         if (context.formalParameterList() is null)
@@ -220,7 +221,8 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 lineNumber: context.Start.Line,
                 nextStatement: nextStatement,
                 type: typeNode,
-                identifier: assignNode.Identifier
+                identifier: assignNode.Identifier,
+                expression: assignNode.Expression
             );
     }
 
@@ -366,7 +368,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override QueueDeclarationNode VisitQueueDefinition([NotNull] AQLParser.QueueDefinitionContext context)
     {
-        IdentifierNode identifierNode = VisitIdentifier(context.identifier());
+        SingleIdentifierNode identifierNode = VisitIdentifier(context.identifier());
         ExpressionNode serviceNode = VisitExpression(context.service);
         ExpressionNode capacityNode = VisitExpression(context.capacity);
 
@@ -383,7 +385,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             numberOfServersNode = VisitExpression(context.numberOfServers);
         }
 
-        IEnumerable<MetricNode> metricNodes;
+        IEnumerable<NamedMetricNode> metricNodes;
         if (context.metrics() is null)
         {
             metricNodes = [];
@@ -395,6 +397,10 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
         return new(
             lineNumber: context.Start.Line,
+            customType: new(
+                lineNumber: context.Start.Line,
+                identifier: identifierNode
+            ),
             identifierNode,
             serviceNode,
             capacityNode,
@@ -405,13 +411,13 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override NetworkDeclarationNode VisitNetworkDefinition([NotNull] AQLParser.NetworkDefinitionContext context)
     {
-        IdentifierNode identifierNode = VisitIdentifier(context.identifier());
+        SingleIdentifierNode identifierNode = VisitIdentifier(context.identifier());
 
-        List<IdentifierNode> inputNodes = [];
-        List<IdentifierNode> outputNodes = [];
+        List<SingleIdentifierNode> inputNodes = [];
+        List<SingleIdentifierNode> outputNodes = [];
         List<InstanceDeclaration> instanceNodes = [];
         List<RouteDefinitionNode> routeNodes = [];
-        List<MetricNode> metricNodes = [];
+        List<NamedMetricNode> metricNodes = [];
 
         foreach (AQLParser.NetworkExpressionContext networkExpressionContext in context.networkExpression())
         {
@@ -430,7 +436,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             {
                 routeNodes.AddRange(routeCast);
             }
-            else if (TryCast(networkExpressions, out IEnumerable<MetricNode>? metricCast))
+            else if (TryCast(networkExpressions, out IEnumerable<NamedMetricNode>? metricCast))
             {
                 metricNodes.AddRange(metricCast);
             }
@@ -442,6 +448,10 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
         return new(
             lineNumber: context.Start.Line,
+            customType: new(
+                lineNumber: context.Start.Line,
+                identifier: identifierNode
+            ),
             identifier: identifierNode,
             inputs: inputNodes,
             outputs: outputNodes,
@@ -477,8 +487,8 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override IEnumerable<NetworkInputOutputNode> VisitInputOutputNetworkExpression([NotNull] AQLParser.InputOutputNetworkExpressionContext context)
     {
-        IEnumerable<IdentifierNode> inputNodes = VisitIdList(context.inputs);
-        IEnumerable<IdentifierNode> outputNodes = VisitIdList(context.outputs);
+        IEnumerable<SingleIdentifierNode> inputNodes = VisitIdList(context.inputs);
+        IEnumerable<SingleIdentifierNode> outputNodes = VisitIdList(context.outputs);
 
         return [
             new(
@@ -490,16 +500,20 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override IEnumerable<InstanceDeclaration> VisitInstanceNetworkExpression([NotNull] AQLParser.InstanceNetworkExpressionContext context)
     {
-        ExpressionNode exisitingInstance = VisitQualifiedId(context.existing);
-        IEnumerable<IdentifierNode> newInstances = VisitIdList(context.@new);
+        IdentifierNode exisitingInstance = VisitQualifiedId(context.existing);
+        IEnumerable<SingleIdentifierNode> newInstances = VisitIdList(context.@new);
 
-        return [
-            new(
+        List<InstanceDeclaration> instanceDeclarations = [];
+        foreach (SingleIdentifierNode newInstance in newInstances)
+        {
+            InstanceDeclaration instanceDeclaration = new(
                 lineNumber: context.Start.Line,
                 existingInstance: exisitingInstance,
-                newInstances: newInstances
-            )
-        ];
+                newInstances: newInstance
+            );
+        }
+
+        return instanceDeclarations;
     }
 
     private static bool TryCast<T>(IEnumerable<object> nodes, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out IEnumerable<T> cast)
@@ -524,7 +538,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override AssignNode VisitAssignStatement([NotNull] AQLParser.AssignStatementContext context)
     {
-        IdentifierNode identifierNode = VisitIdentifier(context.identifier());
+        SingleIdentifierNode identifierNode = VisitIdentifier(context.identifier());
         ExpressionNode expressionNode = VisitExpression(context.expression());
 
         return new(
@@ -544,7 +558,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         foreach (AQLParser.TypeContext typeContext in context.type())
         {
             TypeNode typeNode = VisitType(typeContext);
-            IdentifierNode identifierNode = VisitIdentifier(identifierContexts[index]);
+            SingleIdentifierNode identifierNode = VisitIdentifier(identifierContexts[index]);
 
             TypeAndIdentifier typeAndIdentifier = new(
                 lineNumber: context.Start.Line,
@@ -629,13 +643,13 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     }
     #endregion
 
-    public override IEnumerable<IdentifierNode> VisitIdList([NotNull] AQLParser.IdListContext context)
+    public override IEnumerable<SingleIdentifierNode> VisitIdList([NotNull] AQLParser.IdListContext context)
     {
-        List<IdentifierNode> identifiers = [];
+        List<SingleIdentifierNode> identifiers = [];
 
         foreach (AQLParser.IdentifierContext identifierContext in context.identifier())
         {
-            IdentifierNode identifier = VisitIdentifier(identifierContext);
+            SingleIdentifierNode identifier = VisitIdentifier(identifierContext);
             identifiers.Add(identifier);
         }
 
@@ -644,35 +658,65 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override List<RouteDefinitionNode> VisitRoutes([NotNull] AQLParser.RoutesContext context)
     {
-        AQLParser.QualifiedIdContext[] qualifiedIdentifierContexts = context.qualifiedId();
-        ExpressionNode fromIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts.First());
-
-        if (context.routes() != null)
+        if (context.routesId() != null)
         {
-            List<RouteDefinitionNode> routeNodes = VisitRoutes(context.routes());
+            return VisitRoutesId(context.routesId());
+        }
+        else if (context.routesValue() != null)
+        {
+            return VisitRoutesValue(context.routesValue());
+        }
+
+        throw new($"Not a valid route definition! (Line {context.Start.Line})");
+    }
+
+    public override List<RouteDefinitionNode> VisitRoutesId([NotNull] AQLParser.RoutesIdContext context)
+    {
+        // Rule: routesId:
+        //          qualifiedId '->' (routesId | qualifiedId | probabilityIdList);
+
+        // We get all qualified Id's there are at most two.
+        AQLParser.QualifiedIdContext[] qualifiedIdentifierContexts = context.qualifiedId();
+        IdentifierNode fromIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts.First());
+        IdentifierExpressionNode fromExpressionNode = new(fromIdentifierNode.LineNumber, fromIdentifierNode);
+
+        // In the case that routesId is defined, we know the chain is longer than where we currently are.
+        if (context.routesId() != null)
+        {
+            List<RouteDefinitionNode> routeNodes = VisitRoutesId(context.routesId());
+            // We always add to the list, meaning the newest element will be last in the list.
             ExpressionNode routeTo = routeNodes.Last().From;
 
-            RouteDefinitionNode routeNode = MakeRouteDefinition(lineNumber: context.Start.Line, from: fromIdentifierNode, to: routeTo);
+            if (routeTo is not IdentifierExpressionNode identifierExpressionNode)
+            {
+                throw new($"Not a valid route definition (Line: {routeTo.LineNumber})");
+            }
+
+            RouteDefinitionNode routeNode = MakeRouteDefinition(lineNumber: context.Start.Line, from: fromExpressionNode, to: identifierExpressionNode.Identifier);
 
             routeNodes.Add(routeNode);
 
             return routeNodes;
         }
-        else if (qualifiedIdentifierContexts.Length > 1) // There is always one identifier rule present, but at most two.
+        // There is always one identifier rule present, but at most two.
+        // If there is two we know the rule is:
+        //          qualifiedId '->' qualifiedId
+        else if (qualifiedIdentifierContexts.Length > 1)
         {
-            ExpressionNode toIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts[1]);
-
+            IdentifierNode toIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts[1]);
             return [
-                MakeRouteDefinition(lineNumber: context.Start.Line, from: fromIdentifierNode, to: toIdentifierNode)
+                MakeRouteDefinition(lineNumber: context.Start.Line, from: fromExpressionNode, to: toIdentifierNode)
             ];
         }
+        // If the probabilityIdList exists we know the rule is:
+        //          qualifiedId '->' probabilityIdList
         else if (context.probabilityIdList() != null)
         {
             IEnumerable<RouteValuePairNode> routeValuePairNodes = VisitProbabilityIdList(context.probabilityIdList());
             return [
                 new(
                     lineNumber: context.Start.Line,
-                    from: fromIdentifierNode,
+                    from: fromExpressionNode,
                     to: routeValuePairNodes
                 )
             ];
@@ -683,7 +727,60 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
     }
 
-    private RouteDefinitionNode MakeRouteDefinition(int lineNumber, ExpressionNode from, ExpressionNode to)
+    public override List<RouteDefinitionNode> VisitRoutesValue([NotNull] AQLParser.RoutesValueContext context)
+    {
+        // Rule: routesValue:
+        //          value '->' (routesId | qualifiedId | probabilityIdList);
+
+        ExpressionNode value = VisitValue(context.value());
+
+        // In the case that routesId is defined, we know the chain is longer than where we currently are.
+        if (context.routesId() != null)
+        {
+            List<RouteDefinitionNode> routeNodes = VisitRoutesId(context.routesId());
+            // We always add to the list, meaning the newest element will be last in the list.
+            ExpressionNode routeTo = routeNodes.Last().From;
+
+            if (routeTo is not IdentifierExpressionNode identifierExpressionNode)
+            {
+                throw new($"Not a valid route definition (Line: {routeTo.LineNumber})");
+            }
+
+            RouteDefinitionNode routeNode = MakeRouteDefinition(lineNumber: context.Start.Line, from: value, to: identifierExpressionNode.Identifier);
+
+            routeNodes.Add(routeNode);
+
+            return routeNodes;
+        }
+        // If there is two we know the rule is:
+        //          value '->' qualifiedId
+        else if (context.qualifiedId() != null)
+        {
+            IdentifierNode toIdentifierNode = VisitQualifiedId(context.qualifiedId());
+            return [
+                MakeRouteDefinition(lineNumber: context.Start.Line, from: value, to: toIdentifierNode)
+            ];
+        }
+        // If the probabilityIdList exists we know the rule is:
+        //          value '->' probabilityIdList
+        else if (context.probabilityIdList() != null)
+        {
+            IEnumerable<RouteValuePairNode> routeValuePairNodes = VisitProbabilityIdList(context.probabilityIdList());
+            return [
+                new(
+                    lineNumber: context.Start.Line,
+                    from: value,
+                    to: routeValuePairNodes
+                )
+            ];
+        }
+        else
+        {
+            throw new("Not a valid route.");
+        }
+    }
+
+    private RouteDefinitionNode MakeRouteDefinition(int lineNumber, ExpressionNode from, IdentifierNode to)
     {
         return new(
             lineNumber: lineNumber,
@@ -713,7 +810,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         foreach (AQLParser.ExpressionContext expressionContext in expressionContexts)
         {
             ExpressionNode probabilityNode = VisitExpression(expressionContext);
-            ExpressionNode identifierNode = VisitQualifiedId(qualifiedIds[index]);
+            IdentifierNode identifierNode = VisitQualifiedId(qualifiedIds[index]);
 
             RouteValuePairNode routeValuePairNode = new(
                 lineNumber: context.Start.Line,
@@ -729,15 +826,15 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return routeValuePairNodes;
     }
 
-    public override IEnumerable<MetricNode> VisitMetrics([NotNull] AQLParser.MetricsContext context)
+    public override IEnumerable<NamedMetricNode> VisitMetrics([NotNull] AQLParser.MetricsContext context)
     {
-        List<MetricNode> metrics = [];
+        List<NamedMetricNode> metrics = [];
 
         if (context.metric() != null)
         {
             foreach (AQLParser.MetricContext metricContext in context.metric())
             {
-                MetricNode metric = VisitMetric(metricContext);
+                NamedMetricNode metric = VisitMetric(metricContext);
                 metrics.Add(metric);
             }
         }
@@ -745,18 +842,11 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return metrics;
     }
 
-    public override MetricNode VisitMetric([NotNull] AQLParser.MetricContext context)
+    public override NamedMetricNode VisitMetric([NotNull] AQLParser.MetricContext context)
     {
         if (context.namedMetric() != null)
         {
             return VisitNamedMetric(context.namedMetric());
-        }
-        else if (context.functionMetric != null)
-        {
-            return new FunctionMetricNode(
-                lineNumber: context.Start.Line,
-                function: VisitQualifiedId(context.functionMetric)
-            );
         }
         else
         {
@@ -774,7 +864,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override SimulateNode VisitSimulateDefinition([NotNull] AQLParser.SimulateDefinitionContext context)
     {
-        ExpressionNode networkNode = VisitQualifiedId(context.network);
+        IdentifierNode networkNode = VisitQualifiedId(context.network);
         ExpressionNode runsNode = VisitExpression(context.runs);
         ExpressionNode terminationCriteriaNode = VisitExpression(context.terminationCriteria);
 
@@ -794,7 +884,10 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
         else if (context.qualifiedId() != null)
         {
-            return VisitQualifiedId(context.qualifiedId());
+            return new IdentifierExpressionNode(
+                lineNumber: context.Start.Line,
+                identifier: VisitQualifiedId(context.qualifiedId())
+            );
         }
         else if (context.@string() != null)
         {
@@ -828,7 +921,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override FunctionCallNode VisitFunctionCall(AQLParser.FunctionCallContext context)
     {
-        ExpressionNode functionIdentifierNode = VisitQualifiedId(context.functionIdentifier);
+        SingleIdentifierNode functionIdentifierNode = VisitIdentifier(context.functionIdentifier);
 
         IEnumerable<ExpressionNode>? parameters = null;
         if (context.parameters != null)
@@ -855,41 +948,36 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         return expressionNodes;
     }
 
-    public override IEnumerable<ExpressionNode> VisitQualifiedIdList([NotNull] AQLParser.QualifiedIdListContext context)
+    public override IEnumerable<IdentifierNode> VisitQualifiedIdList([NotNull] AQLParser.QualifiedIdListContext context)
     {
-        List<ExpressionNode> qualifiedIdentifiers = [];
+        List<IdentifierNode> qualifiedIdentifiers = [];
 
         foreach (AQLParser.QualifiedIdContext qualifiedIdContext in context.qualifiedId())
         {
-            ExpressionNode qualifiedIdentifier = VisitQualifiedId(qualifiedIdContext);
+            IdentifierNode qualifiedIdentifier = VisitQualifiedId(qualifiedIdContext);
             qualifiedIdentifiers.Add(qualifiedIdentifier);
         }
 
         return qualifiedIdentifiers;
     }
 
-    public override ExpressionNode VisitQualifiedId([NotNull] AQLParser.QualifiedIdContext context)
+    public override QualifiedIdentifierNode VisitQualifiedId([NotNull] AQLParser.QualifiedIdContext context)
     {
-        List<AQLParser.IdentifierContext> identifiers = [.. context.identifier()];
-        identifiers.Reverse();
 
-        ExpressionNode current = VisitIdentifier(identifiers.First());
-        foreach (AQLParser.IdentifierContext identifierContext in identifiers.Skip(1))
-        {
-            IdentifierNode newIdentifierNode = VisitIdentifier(identifierContext);
-            current = new QualifiedIdentifierNode(
-                lineNumber: context.Start.Line,
-                identifier: newIdentifierNode,
-                expression: current
-            );
-        }
+        SingleIdentifierNode leftNode = VisitIdentifier(context.left);
+        SingleIdentifierNode rightNode = VisitIdentifier(context.right);
 
-        return current;
+        return new(
+            lineNumber: context.Start.Line,
+            leftIdentifier: leftNode,
+            rightIdentifier: rightNode
+        );
+
     }
 
     public override IndexingNode VisitArrayIndexing([NotNull] AQLParser.ArrayIndexingContext context)
     {
-        ExpressionNode targetNode = VisitQualifiedId(context.target);
+        SingleIdentifierNode targetNode = VisitIdentifier(context.target);
         ExpressionNode indexNode = VisitExpression(context.index);
 
         return new(
@@ -1444,7 +1532,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     #endregion
 
     #region Literals
-    public override IdentifierNode VisitIdentifier([NotNull] AQLParser.IdentifierContext context)
+    public override SingleIdentifierNode VisitIdentifier([NotNull] AQLParser.IdentifierContext context)
     {
         return new(
             lineNumber: context.Start.Line,

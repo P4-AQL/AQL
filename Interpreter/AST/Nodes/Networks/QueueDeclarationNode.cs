@@ -2,10 +2,13 @@
 
 
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Identifiers;
+using Interpreter.AST.Nodes.Metrics;
 using Interpreter.AST.Nodes.NonTerminals;
+using Interpreter.AST.Nodes.Types;
 
 namespace Interpreter.AST.Nodes.Networks;
-public class QueueDeclarationNode(int lineNumber, IdentifierNode identifier, ExpressionNode service, ExpressionNode capacity, ExpressionNode numberOfServers, IEnumerable<MetricNode> metrics) : NetworkNode(lineNumber, identifier, metrics)
+public class QueueDeclarationNode(int lineNumber, NetworkTypeNode customType, SingleIdentifierNode identifier, ExpressionNode service, ExpressionNode capacity, ExpressionNode numberOfServers, IEnumerable<NamedMetricNode> metrics) : NetworkNode(lineNumber, customType, identifier, metrics)
 {
     public ExpressionNode Service { get; } = service;
     public ExpressionNode Capacity { get; } = capacity;

@@ -2,20 +2,21 @@
 
 
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Types;
-public class NetworkTypeNode(int lineNumber, IdentifierNode identifier) : TypeNode(lineNumber)
+public class NetworkTypeNode(int lineNumber, SingleIdentifierNode identifier) : TypeNode(lineNumber)
 {
-    public IdentifierNode Identifier { get; } = identifier;
+    public SingleIdentifierNode Identifier { get; } = identifier;
 
     public override string ToString() => $"NetworkType({Identifier})";
 
     public override IEnumerable<Node> GetChildren()
     {
         return [
-            .. base.GetChildren(),
             Identifier,
+            .. base.GetChildren(),
         ];
     }
 
