@@ -47,8 +47,12 @@ instanceNetworkExpression:
 	existing = qualifiedId ':' new = idList;
 
 routesList: routes (',' routes)*;
-routes:
-	qualifiedId '->' (routes | qualifiedId | probabilityIdList);
+routes: routesId | routesValue;
+
+routesId:
+	qualifiedId '->' (routesId | qualifiedId | probabilityIdList);
+routesValue:
+	value '->' (routesId | qualifiedId | probabilityIdList);
 
 probabilityIdList:
 	'[' expression qualifiedId (',' expression qualifiedId)* ']';

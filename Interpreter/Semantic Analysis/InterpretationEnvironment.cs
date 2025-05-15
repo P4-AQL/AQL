@@ -16,8 +16,8 @@ public struct InterpretationEnvironment
     public readonly List<string> Errors => _errors;
     List<string> _errors;
 
-    public readonly List<InterpretationEnvironment> ModuleDependencies => _moduleDependencies;
-    List<InterpretationEnvironment> _moduleDependencies;
+    public readonly Table<InterpretationEnvironment> ModuleDependencies => _moduleDependencies;
+    Table<InterpretationEnvironment> _moduleDependencies;
 
     public ProgramNode Root;
 
@@ -29,7 +29,7 @@ public struct InterpretationEnvironment
         _networkState = new(),
         _errors = [],
 
-        _moduleDependencies = [],
+        _moduleDependencies = new(),
 
         Root = root,
     };

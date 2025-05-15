@@ -53,7 +53,7 @@ public class InterpreterClass
     public void InterpretImport(ImportNode node)
     {
         InterpretationEnvironment dependency = ModuleLoader.LoadModuleByName(node.Namespace.Identifier);
-        globalEnvironment.ModuleDependencies.Add(dependency);
+        globalEnvironment.ModuleDependencies.ForceBind(node.Namespace.Identifier, dependency);
     }
 
     private void InterpretDefinition(DefinitionNode node)
@@ -432,7 +432,30 @@ public class InterpreterClass
         }
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            throw new NotImplementedException();
+            InterpretImportIdentifier(qualifiedIdentifierNode);
+        }
+
+        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+    }
+
+    private object InterpretImportIdentifier(QualifiedIdentifierNode node)
+    {
+        string nodeIdentifier = node.Identifier.Identifier;
+        string expressionIdentifier = node.Expression.Identifier;
+        if (globalEnvironment.ModuleDependencies.Lookup(nodeIdentifier, out InterpretationEnvironment dependency))
+        {
+            if (dependency.FunctionState.Lookup(expressionIdentifier, out FunctionStateTuple functionDependency))
+            {
+                return functionDependency;
+            }
+            else if (dependency.VariableState.Lookup(expressionIdentifier, out object? variableDependency))
+            {
+                return variableDependency;
+            }
+            else if (dependency.NetworkState.Lookup(expressionIdentifier, out NetworkDeclarationNode? networkDependency))
+            {
+                return networkDependency;
+            }
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");

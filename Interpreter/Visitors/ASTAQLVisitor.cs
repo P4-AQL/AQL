@@ -658,35 +658,65 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override List<RouteDefinitionNode> VisitRoutes([NotNull] AQLParser.RoutesContext context)
     {
+        if (context.routesId() != null)
+        {
+            return VisitRoutesId(context.routesId());
+        }
+        else if (context.routesValue() != null)
+        {
+            return VisitRoutesValue(context.routesValue());
+        }
+
+        throw new($"Not a valid route definition! (Line {context.Start.Line})");
+    }
+
+    public override List<RouteDefinitionNode> VisitRoutesId([NotNull] AQLParser.RoutesIdContext context)
+    {
+        // Rule: routesId:
+        //          qualifiedId '->' (routesId | qualifiedId | probabilityIdList);
+
+        // We get all qualified Id's there are at most two.
         AQLParser.QualifiedIdContext[] qualifiedIdentifierContexts = context.qualifiedId();
         IdentifierNode fromIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts.First());
+        IdentifierExpressionNode fromExpressionNode = new(fromIdentifierNode.LineNumber, fromIdentifierNode);
 
-        if (context.routes() != null)
+        // In the case that routesId is defined, we know the chain is longer than where we currently are.
+        if (context.routesId() != null)
         {
-            List<RouteDefinitionNode> routeNodes = VisitRoutes(context.routes());
-            IdentifierNode routeTo = routeNodes.Last().From;
+            List<RouteDefinitionNode> routeNodes = VisitRoutesId(context.routesId());
+            // We always add to the list, meaning the newest element will be last in the list.
+            ExpressionNode routeTo = routeNodes.Last().From;
 
-            RouteDefinitionNode routeNode = MakeRouteDefinition(lineNumber: context.Start.Line, from: fromIdentifierNode, to: routeTo);
+            if (routeTo is not IdentifierExpressionNode identifierExpressionNode)
+            {
+                throw new($"Not a valid route definition (Line: {routeTo.LineNumber})");
+            }
+
+            RouteDefinitionNode routeNode = MakeRouteDefinition(lineNumber: context.Start.Line, from: fromExpressionNode, to: identifierExpressionNode.Identifier);
 
             routeNodes.Add(routeNode);
 
             return routeNodes;
         }
-        else if (qualifiedIdentifierContexts.Length > 1) // There is always one identifier rule present, but at most two.
+        // There is always one identifier rule present, but at most two.
+        // If there is two we know the rule is:
+        //          qualifiedId '->' qualifiedId
+        else if (qualifiedIdentifierContexts.Length > 1)
         {
             IdentifierNode toIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts[1]);
-
             return [
-                MakeRouteDefinition(lineNumber: context.Start.Line, from: fromIdentifierNode, to: toIdentifierNode)
+                MakeRouteDefinition(lineNumber: context.Start.Line, from: fromExpressionNode, to: toIdentifierNode)
             ];
         }
+        // If the probabilityIdList exists we know the rule is:
+        //          qualifiedId '->' probabilityIdList
         else if (context.probabilityIdList() != null)
         {
             IEnumerable<RouteValuePairNode> routeValuePairNodes = VisitProbabilityIdList(context.probabilityIdList());
             return [
                 new(
                     lineNumber: context.Start.Line,
-                    from: fromIdentifierNode,
+                    from: fromExpressionNode,
                     to: routeValuePairNodes
                 )
             ];
@@ -697,7 +727,60 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
     }
 
-    private RouteDefinitionNode MakeRouteDefinition(int lineNumber, IdentifierNode from, IdentifierNode to)
+    public override List<RouteDefinitionNode> VisitRoutesValue([NotNull] AQLParser.RoutesValueContext context)
+    {
+        // Rule: routesValue:
+        //          value '->' (routesId | qualifiedId | probabilityIdList);
+
+        ExpressionNode value = VisitValue(context.value());
+
+        // In the case that routesId is defined, we know the chain is longer than where we currently are.
+        if (context.routesId() != null)
+        {
+            List<RouteDefinitionNode> routeNodes = VisitRoutesId(context.routesId());
+            // We always add to the list, meaning the newest element will be last in the list.
+            ExpressionNode routeTo = routeNodes.Last().From;
+
+            if (routeTo is not IdentifierExpressionNode identifierExpressionNode)
+            {
+                throw new($"Not a valid route definition (Line: {routeTo.LineNumber})");
+            }
+
+            RouteDefinitionNode routeNode = MakeRouteDefinition(lineNumber: context.Start.Line, from: value, to: identifierExpressionNode.Identifier);
+
+            routeNodes.Add(routeNode);
+
+            return routeNodes;
+        }
+        // If there is two we know the rule is:
+        //          value '->' qualifiedId
+        else if (context.qualifiedId() != null)
+        {
+            IdentifierNode toIdentifierNode = VisitQualifiedId(context.qualifiedId());
+            return [
+                MakeRouteDefinition(lineNumber: context.Start.Line, from: value, to: toIdentifierNode)
+            ];
+        }
+        // If the probabilityIdList exists we know the rule is:
+        //          value '->' probabilityIdList
+        else if (context.probabilityIdList() != null)
+        {
+            IEnumerable<RouteValuePairNode> routeValuePairNodes = VisitProbabilityIdList(context.probabilityIdList());
+            return [
+                new(
+                    lineNumber: context.Start.Line,
+                    from: value,
+                    to: routeValuePairNodes
+                )
+            ];
+        }
+        else
+        {
+            throw new("Not a valid route.");
+        }
+    }
+
+    private RouteDefinitionNode MakeRouteDefinition(int lineNumber, ExpressionNode from, IdentifierNode to)
     {
         return new(
             lineNumber: lineNumber,
