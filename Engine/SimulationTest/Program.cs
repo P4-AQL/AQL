@@ -19,10 +19,14 @@ class Program
         // Creates a queue for the system, it takes a name, the number of the servers i the queue, the max of entities that can be in the queue at the same time and a service distribution that are a function that returns a double
         engine.CreateQueueNode("Network1.Q1", 2, 10, Exp(1.2));
         engine.CreateQueueNode("Network1.Q2", 1, 10, Exp(1.15));
+        engine.CreateQueueNode("Network1.Q3", 1, 25, Exp(1.05));
 
         // Creates a route in the system, it takes the name of the node where the entities comes from and then the name of the queue that the entities shall go to
         engine.ConnectNode("Network1.D1", "Network1.Q1");
-        engine.ConnectNode("Network1.Q1", "Network1.Q2");
+
+        // How to create a route in the system where the queue have two queues it outputs too
+        engine.ConnectNode("Network1.Q1", "Network1.Q2", 0.4);
+        engine.ConnectNode("Network1.Q1", "Network1.Q3", 0.6);
 
         // parameters for the simulation time it runs until and how many runs the simulation runs
         engine.SetSimulationParameters(5000, 5);
