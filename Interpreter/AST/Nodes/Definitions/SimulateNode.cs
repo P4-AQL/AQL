@@ -4,9 +4,9 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Definitions;
-public class SimulateNode(int lineNumber, ExpressionNode networkIdentifier, ExpressionNode runs, ExpressionNode terminationCriteria) : DefinitionNode(lineNumber)
+public class SimulateNode(int lineNumber, IdentifierNode networkIdentifier, ExpressionNode runs, ExpressionNode terminationCriteria) : DefinitionNode(lineNumber)
 {
-    public ExpressionNode NetworkIdentifier { get; } = networkIdentifier;
+    public IdentifierNode NetworkIdentifier { get; } = networkIdentifier;
     public ExpressionNode Runs { get; } = runs;
     public ExpressionNode TerminationCriteria { get; } = terminationCriteria;
 

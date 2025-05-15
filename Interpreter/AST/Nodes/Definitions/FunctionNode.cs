@@ -4,12 +4,13 @@
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.Statements;
+using Interpreter.AST.Nodes.Identifiers;
 
 namespace Interpreter.AST.Nodes.Definitions;
-public class FunctionNode(int lineNumber, DefinitionNode? nextDefinition, TypeNode returnType, IdentifierNode identifier, IEnumerable<TypeAndIdentifier> parameters, StatementNode body) : DefinitionCompositionNode(lineNumber, nextDefinition)
+public class FunctionNode(int lineNumber, DefinitionNode? nextDefinition, TypeNode returnType, SingleIdentifierNode identifier, IEnumerable<TypeAndIdentifier> parameters, StatementNode body) : DefinitionCompositionNode(lineNumber, nextDefinition)
 {
     public TypeNode ReturnType { get; } = returnType;
-    public IdentifierNode Identifier { get; } = identifier;
+    public SingleIdentifierNode Identifier { get; } = identifier;
     public IReadOnlyList<TypeAndIdentifier> Parameters { get; } = [.. parameters];
     public StatementNode Body { get; } = body;
 

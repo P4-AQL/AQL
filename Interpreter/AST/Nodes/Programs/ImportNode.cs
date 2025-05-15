@@ -2,13 +2,14 @@
 
 
 using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Programs
 {
-    public class ImportNode(int lineNumber, IdentifierNode @namespace, ProgramNode? nextProgram) : ProgramNode(lineNumber)
+    public class ImportNode(int lineNumber, SingleIdentifierNode @namespace, ProgramNode? nextProgram) : ProgramNode(lineNumber)
     {
-        public IdentifierNode Namespace { get; } = @namespace;
+        public SingleIdentifierNode Namespace { get; } = @namespace;
         public ProgramNode? NextProgram { get; } = nextProgram;
 
         public override string ToString() => $"ImportNode({Namespace}, {NextProgram})";
