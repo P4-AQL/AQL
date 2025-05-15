@@ -365,7 +365,7 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitExpression([NotNull] AQLParser.ExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.logicalOrExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.operator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -373,9 +373,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitLogicalOrExpression([NotNull] AQLParser.LogicalOrExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitOperator([NotNull] AQLParser.OperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.logicalAndExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.andOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -383,9 +383,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitLogicalAndExpression([NotNull] AQLParser.LogicalAndExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitAndOperator([NotNull] AQLParser.AndOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.equalityExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.orOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -393,9 +393,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitEqualityExpression([NotNull] AQLParser.EqualityExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitOrOperator([NotNull] AQLParser.OrOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.equalExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.addOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -403,9 +403,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitEqualExpression([NotNull] AQLParser.EqualExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitAddOperator([NotNull] AQLParser.AddOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.inEqualExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.subtractOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -413,9 +413,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitInEqualExpression([NotNull] AQLParser.InEqualExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitSubtractOperator([NotNull] AQLParser.SubtractOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.relationalExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.divisionOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -423,9 +423,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitRelationalExpression([NotNull] AQLParser.RelationalExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitDivisionOperator([NotNull] AQLParser.DivisionOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.lessThanExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.equalOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -433,9 +433,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitLessThanExpression([NotNull] AQLParser.LessThanExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitEqualOperator([NotNull] AQLParser.EqualOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.lessThanOrEqualExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.inEqualOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -443,9 +443,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitLessThanOrEqualExpression([NotNull] AQLParser.LessThanOrEqualExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitInEqualOperator([NotNull] AQLParser.InEqualOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.greaterThanExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.greaterThanOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -453,9 +453,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitGreaterThanExpression([NotNull] AQLParser.GreaterThanExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitGreaterThanOperator([NotNull] AQLParser.GreaterThanOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.greaterThanOrEqualExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.greaterThanOrEqualOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -463,9 +463,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitGreaterThanOrEqualExpression([NotNull] AQLParser.GreaterThanOrEqualExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitGreaterThanOrEqualOperator([NotNull] AQLParser.GreaterThanOrEqualOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.additiveExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.lessThanOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -473,9 +473,9 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitAdditiveExpression([NotNull] AQLParser.AdditiveExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitLessThanOperator([NotNull] AQLParser.LessThanOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.addExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.lessThanOrEqualOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -483,47 +483,7 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitAddExpression([NotNull] AQLParser.AddExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.subtractExpression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitSubtractExpression([NotNull] AQLParser.SubtractExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.multiplicativeExpression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitMultiplicativeExpression([NotNull] AQLParser.MultiplicativeExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.multiplyExpression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitMultiplyExpression([NotNull] AQLParser.MultiplyExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.divisionExpression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitDivisionExpression([NotNull] AQLParser.DivisionExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitLessThanOrEqualOperator([NotNull] AQLParser.LessThanOrEqualOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.unaryExpression"/>.
 	/// <para>
@@ -674,6 +634,16 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitArrayType([NotNull] AQLParser.ArrayTypeContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.anyIdentifier"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitAnyIdentifier([NotNull] AQLParser.AnyIdentifierContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.qualifiedIdList"/>.
 	/// <para>

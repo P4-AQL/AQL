@@ -99,49 +99,32 @@ returnStatement: 'return' expression ';';
 
 expressionList: expression (',' expression)*;
 
-expression: logicalOrExpression;
+expression: expression operator expression | unaryExpression;
 
-logicalOrExpression:
-	logicalAndExpression ('||' logicalAndExpression)*;
+operator:
+	andOperator
+	| orOperator
+	| addOperator
+	| subtractOperator
+	| divisionOperator
+	| equalOperator
+	| inEqualOperator
+	| greaterThanOperator
+	| greaterThanOrEqualOperator
+	| lessThanOperator
+	| lessThanOrEqualOperator;
 
-logicalAndExpression:
-	equalityExpression ('&&' equalityExpression)*;
-
-equalityExpression: equalExpression | inEqualExpression;
-
-equalExpression:
-	relationalExpression ('==' relationalExpression)*;
-inEqualExpression:
-	relationalExpression ('!=' relationalExpression)*;
-
-relationalExpression:
-	lessThanExpression
-	| lessThanOrEqualExpression
-	| greaterThanExpression
-	| greaterThanOrEqualExpression;
-
-lessThanExpression:
-	additiveExpression ('<' additiveExpression)*;
-lessThanOrEqualExpression:
-	additiveExpression ('<=' additiveExpression)*;
-greaterThanExpression:
-	additiveExpression ('>' additiveExpression)*;
-greaterThanOrEqualExpression:
-	additiveExpression ('>=' additiveExpression)*;
-
-additiveExpression: addExpression | subtractExpression;
-
-addExpression:
-	multiplicativeExpression ('+' multiplicativeExpression)*;
-subtractExpression:
-	multiplicativeExpression ('-' multiplicativeExpression)*;
-
-multiplicativeExpression:
-	multiplyExpression
-	| divisionExpression;
-
-multiplyExpression: unaryExpression ('*' unaryExpression)*;
-divisionExpression: unaryExpression ('/' unaryExpression)*;
+andOperator: '&&';
+orOperator: '||';
+addOperator: '+';
+subtractOperator: '-';
+divisionOperator: '/';
+equalOperator: '==';
+inEqualOperator: '!=';
+greaterThanOperator: '>';
+greaterThanOrEqualOperator: '>=';
+lessThanOperator: '<';
+lessThanOrEqualOperator: '<=';
 
 unaryExpression:
 	negationExpression
@@ -155,7 +138,7 @@ parenthesesExpression: '(' expression ')';
 
 value:
 	functionCall
-	| qualifiedId
+	| anyIdentifier
 	| string
 	| double
 	| int
@@ -164,7 +147,7 @@ value:
 	| arrayIndexing;
 
 functionCall:
-	functionIdentifier = identifier '(' parameters = expressionList? ')';
+	functionIdentifier = anyIdentifier '(' parameters = expressionList? ')';
 
 arrayInitialization: '{' expression* (',' expression)* '}';
 arrayIndexing: target = identifier '[' index = expression ']';
@@ -183,6 +166,8 @@ doubleKeyword: 'double';
 stringKeyword: 'string';
 
 arrayType: '[' type ']';
+
+anyIdentifier: identifier | qualifiedId;
 
 qualifiedIdList: qualifiedId (',' qualifiedId)*;
 qualifiedId: left = identifier '.' right = identifier;

@@ -230,101 +230,77 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpression([NotNull] AQLParser.ExpressionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.logicalOrExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.operator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitLogicalOrExpression([NotNull] AQLParser.LogicalOrExpressionContext context);
+	Result VisitOperator([NotNull] AQLParser.OperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.logicalAndExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.andOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitLogicalAndExpression([NotNull] AQLParser.LogicalAndExpressionContext context);
+	Result VisitAndOperator([NotNull] AQLParser.AndOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.equalityExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.orOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitEqualityExpression([NotNull] AQLParser.EqualityExpressionContext context);
+	Result VisitOrOperator([NotNull] AQLParser.OrOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.equalExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.addOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitEqualExpression([NotNull] AQLParser.EqualExpressionContext context);
+	Result VisitAddOperator([NotNull] AQLParser.AddOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.inEqualExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.subtractOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitInEqualExpression([NotNull] AQLParser.InEqualExpressionContext context);
+	Result VisitSubtractOperator([NotNull] AQLParser.SubtractOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.relationalExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.divisionOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitRelationalExpression([NotNull] AQLParser.RelationalExpressionContext context);
+	Result VisitDivisionOperator([NotNull] AQLParser.DivisionOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.lessThanExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.equalOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitLessThanExpression([NotNull] AQLParser.LessThanExpressionContext context);
+	Result VisitEqualOperator([NotNull] AQLParser.EqualOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.lessThanOrEqualExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.inEqualOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitLessThanOrEqualExpression([NotNull] AQLParser.LessThanOrEqualExpressionContext context);
+	Result VisitInEqualOperator([NotNull] AQLParser.InEqualOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.greaterThanExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.greaterThanOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitGreaterThanExpression([NotNull] AQLParser.GreaterThanExpressionContext context);
+	Result VisitGreaterThanOperator([NotNull] AQLParser.GreaterThanOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.greaterThanOrEqualExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.greaterThanOrEqualOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitGreaterThanOrEqualExpression([NotNull] AQLParser.GreaterThanOrEqualExpressionContext context);
+	Result VisitGreaterThanOrEqualOperator([NotNull] AQLParser.GreaterThanOrEqualOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.additiveExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.lessThanOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitAdditiveExpression([NotNull] AQLParser.AdditiveExpressionContext context);
+	Result VisitLessThanOperator([NotNull] AQLParser.LessThanOperatorContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.addExpression"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.lessThanOrEqualOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitAddExpression([NotNull] AQLParser.AddExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.subtractExpression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitSubtractExpression([NotNull] AQLParser.SubtractExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.multiplicativeExpression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitMultiplicativeExpression([NotNull] AQLParser.MultiplicativeExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.multiplyExpression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitMultiplyExpression([NotNull] AQLParser.MultiplyExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.divisionExpression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitDivisionExpression([NotNull] AQLParser.DivisionExpressionContext context);
+	Result VisitLessThanOrEqualOperator([NotNull] AQLParser.LessThanOrEqualOperatorContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.unaryExpression"/>.
 	/// </summary>
@@ -415,6 +391,12 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitArrayType([NotNull] AQLParser.ArrayTypeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.anyIdentifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAnyIdentifier([NotNull] AQLParser.AnyIdentifierContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.qualifiedIdList"/>.
 	/// </summary>
