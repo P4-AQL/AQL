@@ -229,14 +229,14 @@ public class InterpreterClass
 
     private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, InstanceDeclaration instance)
     {
-        object someNetwork = InterpretIdentifier(instance.ExistingInstance, shadowVariableState: null);
-        if (someNetwork is not NetworkNode networkNode)
+        object existingNetwork = InterpretIdentifier(instance.ExistingInstance, shadowVariableState: null);
+        if (existingNetwork is not NetworkNode existingNetworkNode)
         {
             throw new($"Not a valid instance! (Line: {instance.LineNumber})");
         }
 
         string queueFullPath = networkIdentifier + "." + instance.NewInstance.Identifier;
-        CreateQueueInEngine(engineAPI, queueFullPath, networkNode);
+        CreateQueueInEngine(engineAPI, queueFullPath, existingNetworkNode);
     }
 
     private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, NetworkNode network)
