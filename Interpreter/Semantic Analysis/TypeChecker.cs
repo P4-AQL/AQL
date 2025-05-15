@@ -5,6 +5,7 @@ using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
+using Interpreter.AST.Nodes.Routes;
 using Interpreter.AST.Nodes.Statements;
 using Interpreter.AST.Nodes.Types;
 
@@ -130,14 +131,25 @@ public class TypeChecker
             /// Type check metrics
             /// Save in network Environment and 
             /// IsValid must be true?
-            /// Type check remaining children
+            /// Bind Sigma to Gamma and continue with next definition
             
             // x not in dom(E)
             if (environment.Lookup(GetIdentifier(networkDeclarationNode.Identifier), out Node? _)) errors.Add("Identifier already declared");
 
             // Make Sigma
             Table<Node> localNetwork = new Table<Node>();
+
+            // input
             TypeCheckInputs(networkDeclarationNode.Inputs, localNetwork, errors);
+
+            // output
+            TypeCheckOutputs(networkDeclarationNode.Inputs, localNetwork, errors);
+
+            // instances
+            TypeCheckInstances(networkDeclarationNode.Instances, localNetwork, errors);
+
+            // routes
+            TypeCheckRoutes(networkDeclarationNode.Routes, localNetwork, errors);
 
         }
         else if (networkDefinitionNode.Network is QueueDeclarationNode queueDeclarationNode)
@@ -362,6 +374,7 @@ public class TypeChecker
         }
     }
 
+    //These 2 methods could probably be combined, but it is not important
     private void TypeCheckInputs(IReadOnlyList<SingleIdentifierNode> io, Table<Node> localNetworkTable, List<string> errors)
     {
         foreach (SingleIdentifierNode node in io)
@@ -373,5 +386,52 @@ public class TypeChecker
             localNetworkTable.TryBindIfNotExists(node.Identifier, new InputTypeNode(node.LineNumber));
             // should be checked above, since we do it one identifier at a time, it and makes sure it is not defined before
         }
+    }
+
+    private void TypeCheckOutputs(IReadOnlyList<SingleIdentifierNode> io, Table<Node> localNetworkTable, List<string> errors)
+    {
+        foreach (SingleIdentifierNode node in io)
+        {
+            // not in dom(E) or dom(Sigma)
+            if (environment.Lookup(node.Identifier, out Node? _) || localNetworkTable.Lookup(node.Identifier, out Node? _)) errors.Add("identifier already declared");
+
+            // i != j => x_i != x_j
+            localNetworkTable.TryBindIfNotExists(node.Identifier, new OutputTypeNode(node.LineNumber)); //Should always work since we alread looked it up
+            
+        }
+    }
+
+    private void TypeCheckInstances(IReadOnlyList<InstanceDeclaration> instances, Table<Node> localNetwork, List<string> errors)
+    {
+        foreach (InstanceDeclaration instance in instances)
+        {
+            // check existing
+            if (environment.Lookup(GetIdentifier(instance.ExistingInstance), out Node? _) || localNetworkScopesEnvironment.Lookup(GetIdentifier(instance.ExistingInstance), out Table<Node>? _)) {
+                // bind new to same as existing
+                localNetwork.TryBindIfNotExists(GetIdentifier(instance.NewInstances), instance.ExistingInstance);
+            }
+            else errors.Add("Error: Instance identifier not found");
+        }
+    }
+
+    private void TypeCheckRoutes(IReadOnlyList<RouteNode> routes, Table<Node> localNetwork, List<string> errors)
+    {
+        foreach (RouteNode route in routes)
+        {
+            if (route is RouteDefinitionNode routeDefinitionNode) {
+                // Check destination
+                TypeCheckRouteDestination(routeDefinitionNode.To, localNetwork, errors);
+
+                
+            }
+            else {
+                errors.Add("Route is not valid");
+            }
+        }
+    }
+
+    private void TypeCheckRouteDestination(IReadOnlyList<RouteValuePairNode> to, Table<Node> localNetwork, List<string> errors)
+    {
+        throw new NotImplementedException();
     }
 }
