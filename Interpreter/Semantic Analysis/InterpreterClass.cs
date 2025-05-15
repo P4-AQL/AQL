@@ -235,10 +235,20 @@ public class InterpreterClass
             throw new($"Not a valid instance! (Line: {instance.LineNumber})");
         }
 
-
-
         string queueFullPath = networkIdentifier + "." + instance.NewInstance.Identifier;
+        CreateQueueInEngine(engineAPI, queueFullPath, networkNode);
+    }
 
+    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, NetworkNode network)
+    {
+        if (network is NetworkDeclarationNode networkDeclarationNode)
+        {
+
+        }
+        else if (network is QueueDeclarationNode queueDeclarationNode)
+        {
+
+        }
     }
 
     private void InterpretSimulate(SimulateNode simulateNode)

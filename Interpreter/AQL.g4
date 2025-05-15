@@ -44,31 +44,37 @@ inputOutputNetworkExpression:
 	inputs = idList '|' outputs = idList;
 
 instanceNetworkExpression:
-	existing = qualifiedId ':' new = idList;
+	existing = anyIdentifier ':' new = idList;
 
 routesList: routes (',' routes)*;
 routes: routesId | routesValue;
 
 routesId:
-	qualifiedId '->' (routesId | qualifiedId | probabilityIdList);
+	anyIdentifier '->' (
+		routesId
+		| anyIdentifier
+		| probabilityIdList
+	);
+
 routesValue:
-	value '->' (routesId | qualifiedId | probabilityIdList);
+	value '->' (routesId | anyIdentifier | probabilityIdList);
 
 probabilityIdList:
-	'[' expression qualifiedId (',' expression qualifiedId)* ']';
+	'[' expression anyIdentifier (',' expression anyIdentifier)* ']';
 
 metrics: '*' (metric (',' metric)*)? '*';
-metric: namedMetric | functionMetric = qualifiedId;
+metric: namedMetric;
+
 namedMetric:
 	'mrt'
 	| 'vrt'
-	| 'util'
+	| 'utilization'
 	| 'throughput'
 	| 'num'
 	| 'avgNum';
 
 simulateDefinition:
-	'simulate' '{' 'run:' network = qualifiedId ';' 'until:' terminationCriteria = expression ';'
+	'simulate' '{' 'run:' network = anyIdentifier ';' 'until:' terminationCriteria = expression ';'
 		'times:' runs = expression ';'? '}';
 
 statement:
@@ -169,7 +175,7 @@ arrayType: '[' type ']';
 
 anyIdentifier: identifier | qualifiedId;
 
-qualifiedIdList: qualifiedId (',' qualifiedId)*;
+//qualifiedIdList: qualifiedId (',' qualifiedId)*;
 qualifiedId: left = identifier '.' right = identifier;
 
 idList: identifier (',' identifier)*;

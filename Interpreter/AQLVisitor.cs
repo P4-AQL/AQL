@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/thoma/Documents/GitHub/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
+// Generated from c:/Users/thoma/Documents/VSCODE/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -397,12 +397,6 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitAnyIdentifier([NotNull] AQLParser.AnyIdentifierContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.qualifiedIdList"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitQualifiedIdList([NotNull] AQLParser.QualifiedIdListContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.qualifiedId"/>.
 	/// </summary>
