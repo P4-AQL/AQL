@@ -24,26 +24,26 @@ public class TypeChecker
     {
         if (node is ProgramNode programNode){
             TypeCheckProgramNode(programNode, errors);
-        }   
-        else if (node is DefinitionNode defNode)
-        {
-            // We don't need localEnv because these definition can only be global.
-            TypeCheckDefinitionNode(defNode, errors);
 
-        }
+        }   
+        else errors.Add("Unexpected definition");
+
         // Return errors to parent node type check
         return errors;
     }
 
-    private void TypeCheckProgramNode(Node programNode, List<String> errors)
+    private void TypeCheckProgramNode(ProgramNode programNode, List<String> errors)
     {
         if (programNode is ImportNode)
         {
-
+            // The interpreter fixes this
         }
-        else if (programNode is DefinitionProgramNode)
+        else if (programNode is DefinitionProgramNode definitionProgramNode)
         {
-
+            TypeCheckDefinitionNode(definitionProgramNode.Definition, errors);
+        }
+        else {
+            errors.Add("Unexpected definition");
         }
     }
 
@@ -177,6 +177,7 @@ public class TypeChecker
             // next definition is being checked in the end of this method
         }
 
+        // check children
         if (networkDefinitionNode.NextDefinition is not null) TypeCheckDefinitionNode(networkDefinitionNode.NextDefinition, errors);
     }
 
@@ -186,7 +187,6 @@ public class TypeChecker
             environment = localEnvironment;
         }
         
-
         if (statementNode is AssignNode assignNode){
             // E ⊢ x = e : ok   if 
                 // E(x) = T 
@@ -356,8 +356,6 @@ public class TypeChecker
         }
     }
 
-    
-
     private TypeNode GetReturnTypeOfFunctionCall(FunctionCallNode node) 
     {
         environment.Lookup(GetIdentifier(node.Identifier), out Node? functionBody);
@@ -458,6 +456,8 @@ public class TypeChecker
             if (route is RouteDefinitionNode routeDefinitionNode) {
                 // Check destination
                 TypeCheckRouteDestination(routeDefinitionNode.To, localNetwork, errors);
+
+
 
                 
             }
