@@ -445,7 +445,7 @@ public class TypeChecker
     {
         if (node is FunctionCallNode funcNode)
         {
-            environment.Lookup(funcNode.Identifier.Identifier, out Node? returnType);
+            environment.Lookup(GetIdentifier(funcNode.Identifier)[0], out Node? returnType);
 
             if (returnType is null) return false;
 
