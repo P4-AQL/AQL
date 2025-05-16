@@ -475,13 +475,13 @@ public class InterpreterClass
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
             object leftValue = InterpretIdentifier(qualifiedIdentifierNode.LeftIdentifier, globalEnvironment);
-            if (leftValue is not InterpretationEnvironment dependency)
+            if (leftValue is InterpretationEnvironment dependency)
             {
-                return leftValue;
+                return InterpretIdentifier(qualifiedIdentifierNode.RightIdentifier, dependency);
             }
             else
             {
-                return InterpretIdentifier(qualifiedIdentifierNode.RightIdentifier, dependency);
+                return leftValue;
             }
         }
 

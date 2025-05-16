@@ -87,8 +87,8 @@ statement:
 whileStatement:
 	'while' condition = expression 'do' body = block nextStatement = statement?;
 
-variableDeclarationStatement:
-	type assignStatement nextStatement = statement?;
+// The assign statement has the next statement
+variableDeclarationStatement: type assignStatement;
 
 assignStatement:
 	<assoc = right> identifier '=' expression ';' nextStatement = statement?;

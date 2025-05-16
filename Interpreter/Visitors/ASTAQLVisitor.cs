@@ -212,15 +212,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         TypeNode typeNode = VisitType(context.type());
         AssignNode assignNode = VisitAssignStatement(context.assignStatement());
 
-        StatementNode? nextStatement = null;
-        if (context.statement() != null)
-        {
-            nextStatement = VisitStatement(context.nextStatement);
-        }
-
         return new(
                 lineNumber: context.Start.Line,
-                nextStatement: nextStatement,
+                nextStatement: assignNode.NextStatement,
                 type: typeNode,
                 identifier: assignNode.Identifier,
                 expression: assignNode.Expression
