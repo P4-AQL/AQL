@@ -59,7 +59,7 @@ public class TypeChecker
             if (FindExpressionType(cdNode.Expression, errors) != cdNode.Type) errors.Add("Error: Expression type must match declaration type.");
 
             // Try binding and error if fail
-            if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Identifier already declared.");
+            if (!constEnvironment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Identifier already declared.");
 
             /// Type check children
             if (cdNode.NextDefinition is not null) TypeCheckDefinitionNode(cdNode.NextDefinition, errors);
@@ -149,6 +149,60 @@ public class TypeChecker
             // routes
             TypeCheckRoutes(networkDeclarationNode.Routes, localNetwork, errors);
 
+            // metrics
+            TypeCheckMetricList(networkDeclarationNode.Metrics, errors);
+
+            // bind to network env
+            localNetworkScopesEnvironment.TryBindIfNotExists(GetIdentifier(networkDeclarationNode.Identifier)[0], localNetwork);
+
+            /// isvalid? Check that there is routing from all inputs, routing from all instances and routing to all outputs
+            // routing from all inputs
+            foreach (SingleIdentifierNode input in networkDeclarationNode.Inputs)
+            {
+                string id = GetIdentifier(input)[0];
+                bool inputFound = false;
+
+                foreach (RouteDefinitionNode route in networkDeclarationNode.Routes.Cast<RouteDefinitionNode>())
+                {
+                    if (route.From is IdentifierExpressionNode idExprNode) {
+                        if (GetIdentifier(idExprNode.Identifier)[0] == id) inputFound = true;
+                    }
+                }
+                
+                if (!inputFound) errors.Add("Input not used");
+            }
+
+            // routing from all instances
+            foreach (InstanceDeclaration instance in networkDeclarationNode.Instances)
+            {
+                string id = GetIdentifier(instance.ExistingInstance)[0];
+                bool instanceFound = false;
+
+                foreach (RouteDefinitionNode route in networkDeclarationNode.Routes.Cast<RouteDefinitionNode>())
+                {
+                    if (route.From is IdentifierExpressionNode idExprNode) {
+                        if (GetIdentifier(idExprNode.Identifier)[0] == id) instanceFound = true;
+                    }
+                }
+                
+                if (!instanceFound) errors.Add("Instance not used");
+            }
+
+            // routing to all outputs
+            foreach (SingleIdentifierNode output in networkDeclarationNode.Outputs)
+            {
+                string id = GetIdentifier(output)[0];
+                bool outputFound = false;
+
+                foreach (RouteDefinitionNode route in networkDeclarationNode.Routes.Cast<RouteDefinitionNode>())
+                {
+                    if (route.From is IdentifierExpressionNode idExprNode) {
+                        if (GetIdentifier(idExprNode.Identifier)[0] == id) outputFound = true;
+                    }
+                }
+                
+                if (!outputFound) errors.Add("Instance not used");
+            }
         }
         else if (networkDefinitionNode.Network is QueueDeclarationNode queueDeclarationNode)
         {
