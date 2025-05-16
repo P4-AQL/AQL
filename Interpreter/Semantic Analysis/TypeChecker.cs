@@ -38,7 +38,7 @@ public class TypeChecker
     {
         if (programNode is ImportNode importNode)
         {
-            // The interpreter fixes this
+            // The interpreter fixes this (NOT)
             if (importNode.NextProgram is not null)
                 TypeCheckNode(importNode.NextProgram, errors);
         }
@@ -345,8 +345,6 @@ public class TypeChecker
 
     }
 
-
-
     private TypeNode? FindExpressionType(ExpressionNode topExpression, List<string> errors, Table<Node>? localEnvironment)
     {
         try
@@ -361,35 +359,19 @@ public class TypeChecker
 
         TypeNode FindExpressionTypeInner(ExpressionNode expressionNode, Table<Node>? localEnvironment)
         {
-            TypeNode FindRecursive(ExpressionNode expressionNode) => FindExpressionTypeInner(expressionNode, localEnvironment);
-
             return expressionNode switch
             {
                 // Further expressions. Clearly not optimized
-                AddNode node => (FindRecursive(node.Left) is DoubleTypeNode || FindRecursive(node.Right) is DoubleTypeNode)
-                        ? new DoubleTypeNode(node.LineNumber)
-                        : ((FindRecursive(node.Left) is IntTypeNode || FindRecursive(node.Right) is IntTypeNode)
-                            ? new IntTypeNode(node.LineNumber)
-                            : throw new("Expression must be int or double")),
-                AndNode node => (FindRecursive(node.Left) is BoolTypeNode) && (FindRecursive(node.Right) is BoolTypeNode) ? new BoolTypeNode(node.LineNumber) : throw new("Expressions must evaluate to bool"),
-                DivisionNode node => (FindRecursive(node.Left) is DoubleTypeNode || FindRecursive(node.Right) is DoubleTypeNode)
-                        ? new DoubleTypeNode(node.LineNumber)
-                        : ((FindRecursive(node.Left) is IntTypeNode || FindRecursive(node.Right) is IntTypeNode)
-                            ? new IntTypeNode(node.LineNumber)
-                            : throw new("Expression must be int or double")),
-                EqualNode node => FindRecursive(node.Left).GetType() == FindRecursive(node.Right).GetType() ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
-                FunctionCallNode node => GetReturnTypeOfFunctionCall(node),
-                IdentifierExpressionNode node => GetIdentifierType(node, localEnvironment),
-                LessThanNode node => IsIntOrDouble(FindRecursive(node.Left)) && IsIntOrDouble(FindRecursive(node.Right)) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
-                MultiplyNode node => FindRecursive(node.Left).GetType() == FindRecursive(node.Right).GetType()
-                    ? ((FindRecursive(node.Left) is DoubleTypeNode || FindRecursive(node.Right) is DoubleTypeNode)
-                        ? new DoubleTypeNode(node.LineNumber)
-                        : ((FindRecursive(node.Left) is IntTypeNode || FindRecursive(node.Right) is IntTypeNode)
-                            ? new IntTypeNode(node.LineNumber)
-                            : throw new("Expression must be int or double")))
-                    : throw new("Error: Expression not found"),
-                NegativeNode node => IsIntOrDouble(FindRecursive(node.Inner)) ? FindRecursive(node.Inner) : throw new("Expression not int or double"),
-                NotNode node => FindRecursive(node.Inner) is BoolTypeNode ? FindRecursive(node.Inner) : throw new("Expression must evaluate to bool"),
+                AddNode node => TypeCheckAddNode(node),
+                AndNode node => TypeCheckAndNode(node),
+                DivisionNode node => TypeCheckDivisionNode(node),
+                EqualNode node => TypeCheckEqualNode(node),
+                FunctionCallNode node => TypeCheckFunctionCall(node),
+                IdentifierExpressionNode node => TypeCheckIdentifierNode(node, localEnvironment),
+                LessThanNode node => TypeCheckLessThanNode(node),
+                MultiplyNode node => TypeCheckMultiplyNode(node),
+                NegativeNode node => TypeCheckNegativeNode(node),
+                NotNode node => TypeCheckNotNode(node),
                 ParenthesesNode node => FindRecursive(node.Inner),
 
                 // Literals
@@ -400,49 +382,152 @@ public class TypeChecker
                 LiteralNode node => new StringTypeNode(node.LineNumber),
                 _ => throw new("Error: Not a valid expression!")
             };
-            throw new NotImplementedException();
-        }
-    }
 
-    private TypeNode GetIdentifierType(IdentifierExpressionNode node, Table<Node>? localEnvironment)
-    {
-        Node? typeNode = null;
-        localEnvironment?.Lookup(GetIdentifier(node.Identifier)[0], out typeNode);
-        if (typeNode is null)
-        {
-            environment.Lookup(GetIdentifier(node.Identifier)[0], out typeNode);
-            if (typeNode is null)
+            #region Local Functions
+
+            TypeNode TypeCheckAddNode(AddNode node)
             {
-                constEnvironment.Lookup(GetIdentifier(node.Identifier)[0], out typeNode);
-            }
-        }
+                TypeNode leftType = FindRecursive(node.Left);
+                TypeNode rightType = FindRecursive(node.Right);
 
-        if (typeNode is not null)
-        {
-            if (typeNode is not TypeNode typeNodeCast)
+                return (leftType, rightType) switch
+                {
+                    (DoubleTypeNode, DoubleTypeNode) => leftType,
+                    (IntTypeNode, IntTypeNode) => leftType,
+                    (DoubleTypeNode, IntTypeNode) => leftType,
+                    (IntTypeNode, DoubleTypeNode) => rightType,
+                    _ => throw new("Expression must be int or double")
+                };
+            }
+
+            TypeNode TypeCheckAndNode(AndNode node)
             {
-                throw new($"Not valid in this context! (Line {node.LineNumber})");
+                TypeNode leftType = FindRecursive(node.Left);
+                TypeNode rightType = FindRecursive(node.Right);
+
+                return (leftType, rightType) switch
+                {
+                    (BoolTypeNode, BoolTypeNode) => leftType,
+                    _ => throw new("Expressions must evaluate to bool")
+                };
             }
-            return typeNodeCast;
-        }
-        else
-        {
-            throw new($"Identifier not found! (Line {node.LineNumber})");
-        }
-    }
 
-    private static bool IsIntOrDouble(TypeNode typeNode) => typeNode is IntTypeNode || typeNode is DoubleTypeNode;
+            TypeNode TypeCheckDivisionNode(DivisionNode node)
+            {
+                TypeNode leftType = FindRecursive(node.Left);
+                TypeNode rightType = FindRecursive(node.Right);
 
-    private TypeNode GetReturnTypeOfFunctionCall(FunctionCallNode node)
-    {
-        environment.Lookup(GetIdentifier(node.Identifier)[0], out Node? functionBody);
-        if (functionBody is FunctionNode funcNode)
-        {
-            return funcNode.ReturnType;
-        }
-        else
-        {
-            throw new("Error: Unexpected node saved at identifier.");
+                return (leftType, rightType) switch
+                {
+                    (DoubleTypeNode, DoubleTypeNode) => leftType,
+                    (IntTypeNode, IntTypeNode) => leftType,
+                    (DoubleTypeNode, IntTypeNode) => leftType,
+                    (IntTypeNode, DoubleTypeNode) => rightType,
+                    _ => throw new("Expression must be int or double")
+                };
+            }
+
+            TypeNode TypeCheckEqualNode(EqualNode node)
+            {
+                TypeNode leftType = FindRecursive(node.Left);
+                TypeNode rightType = FindRecursive(node.Right);
+
+                return (leftType, rightType) switch
+                {
+                    (BoolTypeNode, BoolTypeNode) => leftType,
+                    _ => throw new("Expressions must evaluate to bool")
+                };
+            }
+
+            TypeNode TypeCheckFunctionCall(FunctionCallNode node)
+            {
+                environment.Lookup(GetIdentifier(node.Identifier)[0], out Node? functionBody);
+                if (functionBody is FunctionNode funcNode)
+                {
+                    return funcNode.ReturnType;
+                }
+                else
+                {
+                    throw new("Error: Unexpected node saved at identifier.");
+                }
+            }
+
+            TypeNode TypeCheckIdentifierNode(IdentifierExpressionNode node, Table<Node>? localEnvironment)
+            {
+                Node? typeNode = null;
+                localEnvironment?.Lookup(GetIdentifier(node.Identifier)[0], out typeNode);
+                if (typeNode is null)
+                {
+                    environment.Lookup(GetIdentifier(node.Identifier)[0], out typeNode);
+                    if (typeNode is null)
+                    {
+                        constEnvironment.Lookup(GetIdentifier(node.Identifier)[0], out typeNode);
+                    }
+                }
+
+                if (typeNode is not null)
+                {
+                    if (typeNode is not TypeNode typeNodeCast)
+                    {
+                        throw new($"Not valid in this context! (Line {node.LineNumber})");
+                    }
+                    return typeNodeCast;
+                }
+                else
+                {
+                    throw new($"Identifier not found! (Line {node.LineNumber})");
+                }
+            }
+
+            TypeNode TypeCheckLessThanNode(LessThanNode node)
+            {
+                TypeNode leftType = FindRecursive(node.Left);
+                TypeNode rightType = FindRecursive(node.Right);
+
+                BoolTypeNode expressionType = new(node.LineNumber);
+
+                if (IsIntOrDouble(leftType) && IsIntOrDouble(rightType))
+                    return expressionType;
+                else
+                    throw new("Expression must be int or double");
+            }
+
+            TypeNode TypeCheckMultiplyNode(MultiplyNode node)
+            {
+                TypeNode leftType = FindRecursive(node.Left);
+                TypeNode rightType = FindRecursive(node.Right);
+
+                return (leftType, rightType) switch
+                {
+                    (DoubleTypeNode, DoubleTypeNode) => leftType,
+                    (IntTypeNode, IntTypeNode) => leftType,
+                    (DoubleTypeNode, IntTypeNode) => leftType,
+                    (IntTypeNode, DoubleTypeNode) => rightType,
+                    _ => throw new("Expression must be int or double")
+                };
+            }
+
+            TypeNode TypeCheckNegativeNode(NegativeNode node)
+            {
+                TypeNode innerType = FindRecursive(node.Inner);
+                if (IsIntOrDouble(innerType))
+                    return innerType;
+                else
+                    throw new("Expression not int or double");
+            }
+
+            TypeNode TypeCheckNotNode(NotNode node)
+            {
+                TypeNode innerType = FindRecursive(node.Inner);
+                if (innerType is not BoolTypeNode)
+                    throw new($"Expression must evaluate to a bool (Line {node.LineNumber})");
+                return innerType;
+            }
+
+            static bool IsIntOrDouble(TypeNode typeNode) => typeNode is IntTypeNode || typeNode is DoubleTypeNode;
+
+            TypeNode FindRecursive(ExpressionNode expressionNode) => FindExpressionTypeInner(expressionNode, localEnvironment);
+            #endregion
         }
     }
 
@@ -450,41 +535,13 @@ public class TypeChecker
     {
         if (idNode is SingleIdentifierNode node)
         {
-            return new string[] { node.Identifier };
+            return [node.Identifier];
         }
         else if (idNode is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            return new string[] { qualifiedIdentifierNode.LeftIdentifier.Identifier, qualifiedIdentifierNode.RightIdentifier.Identifier };
+            return [qualifiedIdentifierNode.LeftIdentifier.Identifier, qualifiedIdentifierNode.RightIdentifier.Identifier];
         }
         else return [];
-    }
-
-    private bool CheckNodeMatchesLiteral(Node node, LiteralNode expectedLiteral)
-    {
-        if (node is FunctionCallNode funcNode)
-        {
-            environment.Lookup(GetIdentifier(funcNode.Identifier)[0], out Node? returnType);
-
-            if (returnType is null) return false;
-
-            return returnType.GetType() == expectedLiteral.GetType();
-        }
-        else if (node is IdentifierExpressionNode idNode)
-        {
-            if (idNode.Identifier is SingleIdentifierNode singleIdNode)
-            {
-                environment.Lookup(singleIdNode.Identifier, out Node? type);
-
-                if (type is null) return false;
-
-                return type.GetType() == expectedLiteral.GetType();
-            }
-            else
-            {
-                throw new NotImplementedException("We only look at single identifiers currently.");
-            }
-        }
-        return false;
     }
 
     //These 2 methods could probably be combined, but it is not important
