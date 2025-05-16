@@ -1,20 +1,27 @@
+namespace SimEngine.Core;
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using Microsoft.VisualBasic;
+using SimEngine.Metrics;
+using SimEngine.Nodes;
+using SimEngine.Networks;
+
 
 public class SimulationEngineAPI
 {
     public Simulation _simulation = new();
+    public Random RandomGenerator { get; private set; } = new();
     private Dictionary<string, QueueNode> _queues = new();
     private Dictionary<string, DispatcherNode> _dispatchers = new();
     public Dictionary<string, NetworkStats> _networks = new();
     public List<Entity> _entities = new();
     private List<QueueNode> _allNodes = new();
-    private Dictionary<string, Engine.Node> _nodes = new();
+    private Dictionary<string, Node> _nodes = new();
     private double _untilTime = 1000;
     private int _runCount = 1;
+
+    public SimulationStats Stats { get; private set; } = new();
 
     public void SetSimulationParameters(double untilTime, int runCount)
     {
@@ -22,11 +29,18 @@ public class SimulationEngineAPI
         _runCount = runCount;
     }
 
-    public void CreateDispatcherNode(string name, Func<double> arrivalDist) {
+    public void SetSeed(int seed)
+    {
+        RandomGenerator = new Random(seed);
+    }
+
+    public void CreateDispatcherNode(string name, Func<double> arrivalDist)
+    {
         var dispatcher = new DispatcherNode(this, name, arrivalDist);
         _nodes.Add(name, dispatcher);
         _dispatchers[name] = dispatcher;
     }
+
     public void CreateQueueNode(string name, int servers, int capacity, Func<double> serviceTime, Func<double>? arrivalTime = null)
     {
         var queue = new QueueNode(this, name, servers, capacity, serviceTime, arrivalTime);
@@ -70,11 +84,21 @@ public class SimulationEngineAPI
         if (_networks.TryGetValue(networkName, out var stats))
         {
             stats.RecordExit(entity, time);
+
+            var runtimeStats = Stats.NetworkStats.FirstOrDefault(n => n.Name == networkName);
+            if (runtimeStats == null)
+            {
+                runtimeStats = new NetworkRuntimeStats { Name = networkName };
+                Stats.NetworkStats.Add(runtimeStats);
+            }
+            runtimeStats.AddRespondTime(time - entity.CreationTime);
         }
     }
 
     public void RunSimulation()
     {
+        Stats = new SimulationStats();
+
         foreach (var queue in _allNodes)
         {
             string networkName = queue.Name.Split('.')[0];
@@ -82,6 +106,15 @@ public class SimulationEngineAPI
                 _networks[networkName] = new NetworkStats(networkName);
 
             _networks[networkName].RegisterQueue(queue);
+
+            var runtimeStat = new QueueRuntimeStats
+            {
+                Name = queue.Name,
+                ServerCount = queue.ServerCount,
+                SimulationTimePerRun = _untilTime
+            };
+            Stats.QueueStats.Add(runtimeStat);
+            queue.AttachRuntimeStats(runtimeStat);
         }
 
         for (int i = 0; i < _runCount; i++)
@@ -92,6 +125,7 @@ public class SimulationEngineAPI
                 dispatcher.Value.ScheduleInitialArrival();
 
             _simulation.Run(_untilTime);
+            Stats.AddSimulationRunTime(_simulation.Now);
 
             foreach (var q in _allNodes)
             {
@@ -100,38 +134,13 @@ public class SimulationEngineAPI
         }
     }
 
-    public EntityMetrics GetEntityMetrics()  
-    {   
-        var exited = _entities.Where(e => e.DepartureTime > 0).ToList();    
+    public SimulationStats GetSimulationStats() => Stats;
 
-        return new EntityMetrics    
-        {   
-            Entered = _entities.Count,  
-            Exited = exited.Count,  
-            AvgTimeInNetwork = exited.Count > 0 ? exited.Average(e => e.TotalTime) : 0.0,   
-            AvgWaitTime = exited.Count > 0 ? exited.Average(e => e.TotalWaitingTime) : 0.0, 
-            AvgServiceTime = exited.Count > 0 ? exited.Average(e => e.TotalServiceTime) : 0.0   
-        };  
-    }
-    public Dictionary<string, QueueMetrics> GetMetrics()
+    public List<Entity> GetEntities() => _entities;
+
+    public void RegisterEntity(Entity entity)
     {
-        return _queues.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.GetMetrics()
-        );
+        _entities.Add(entity);
+        Stats.AddEntityCreated();
     }
-
-    public Dictionary<string, NetworkMetrics> GetNetworkMetrics()
-    {
-        return _networks.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.GetMetrics()
-        );
-    }
-
-    public List<Entity> GetEntities()
-    {
-        return _entities;
-    }
-
 }

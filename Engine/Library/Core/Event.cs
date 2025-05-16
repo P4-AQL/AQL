@@ -1,3 +1,6 @@
+
+namespace SimEngine.Core;
+
 using System;
 
 public class Event

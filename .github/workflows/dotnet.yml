@@ -39,3 +39,6 @@ jobs:
 
       - name: Build SharedProject
         run: dotnet build SharedProject/SharedProject.csproj --configuration Release
+
+      - name: Run SimulationTest
+        run: dotnet test Engine/SimulationEngine.Tests/SimulationEngine.Tests.csproj --configuration Release

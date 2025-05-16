@@ -1,6 +1,9 @@
-using System;
+namespace SimEngine.Nodes;
 
-public class DispatcherNode : Engine.Node
+using System;
+using SimEngine.Core;
+
+public class DispatcherNode : Node
 {
     private readonly SimulationEngineAPI _engine;
     private Simulation Simulation => _engine._simulation;
@@ -24,14 +27,13 @@ public class DispatcherNode : Engine.Node
                 CurrentNetworkName = _network
             };
 
-            _engine._entities.Add(entity);
+            _engine.RegisterEntity(entity);
             _engine.RecordNetworkEntry(entity, _network, Simulation.Now);
 
-            // Use base's routing logic
             QueueNode target = NextNode!;
             if (NextNodeChoices != null)
             {
-                double r = Random.Shared.NextDouble();
+                double r = _engine.RandomGenerator.NextDouble();
                 double cumulative = 0;
                 foreach (var (node, prob) in NextNodeChoices)
                 {
@@ -45,8 +47,6 @@ public class DispatcherNode : Engine.Node
             }
 
             Simulation.Schedule(0, () => target.ProcessArrival(entity));
-
-            // Recurse
             ScheduleInitialArrival();
         });
     }
