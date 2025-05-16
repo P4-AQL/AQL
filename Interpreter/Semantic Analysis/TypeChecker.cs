@@ -2,6 +2,7 @@ using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.Identifiers;
+using Interpreter.AST.Nodes.Metrics;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
@@ -135,7 +136,7 @@ public class TypeChecker
             if (environment.Lookup(GetIdentifier(networkDeclarationNode.Identifier)[0], out Node? _)) errors.Add("Identifier already declared");
 
             // Make Sigma
-            Table<Node> localNetwork = new Table<Node>();
+            Table<Node> localNetwork = new();
 
             // input
             TypeCheckInputs(networkDeclarationNode.Inputs, localNetwork, errors);
@@ -150,7 +151,7 @@ public class TypeChecker
             TypeCheckRoutes(networkDeclarationNode.Routes, localNetwork, errors);
 
             // metrics
-            TypeCheckMetricList(networkDeclarationNode.Metrics, errors);
+            TypeCheckNetworkMetricList(networkDeclarationNode.Metrics, errors);
 
             // bind to network env
             localNetworkScopesEnvironment.TryBindIfNotExists(GetIdentifier(networkDeclarationNode.Identifier)[0], localNetwork);
@@ -226,7 +227,7 @@ public class TypeChecker
             if (FindExpressionType(queueDeclarationNode.NumberOfServers, errors) is not IntTypeNode) errors.Add("Number of servers expression must be int");
 
             // capacity expression...
-            TypeCheckMetricList(queueDeclarationNode.Metrics, errors);
+            TypeCheckQueueMetricList(queueDeclarationNode.Metrics, errors);
 
             // bind x to queue
             environment.TryBindIfNotExists(GetIdentifier(queueDeclarationNode.Identifier)[0], queueDeclarationNode.CustomType);
@@ -495,11 +496,34 @@ public class TypeChecker
         }
     }
 
-    private static void TypeCheckMetricList(IReadOnlyList<Node> metricList, List<string> errors)
+    readonly static string[] queueMetricNames = [
+        "mrt",
+        "vrt",
+        "awt",
+        "expected_num_entities",
+        "util",
+        "throughput"
+    ];
+
+    private static void TypeCheckQueueMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
     {
-        foreach (var metric in metricList)
+        foreach (NamedMetricNode metric in metricList)
         {
-            if (metric is not MetricNode) errors.Add("metric list must only contain metrics");
+            if (queueMetricNames.Contains(metric.Name)) errors.Add("metric list must only contain metrics");
+        }
+    }
+
+    readonly static string[] networkMetricNames = [
+        "avg",
+        "throughput",
+        "expected_num_entities"
+    ];
+
+    private static void TypeCheckNetworkMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
+    {
+        foreach (NamedMetricNode metric in metricList)
+        {
+            if (networkMetricNames.Contains(metric.Name)) errors.Add("metric list must only contain metrics");
         }
     }
 
