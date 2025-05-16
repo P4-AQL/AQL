@@ -202,7 +202,7 @@ public class InterpreterClass
     private void InterpretQueueDeclaration(QueueDeclarationNode node)
     {
         int capacity = (int)InterpretExpression(node.Capacity, null);
-        int servers = (int)InterpretExpression(node.NumberOfServers, null);
+        int servers = (int)InterpretExpression(node.Servers, null);
         object service() => InterpretExpression(node.Service, null);
         IEnumerable<string> metrics = node.Metrics.Select(metric => metric.Name);
 
