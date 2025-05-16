@@ -2,6 +2,7 @@ using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Expressions;
 using Interpreter.AST.Nodes.Identifiers;
+using Interpreter.AST.Nodes.Metrics;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
@@ -25,26 +26,25 @@ public class TypeChecker
         if (node is ProgramNode programNode)
         {
             TypeCheckProgramNode(programNode, errors);
-        }
-        else if (node is DefinitionNode defNode)
-        {
-            // We don't need localEnv because these definition can only be global.
-            TypeCheckDefinitionNode(defNode, errors);
+        }   
+        else errors.Add("Unexpected definition");
 
-        }
         // Return errors to parent node type check
         return errors;
     }
 
-    private void TypeCheckProgramNode(Node programNode, List<String> errors)
+    private void TypeCheckProgramNode(ProgramNode programNode, List<String> errors)
     {
         if (programNode is ImportNode)
         {
-
+            // The interpreter fixes this
         }
-        else if (programNode is DefinitionProgramNode)
+        else if (programNode is DefinitionProgramNode definitionProgramNode)
         {
-
+            TypeCheckDefinitionNode(definitionProgramNode.Definition, errors);
+        }
+        else {
+            errors.Add("Unexpected definition");
         }
     }
 
@@ -60,7 +60,7 @@ public class TypeChecker
             if (FindExpressionType(cdNode.Expression, errors) != cdNode.Type) errors.Add("Error: Expression type must match declaration type.");
 
             // Try binding and error if fail
-            if (!environment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Identifier already declared.");
+            if (!constEnvironment.TryBindIfNotExists(cdNode.Identifier.Identifier, cdNode.Type)) errors.Add("Error: Identifier already declared.");
 
             /// Type check children
             if (cdNode.NextDefinition is not null) TypeCheckDefinitionNode(cdNode.NextDefinition, errors);
@@ -110,8 +110,8 @@ public class TypeChecker
         else if (defNode is SimulateNode simNode)
         {
             // x in domain Gamma
-            if (!localNetworkScopesEnvironment.Lookup(GetIdentifier(simNode.NetworkIdentifier), out Table<Node>? _)) errors.Add("Network identifier not found");
-
+            if (!localNetworkScopesEnvironment.Lookup(GetIdentifier(simNode.NetworkIdentifier)[0], out Table<Node>? _)) errors.Add("Network identifier not found");
+            
 
             // Expression is int
             if (FindExpressionType(simNode.Runs, errors) is not IntTypeNode) errors.Add("Expression for runs must be of type int");
@@ -133,10 +133,10 @@ public class TypeChecker
             /// Bind Sigma to Gamma and continue with next definition
 
             // x not in dom(E)
-            if (environment.Lookup(GetIdentifier(networkDeclarationNode.Identifier), out Node? _)) errors.Add("Identifier already declared");
+            if (environment.Lookup(GetIdentifier(networkDeclarationNode.Identifier)[0], out Node? _)) errors.Add("Identifier already declared");
 
             // Make Sigma
-            Table<Node> localNetwork = new Table<Node>();
+            Table<Node> localNetwork = new();
 
             // input
             TypeCheckInputs(networkDeclarationNode.Inputs, localNetwork, errors);
@@ -150,6 +150,60 @@ public class TypeChecker
             // routes
             TypeCheckRoutes(networkDeclarationNode.Routes, localNetwork, errors);
 
+            // metrics
+            TypeCheckNetworkMetricList(networkDeclarationNode.Metrics, errors);
+
+            // bind to network env
+            localNetworkScopesEnvironment.TryBindIfNotExists(GetIdentifier(networkDeclarationNode.Identifier)[0], localNetwork);
+
+            /// isvalid? Check that there is routing from all inputs, routing from all instances and routing to all outputs
+            // routing from all inputs
+            foreach (SingleIdentifierNode input in networkDeclarationNode.Inputs)
+            {
+                string id = GetIdentifier(input)[0];
+                bool inputFound = false;
+
+                foreach (RouteDefinitionNode route in networkDeclarationNode.Routes.Cast<RouteDefinitionNode>())
+                {
+                    if (route.From is IdentifierExpressionNode idExprNode) {
+                        if (GetIdentifier(idExprNode.Identifier)[0] == id) inputFound = true;
+                    }
+                }
+                
+                if (!inputFound) errors.Add("Input not used");
+            }
+
+            // routing from all instances
+            foreach (InstanceDeclaration instance in networkDeclarationNode.Instances)
+            {
+                string id = GetIdentifier(instance.ExistingInstance)[0];
+                bool instanceFound = false;
+
+                foreach (RouteDefinitionNode route in networkDeclarationNode.Routes.Cast<RouteDefinitionNode>())
+                {
+                    if (route.From is IdentifierExpressionNode idExprNode) {
+                        if (GetIdentifier(idExprNode.Identifier)[0] == id) instanceFound = true;
+                    }
+                }
+                
+                if (!instanceFound) errors.Add("Instance not used");
+            }
+
+            // routing to all outputs
+            foreach (SingleIdentifierNode output in networkDeclarationNode.Outputs)
+            {
+                string id = GetIdentifier(output)[0];
+                bool outputFound = false;
+
+                foreach (RouteDefinitionNode route in networkDeclarationNode.Routes.Cast<RouteDefinitionNode>())
+                {
+                    if (route.From is IdentifierExpressionNode idExprNode) {
+                        if (GetIdentifier(idExprNode.Identifier)[0] == id) outputFound = true;
+                    }
+                }
+                
+                if (!outputFound) errors.Add("Instance not used");
+            }
         }
         else if (networkDefinitionNode.Network is QueueDeclarationNode queueDeclarationNode)
         {
@@ -161,7 +215,7 @@ public class TypeChecker
             /// next definition should be type checked with identifier binded to the queue in E
 
             // x not in dom(E)
-            if (environment.Lookup(GetIdentifier(queueDeclarationNode.Identifier), out Node? _)) errors.Add("Identifier already declared");
+            if (environment.Lookup(GetIdentifier(queueDeclarationNode.Identifier)[0], out Node? _)) errors.Add("Identifier already declared");
 
             // service expression...
             if (FindExpressionType(queueDeclarationNode.Service, errors) is not IntTypeNode && FindExpressionType(queueDeclarationNode.Service, errors) is not DoubleTypeNode) errors.Add("Service expression must be int or double");
@@ -173,14 +227,15 @@ public class TypeChecker
             if (FindExpressionType(queueDeclarationNode.NumberOfServers, errors) is not IntTypeNode) errors.Add("Number of servers expression must be int");
 
             // capacity expression...
-            TypeCheckMetricList(queueDeclarationNode.Metrics, errors);
+            TypeCheckQueueMetricList(queueDeclarationNode.Metrics, errors);
 
             // bind x to queue
-            environment.TryBindIfNotExists(GetIdentifier(queueDeclarationNode.Identifier), queueDeclarationNode.CustomType);
-
+            environment.TryBindIfNotExists(GetIdentifier(queueDeclarationNode.Identifier)[0], queueDeclarationNode.CustomType);
+            
             // next definition is being checked in the end of this method
         }
 
+        // check children
         if (networkDefinitionNode.NextDefinition is not null) TypeCheckDefinitionNode(networkDefinitionNode.NextDefinition, errors);
     }
 
@@ -190,10 +245,8 @@ public class TypeChecker
         {
             environment = localEnvironment;
         }
-
-
-        if (statementNode is AssignNode assignNode)
-        {
+        
+        if (statementNode is AssignNode assignNode){
             // E ⊢ x = e : ok   if 
             // E(x) = T 
             // E ⊢ e : T 
@@ -335,10 +388,10 @@ public class TypeChecker
                     : throw new("Error: Expression not found")),
                 EqualNode node => FindExpressionTypeInner(node.Left) == FindExpressionTypeInner(node.Right) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
                 FunctionCallNode node => GetReturnTypeOfFunctionCall(node),
-                IdentifierExpressionNode node => environment.Lookup(GetIdentifier(node.Identifier), out Node? typeNode)
-                    ? typeNode
-                    : (constEnvironment.Lookup(GetIdentifier(node.Identifier), out Node? constTypeNode)
-                        ? constTypeNode
+                IdentifierExpressionNode node => environment.Lookup(GetIdentifier(node.Identifier)[0], out Node? typeNode) 
+                    ? typeNode 
+                    : (constEnvironment.Lookup(GetIdentifier(node.Identifier)[0], out Node? constTypeNode) 
+                        ? constTypeNode 
                         : throw new("Error: Expression not found")),
                 LessThanNode node => FindExpressionTypeInner(node.Left) == FindExpressionTypeInner(node.Right) ? new BoolTypeNode(node.LineNumber) : new BoolTypeNode(node.LineNumber),
                 MultiplyNode node => (FindExpressionTypeInner(node.Left) == FindExpressionTypeInner(node.Right)
@@ -364,13 +417,10 @@ public class TypeChecker
         }
     }
 
-
-
-    private TypeNode GetReturnTypeOfFunctionCall(FunctionCallNode node)
+    private TypeNode GetReturnTypeOfFunctionCall(FunctionCallNode node) 
     {
-        environment.Lookup(GetIdentifier(node.Identifier), out Node? functionBody);
-        if (functionBody is FunctionNode funcNode)
-        {
+        environment.Lookup(GetIdentifier(node.Identifier)[0], out Node? functionBody);
+        if (functionBody is FunctionNode funcNode) {
             return funcNode.ReturnType;
         }
         else
@@ -379,16 +429,16 @@ public class TypeChecker
         }
     }
 
-    private string GetIdentifier(IdentifierNode idNode)
+    private string[] GetIdentifier(IdentifierNode idNode) 
     {
-        if (idNode is SingleIdentifierNode node)
-        {
-            return node.Identifier;
+        if (idNode is SingleIdentifierNode node) {
+            return new string[]{node.Identifier};
         }
-        else
+        else if (idNode is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            throw new NotImplementedException();
+            return new string[]{qualifiedIdentifierNode.LeftIdentifier.Identifier, qualifiedIdentifierNode.RightIdentifier.Identifier};
         }
+        else return [];
     }
 
     private bool CheckNodeMatchesLiteral(Node node, LiteralNode expectedLiteral)
@@ -446,11 +496,34 @@ public class TypeChecker
         }
     }
 
-    private static void TypeCheckMetricList(IReadOnlyList<Node> metricList, List<string> errors)
+    readonly static string[] queueMetricNames = [
+        "mrt",
+        "vrt",
+        "awt",
+        "expected_num_entities",
+        "util",
+        "throughput"
+    ];
+
+    private static void TypeCheckQueueMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
     {
-        foreach (var metric in metricList)
+        foreach (NamedMetricNode metric in metricList)
         {
-            if (metric is not MetricNode) errors.Add("metric list must only contain metrics");
+            if (queueMetricNames.Contains(metric.Name)) errors.Add("metric list must only contain metrics");
+        }
+    }
+
+    readonly static string[] networkMetricNames = [
+        "avg",
+        "throughput",
+        "expected_num_entities"
+    ];
+
+    private static void TypeCheckNetworkMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
+    {
+        foreach (NamedMetricNode metric in metricList)
+        {
+            if (networkMetricNames.Contains(metric.Name)) errors.Add("metric list must only contain metrics");
         }
     }
 
@@ -459,10 +532,9 @@ public class TypeChecker
         foreach (InstanceDeclaration instance in instances)
         {
             // check existing
-            if (environment.Lookup(GetIdentifier(instance.ExistingInstance), out Node? _) || localNetworkScopesEnvironment.Lookup(GetIdentifier(instance.ExistingInstance), out Table<Node>? _))
-            {
+            if (environment.Lookup(GetIdentifier(instance.ExistingInstance)[0], out Node? _) || localNetworkScopesEnvironment.Lookup(GetIdentifier(instance.ExistingInstance)[0], out Table<Node>? _)) {
                 // bind new to same as existing
-                localNetwork.TryBindIfNotExists(GetIdentifier(instance.NewInstance), instance.ExistingInstance);
+                localNetwork.TryBindIfNotExists(GetIdentifier(instance.NewInstance)[0], instance.ExistingInstance);
             }
             else errors.Add("Error: Instance identifier not found");
         }
@@ -477,7 +549,25 @@ public class TypeChecker
                 // Check destination
                 TypeCheckRouteDestination(routeDefinitionNode.To, localNetwork, errors);
 
-
+                // If it is identifier node, then it is case 2 or 3
+                if (routeDefinitionNode.From is IdentifierExpressionNode identifierExpressionNode) {
+                    // case 3
+                    if (localNetwork.Lookup(GetIdentifier(identifierExpressionNode.Identifier)[0], out Node? type)) {
+                        if (type is not QueueDeclarationNode and not InputTypeNode) errors.Add("Input is not a valid queue or input");
+                    }
+                    // case 2
+                    else if (localNetworkScopesEnvironment.Lookup(GetIdentifier(identifierExpressionNode.Identifier)[0], out Table<Node>? network)) {
+                        network.Lookup(GetIdentifier(identifierExpressionNode.Identifier)[1], out Node? outputNode);
+                        if (outputNode is not OutputTypeNode) errors.Add("Second identifier must be an output node");
+                    }
+                    else errors.Add("Identifier not found");
+                }
+                // Case 1
+                else {
+                    Node? type = FindExpressionType(routeDefinitionNode.From, errors);
+                    // not case 1
+                    if (type is not IntTypeNode && type is not DoubleTypeNode) errors.Add("Expression vlaue must be of type int or double");
+                }
             }
             else
             {
@@ -486,8 +576,26 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckRouteDestination(IReadOnlyList<RouteValuePairNode> to, Table<Node> localNetwork, List<string> errors)
+    private void TypeCheckRouteDestination(IReadOnlyList<RouteValuePairNode> destinations, Table<Node> localNetwork, List<string> errors)
     {
-        throw new NotImplementedException();
+        foreach (RouteValuePairNode destination in destinations)
+        {
+            Node? type = FindExpressionType(destination.Probability, errors);
+            
+            if (type is not IntTypeNode && type is not DoubleTypeNode) errors.Add("Route destination weight must be double or int");
+            
+            if (localNetworkScopesEnvironment.Lookup(GetIdentifier(destination.RouteTo)[0], out Table<Node>? net)) {
+                if (net.Lookup(GetIdentifier(destination.RouteTo)[1], out Node? inputNode)) {
+                    if (inputNode is not InputTypeNode) errors.Add("Route to network identifier must be an input");
+                }
+                else errors.Add("Network identifier not found");
+            }
+            else if (localNetwork.Lookup(GetIdentifier(destination.RouteTo)[0], out Node? caseTwoType)) {
+                if (caseTwoType is not QueueDeclarationNode && caseTwoType is not OutputTypeNode) errors.Add("Must point to queue or output");
+            }
+            else {
+                errors.Add("Instance not found");
+            }
+        }
     }
 }
