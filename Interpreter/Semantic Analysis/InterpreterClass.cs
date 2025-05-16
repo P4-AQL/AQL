@@ -12,6 +12,7 @@ using Interpreter.AST.Nodes.Statements;
 using Interpreter.Utilities.Modules;
 
 namespace Interpreter.SemanticAnalysis;
+
 public class InterpreterClass
 {
     InterpretationEnvironment globalEnvironment;
@@ -229,7 +230,7 @@ public class InterpreterClass
 
     private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, InstanceDeclaration instance)
     {
-        object existingNetwork = InterpretIdentifier(instance.ExistingInstance, shadowVariableState: null);
+        object existingNetwork = InterpretAnyIdentifier(instance.ExistingInstance, shadowVariableState: null);
         if (existingNetwork is not NetworkNode existingNetworkNode)
         {
             throw new($"Not a valid instance! (Line: {instance.LineNumber})");
@@ -260,7 +261,7 @@ public class InterpreterClass
     {
         return node switch
         {
-            IdentifierExpressionNode identifierExpression => InterpretIdentifier(identifierExpression.Identifier, shadowVariableState),
+            IdentifierExpressionNode identifierExpression => InterpretAnyIdentifier(identifierExpression.Identifier, shadowVariableState),
             NegativeNode negativeNode => InterpretNegativeNode(negativeNode, shadowVariableState),
             MultiplyNode multiplyNode => InterpretMultiplyNode(multiplyNode, shadowVariableState),
             DivisionNode divisionNode => InterpretDivisionNode(divisionNode, shadowVariableState),
@@ -413,7 +414,7 @@ public class InterpreterClass
 
     private object InterpretIndexingNode(IndexingNode indexingNode, Table<object>? shadowVariableState)
     {
-        object target = InterpretIdentifier(indexingNode.Target, shadowVariableState);
+        object target = InterpretAnyIdentifier(indexingNode.Target, shadowVariableState);
         object index = InterpretExpression(indexingNode.Index, shadowVariableState);
 
         return (target, index) switch
@@ -435,7 +436,9 @@ public class InterpreterClass
             }
         }
 
-        if (FunctionState.Lookup(functionCallNode.Identifier.Identifier, out FunctionStateTuple state))
+        object identifierValue = InterpretAnyIdentifier(functionCallNode.Identifier, shadowVariableState);
+
+        if (identifierValue is FunctionStateTuple state)
         {
             Table<object>? shadowState = new(VariableState);
 
@@ -456,32 +459,52 @@ public class InterpreterClass
         throw new($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
     }
 
-    enum WhosDoingTheInterpreting
-    {
-        other = 0,
-        import = 1,
-        networks = 2,
-    }
-
-    private object InterpretIdentifier(IdentifierNode node, Table<object>? shadowVariableState, WhosDoingTheInterpreting whosDoingTheInterpreting = WhosDoingTheInterpreting.other)
+    private object InterpretAnyIdentifier(IdentifierNode node, Table<object>? shadowVariableState)
     {
         if (node is SingleIdentifierNode singleIdentifierNode)
         {
-            if (LookupVariableHelper(singleIdentifierNode.Identifier, shadowVariableState, out object? boundValue))
+            if (shadowVariableState is not null && shadowVariableState.Lookup(singleIdentifierNode.Identifier, out object? @out))
             {
-                return boundValue;
+                return @out;
+            }
+            else
+            {
+                return InterpretIdentifier(singleIdentifierNode, globalEnvironment);
             }
         }
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            if (whosDoingTheInterpreting == WhosDoingTheInterpreting.import)
+            object leftValue = InterpretIdentifier(qualifiedIdentifierNode.LeftIdentifier, globalEnvironment);
+            if (leftValue is not InterpretationEnvironment dependency)
             {
-                InterpretImportIdentifier(qualifiedIdentifierNode);
+                return leftValue;
             }
-            else if (whosDoingTheInterpreting == WhosDoingTheInterpreting.networks)
+            else
             {
+                return InterpretIdentifier(qualifiedIdentifierNode.RightIdentifier, dependency);
+            }
+        }
 
-            }
+        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+    }
+
+    private object InterpretIdentifier(SingleIdentifierNode node, InterpretationEnvironment environment)
+    {
+        if (environment.FunctionState.Lookup(node.Identifier, out FunctionStateTuple function))
+        {
+            return function;
+        }
+        else if (environment.VariableState.Lookup(node.Identifier, out object? variable))
+        {
+            return variable;
+        }
+        else if (environment.NetworkState.Lookup(node.Identifier, out NetworkDeclarationNode? network))
+        {
+            return network;
+        }
+        else if (environment.ModuleDependencies.Lookup(node.Identifier, out InterpretationEnvironment moduleDependency))
+        {
+            return moduleDependency;
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");

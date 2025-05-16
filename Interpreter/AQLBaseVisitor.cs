@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/thoma/Documents/VSCODE/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
+// Generated from c:/Users/thoma/Documents/GitHub/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -365,7 +365,7 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitExpression([NotNull] AQLParser.ExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.operator"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.binaryOperator"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -373,7 +373,7 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitOperator([NotNull] AQLParser.OperatorContext context) { return VisitChildren(context); }
+	public virtual Result VisitBinaryOperator([NotNull] AQLParser.BinaryOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.andOperator"/>.
 	/// <para>
@@ -414,6 +414,16 @@ public partial class AQLBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitSubtractOperator([NotNull] AQLParser.SubtractOperatorContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.multiplicationOperator"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitMultiplicationOperator([NotNull] AQLParser.MultiplicationOperatorContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.divisionOperator"/>.
 	/// <para>

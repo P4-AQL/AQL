@@ -105,13 +105,16 @@ returnStatement: 'return' expression ';';
 
 expressionList: expression (',' expression)*;
 
-expression: expression operator expression | unaryExpression;
+expression:
+	left = expression binaryOperator right = expression
+	| unaryExpression;
 
-operator:
+binaryOperator:
 	andOperator
 	| orOperator
 	| addOperator
 	| subtractOperator
+	| multiplicationOperator
 	| divisionOperator
 	| equalOperator
 	| inEqualOperator
@@ -124,6 +127,7 @@ andOperator: '&&';
 orOperator: '||';
 addOperator: '+';
 subtractOperator: '-';
+multiplicationOperator: '*';
 divisionOperator: '/';
 equalOperator: '==';
 inEqualOperator: '!=';

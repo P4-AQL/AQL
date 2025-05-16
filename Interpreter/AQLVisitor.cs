@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/thoma/Documents/VSCODE/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
+// Generated from c:/Users/thoma/Documents/GitHub/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -230,11 +230,11 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpression([NotNull] AQLParser.ExpressionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AQLParser.operator"/>.
+	/// Visit a parse tree produced by <see cref="AQLParser.binaryOperator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitOperator([NotNull] AQLParser.OperatorContext context);
+	Result VisitBinaryOperator([NotNull] AQLParser.BinaryOperatorContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.andOperator"/>.
 	/// </summary>
@@ -259,6 +259,12 @@ public interface IAQLVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitSubtractOperator([NotNull] AQLParser.SubtractOperatorContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AQLParser.multiplicationOperator"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMultiplicationOperator([NotNull] AQLParser.MultiplicationOperatorContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AQLParser.divisionOperator"/>.
 	/// </summary>

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/thoma/Documents/VSCODE/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
+// Generated from c:/Users/thoma/Documents/GitHub/AQL/Interpreter/AQL.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
