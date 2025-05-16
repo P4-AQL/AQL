@@ -509,7 +509,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             InstanceDeclaration instanceDeclaration = new(
                 lineNumber: context.Start.Line,
                 existingInstance: exisitingInstance,
-                newInstances: newInstance
+                newInstance: newInstance
             );
         }
 

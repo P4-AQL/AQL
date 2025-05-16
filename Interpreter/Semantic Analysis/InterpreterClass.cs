@@ -64,7 +64,7 @@ public class InterpreterClass
         }
         else if (node is SimulateNode simulateNode)
         {
-            throw new NotImplementedException("line:" + node.LineNumber);
+            InterpretSimulate(simulateNode);
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
@@ -219,6 +219,41 @@ public class InterpreterClass
     private void InterpretNetworkDeclaration(NetworkDeclarationNode node)
     {
         NetworkState.ForceBind(node.Identifier.Identifier, node);
+
+        SimulationEngineAPI engineAPI = new();
+        foreach (InstanceDeclaration instanceDeclaration in node.Instances)
+        {
+            CreateQueueInEngine(engineAPI, node.Identifier.Identifier, instanceDeclaration);
+        }
+    }
+
+    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, InstanceDeclaration instance)
+    {
+        object existingNetwork = InterpretIdentifier(instance.ExistingInstance, shadowVariableState: null);
+        if (existingNetwork is not NetworkNode existingNetworkNode)
+        {
+            throw new($"Not a valid instance! (Line: {instance.LineNumber})");
+        }
+
+        string queueFullPath = networkIdentifier + "." + instance.NewInstance.Identifier;
+        CreateQueueInEngine(engineAPI, queueFullPath, existingNetworkNode);
+    }
+
+    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, NetworkNode network)
+    {
+        if (network is NetworkDeclarationNode networkDeclarationNode)
+        {
+
+        }
+        else if (network is QueueDeclarationNode queueDeclarationNode)
+        {
+
+        }
+    }
+
+    private void InterpretSimulate(SimulateNode simulateNode)
+    {
+        throw new NotImplementedException();
     }
 
     private object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
@@ -421,7 +456,14 @@ public class InterpreterClass
         throw new($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
     }
 
-    private object InterpretIdentifier(IdentifierNode node, Table<object>? shadowVariableState)
+    enum WhosDoingTheInterpreting
+    {
+        other = 0,
+        import = 1,
+        networks = 2,
+    }
+
+    private object InterpretIdentifier(IdentifierNode node, Table<object>? shadowVariableState, WhosDoingTheInterpreting whosDoingTheInterpreting = WhosDoingTheInterpreting.other)
     {
         if (node is SingleIdentifierNode singleIdentifierNode)
         {
@@ -432,7 +474,14 @@ public class InterpreterClass
         }
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            InterpretImportIdentifier(qualifiedIdentifierNode);
+            if (whosDoingTheInterpreting == WhosDoingTheInterpreting.import)
+            {
+                InterpretImportIdentifier(qualifiedIdentifierNode);
+            }
+            else if (whosDoingTheInterpreting == WhosDoingTheInterpreting.networks)
+            {
+
+            }
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
@@ -440,8 +489,8 @@ public class InterpreterClass
 
     private object InterpretImportIdentifier(QualifiedIdentifierNode node)
     {
-        string nodeIdentifier = node.Identifier.Identifier;
-        string expressionIdentifier = node.Expression.Identifier;
+        string nodeIdentifier = node.LeftIdentifier.Identifier;
+        string expressionIdentifier = node.RightIdentifier.Identifier;
         if (globalEnvironment.ModuleDependencies.Lookup(nodeIdentifier, out InterpretationEnvironment dependency))
         {
             if (dependency.FunctionState.Lookup(expressionIdentifier, out FunctionStateTuple functionDependency))

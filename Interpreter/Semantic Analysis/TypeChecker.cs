@@ -435,7 +435,7 @@ public class TypeChecker
         }
         else if (idNode is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            return new string[]{qualifiedIdentifierNode.Identifier.Identifier, qualifiedIdentifierNode.Expression.Identifier};
+            return new string[]{qualifiedIdentifierNode.LeftIdentifier.Identifier, qualifiedIdentifierNode.RightIdentifier.Identifier};
         }
         else return [];
     }
@@ -510,7 +510,7 @@ public class TypeChecker
             // check existing
             if (environment.Lookup(GetIdentifier(instance.ExistingInstance)[0], out Node? _) || localNetworkScopesEnvironment.Lookup(GetIdentifier(instance.ExistingInstance)[0], out Table<Node>? _)) {
                 // bind new to same as existing
-                localNetwork.TryBindIfNotExists(GetIdentifier(instance.NewInstances)[0], instance.ExistingInstance);
+                localNetwork.TryBindIfNotExists(GetIdentifier(instance.NewInstance)[0], instance.ExistingInstance);
             }
             else errors.Add("Error: Instance identifier not found");
         }

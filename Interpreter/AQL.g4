@@ -44,31 +44,37 @@ inputOutputNetworkExpression:
 	inputs = idList '|' outputs = idList;
 
 instanceNetworkExpression:
-	existing = qualifiedId ':' new = idList;
+	existing = anyIdentifier ':' new = idList;
 
 routesList: routes (',' routes)*;
 routes: routesId | routesValue;
 
 routesId:
-	qualifiedId '->' (routesId | qualifiedId | probabilityIdList);
+	anyIdentifier '->' (
+		routesId
+		| anyIdentifier
+		| probabilityIdList
+	);
+
 routesValue:
-	value '->' (routesId | qualifiedId | probabilityIdList);
+	value '->' (routesId | anyIdentifier | probabilityIdList);
 
 probabilityIdList:
-	'[' expression qualifiedId (',' expression qualifiedId)* ']';
+	'[' expression anyIdentifier (',' expression anyIdentifier)* ']';
 
 metrics: '*' (metric (',' metric)*)? '*';
-metric: namedMetric | functionMetric = qualifiedId;
+metric: namedMetric;
+
 namedMetric:
 	'mrt'
 	| 'vrt'
-	| 'util'
+	| 'utilization'
 	| 'throughput'
 	| 'num'
 	| 'avgNum';
 
 simulateDefinition:
-	'simulate' '{' 'run:' network = qualifiedId ';' 'until:' terminationCriteria = expression ';'
+	'simulate' '{' 'run:' network = anyIdentifier ';' 'until:' terminationCriteria = expression ';'
 		'times:' runs = expression ';'? '}';
 
 statement:
@@ -99,49 +105,32 @@ returnStatement: 'return' expression ';';
 
 expressionList: expression (',' expression)*;
 
-expression: logicalOrExpression;
+expression: expression operator expression | unaryExpression;
 
-logicalOrExpression:
-	logicalAndExpression ('||' logicalAndExpression)*;
+operator:
+	andOperator
+	| orOperator
+	| addOperator
+	| subtractOperator
+	| divisionOperator
+	| equalOperator
+	| inEqualOperator
+	| greaterThanOperator
+	| greaterThanOrEqualOperator
+	| lessThanOperator
+	| lessThanOrEqualOperator;
 
-logicalAndExpression:
-	equalityExpression ('&&' equalityExpression)*;
-
-equalityExpression: equalExpression | inEqualExpression;
-
-equalExpression:
-	relationalExpression ('==' relationalExpression)*;
-inEqualExpression:
-	relationalExpression ('!=' relationalExpression)*;
-
-relationalExpression:
-	lessThanExpression
-	| lessThanOrEqualExpression
-	| greaterThanExpression
-	| greaterThanOrEqualExpression;
-
-lessThanExpression:
-	additiveExpression ('<' additiveExpression)*;
-lessThanOrEqualExpression:
-	additiveExpression ('<=' additiveExpression)*;
-greaterThanExpression:
-	additiveExpression ('>' additiveExpression)*;
-greaterThanOrEqualExpression:
-	additiveExpression ('>=' additiveExpression)*;
-
-additiveExpression: addExpression | subtractExpression;
-
-addExpression:
-	multiplicativeExpression ('+' multiplicativeExpression)*;
-subtractExpression:
-	multiplicativeExpression ('-' multiplicativeExpression)*;
-
-multiplicativeExpression:
-	multiplyExpression
-	| divisionExpression;
-
-multiplyExpression: unaryExpression ('*' unaryExpression)*;
-divisionExpression: unaryExpression ('/' unaryExpression)*;
+andOperator: '&&';
+orOperator: '||';
+addOperator: '+';
+subtractOperator: '-';
+divisionOperator: '/';
+equalOperator: '==';
+inEqualOperator: '!=';
+greaterThanOperator: '>';
+greaterThanOrEqualOperator: '>=';
+lessThanOperator: '<';
+lessThanOrEqualOperator: '<=';
 
 unaryExpression:
 	negationExpression
@@ -155,7 +144,7 @@ parenthesesExpression: '(' expression ')';
 
 value:
 	functionCall
-	| qualifiedId
+	| anyIdentifier
 	| string
 	| double
 	| int
@@ -164,7 +153,7 @@ value:
 	| arrayIndexing;
 
 functionCall:
-	functionIdentifier = identifier '(' parameters = expressionList? ')';
+	functionIdentifier = anyIdentifier '(' parameters = expressionList? ')';
 
 arrayInitialization: '{' expression* (',' expression)* '}';
 arrayIndexing: target = identifier '[' index = expression ']';
@@ -184,7 +173,9 @@ stringKeyword: 'string';
 
 arrayType: '[' type ']';
 
-qualifiedIdList: qualifiedId (',' qualifiedId)*;
+anyIdentifier: identifier | qualifiedId;
+
+//qualifiedIdList: qualifiedId (',' qualifiedId)*;
 qualifiedId: left = identifier '.' right = identifier;
 
 idList: identifier (',' identifier)*;
