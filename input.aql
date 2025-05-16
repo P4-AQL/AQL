@@ -1,0 +1,68 @@
+import stdlib
+import airport
+
+const int x = 5 + 3;
+
+function bool someFunc (int y) {
+  return x == y;
+}
+
+function double main_entrance () {
+  int current_time = stdlib.get_time_in_hours();
+
+  int number_of_hours_passed = current_time / 3600;
+
+  if number_of_hours_passed > 10 {
+    return 350;
+  } else {
+    return 250;
+  }
+}
+
+queue someQ {
+  servers: 5;
+  service: stdlib.exponential(10);
+  capacity: 95;
+  * vrt, avgNum *
+}
+
+queue sometestyQ {
+  servers: 5;
+  service: stdlib.exponential(10);
+  capacity: 95;
+  * vrt, avgNum *
+}
+
+queue someOtherQ {
+  servers: 7;
+  service: 20;
+  capacity: 10;
+  * *
+}
+
+network someNetwork {
+  firstInput, secondInput | singleOutput;
+  airport.sequrityQueue : secQueue1, secQueue2, secQueue3;
+  
+  firstInput -> secQueue1 -> secQueue2;
+  secQueue2 -> secQueue3;
+  secQueue3 -> singleOutput;
+}
+
+network someAdvancedNetwork {
+  firstInput, secondInput | firstOutput, secondOutput;
+  someNetwork : basicNetwork1, basicNetwork2;
+  
+  firstInput -> [0.4 someOtherQ, 0.3 basicNetwork2.firstInput, 0.3 basicNetwork2.secondInput];
+  someOtherQ -> someQ -> basicNetwork1.firstInput;
+  secondInput -> basicNetwork1.secondInput;
+  basicNetwork1.out -> firstOutput;
+  basicNetwork2.out -> secondOutput;
+  * mrt, throughput, utilization *
+}
+
+simulate {
+  run: bigNetwork;
+  until: time > 10000;
+  times: 500
+}

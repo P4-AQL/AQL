@@ -38,6 +38,14 @@ public static class ModuleLoader
         ASTAQLVisitor visitor = new();
         ProgramNode result = visitor.VisitProgramEOF(progContext);
 
+        TypeChecker typeChecker = new();
+        List<string> errors = [];
+        typeChecker.TypeCheckNode(result, errors);
+        foreach (string error in errors)
+        {
+            Console.WriteLine(error);
+        }
+
         InterpreterClass interpreter = new();
         InterpretationEnvironment environment = interpreter.StartInterpretation(result);
 

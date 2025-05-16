@@ -16,6 +16,7 @@ using Interpreter.AST.Nodes.Types;
 using Interpreter.AST.NonNodes;
 
 namespace Interpreter.Visitors;
+
 class ASTAQLVisitor : AQLBaseVisitor<object>
 {
     public override ProgramNode VisitProgramEOF([NotNull] AQLParser.ProgramEOFContext context)
@@ -146,7 +147,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return new(
-            lineNumber: context.Start.StartIndex,
+            lineNumber: context.Start.Line,
             nextDefinition: nextDefinition,
             type: typeNode,
             identifier: assignNode.Identifier,
@@ -211,15 +212,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         TypeNode typeNode = VisitType(context.type());
         AssignNode assignNode = VisitAssignStatement(context.assignStatement());
 
-        StatementNode? nextStatement = null;
-        if (context.statement() != null)
-        {
-            nextStatement = VisitStatement(context.nextStatement);
-        }
-
         return new(
                 lineNumber: context.Start.Line,
-                nextStatement: nextStatement,
+                nextStatement: assignNode.NextStatement,
                 type: typeNode,
                 identifier: assignNode.Identifier,
                 expression: assignNode.Expression
@@ -500,7 +495,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override IEnumerable<InstanceDeclaration> VisitInstanceNetworkExpression([NotNull] AQLParser.InstanceNetworkExpressionContext context)
     {
-        IdentifierNode exisitingInstance = VisitQualifiedId(context.existing);
+        IdentifierNode exisitingInstance = VisitAnyIdentifier(context.existing);
         IEnumerable<SingleIdentifierNode> newInstances = VisitIdList(context.@new);
 
         List<InstanceDeclaration> instanceDeclarations = [];
@@ -509,8 +504,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             InstanceDeclaration instanceDeclaration = new(
                 lineNumber: context.Start.Line,
                 existingInstance: exisitingInstance,
-                newInstances: newInstance
+                newInstance: newInstance
             );
+            instanceDeclarations.Add(instanceDeclaration);
         }
 
         return instanceDeclarations;
@@ -541,9 +537,15 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         SingleIdentifierNode identifierNode = VisitIdentifier(context.identifier());
         ExpressionNode expressionNode = VisitExpression(context.expression());
 
+        StatementNode? nextStatement = null;
+        if (context.nextStatement != null)
+        {
+            nextStatement = VisitStatement(context.nextStatement);
+        }
+
         return new(
             lineNumber: context.Start.Line,
-            nextStatement: null,
+            nextStatement: nextStatement,
             identifier: identifierNode,
             expression: expressionNode
         );
@@ -676,8 +678,8 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         //          qualifiedId '->' (routesId | qualifiedId | probabilityIdList);
 
         // We get all qualified Id's there are at most two.
-        AQLParser.QualifiedIdContext[] qualifiedIdentifierContexts = context.qualifiedId();
-        IdentifierNode fromIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts.First());
+        AQLParser.AnyIdentifierContext[] anyIdentifierContexts = context.anyIdentifier();
+        IdentifierNode fromIdentifierNode = VisitAnyIdentifier(anyIdentifierContexts.First());
         IdentifierExpressionNode fromExpressionNode = new(fromIdentifierNode.LineNumber, fromIdentifierNode);
 
         // In the case that routesId is defined, we know the chain is longer than where we currently are.
@@ -701,9 +703,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         // There is always one identifier rule present, but at most two.
         // If there is two we know the rule is:
         //          qualifiedId '->' qualifiedId
-        else if (qualifiedIdentifierContexts.Length > 1)
+        else if (anyIdentifierContexts.Length > 1)
         {
-            IdentifierNode toIdentifierNode = VisitQualifiedId(qualifiedIdentifierContexts[1]);
+            IdentifierNode toIdentifierNode = VisitAnyIdentifier(anyIdentifierContexts[1]);
             return [
                 MakeRouteDefinition(lineNumber: context.Start.Line, from: fromExpressionNode, to: toIdentifierNode)
             ];
@@ -754,9 +756,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
         // If there is two we know the rule is:
         //          value '->' qualifiedId
-        else if (context.qualifiedId() != null)
+        else if (context.anyIdentifier() != null)
         {
-            IdentifierNode toIdentifierNode = VisitQualifiedId(context.qualifiedId());
+            IdentifierNode toIdentifierNode = VisitAnyIdentifier(context.anyIdentifier());
             return [
                 MakeRouteDefinition(lineNumber: context.Start.Line, from: value, to: toIdentifierNode)
             ];
@@ -802,7 +804,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     public override IEnumerable<RouteValuePairNode> VisitProbabilityIdList([NotNull] AQLParser.ProbabilityIdListContext context)
     {
         AQLParser.ExpressionContext[] expressionContexts = context.expression();
-        AQLParser.QualifiedIdContext[] qualifiedIds = context.qualifiedId();
+        AQLParser.AnyIdentifierContext[] anyIdentifierContexts = context.anyIdentifier();
 
         List<RouteValuePairNode> routeValuePairNodes = [];
 
@@ -810,7 +812,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         foreach (AQLParser.ExpressionContext expressionContext in expressionContexts)
         {
             ExpressionNode probabilityNode = VisitExpression(expressionContext);
-            IdentifierNode identifierNode = VisitQualifiedId(qualifiedIds[index]);
+            IdentifierNode identifierNode = VisitAnyIdentifier(anyIdentifierContexts[index]);
 
             RouteValuePairNode routeValuePairNode = new(
                 lineNumber: context.Start.Line,
@@ -864,7 +866,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override SimulateNode VisitSimulateDefinition([NotNull] AQLParser.SimulateDefinitionContext context)
     {
-        IdentifierNode networkNode = VisitQualifiedId(context.network);
+        IdentifierNode networkNode = VisitAnyIdentifier(context.network);
         ExpressionNode runsNode = VisitExpression(context.runs);
         ExpressionNode terminationCriteriaNode = VisitExpression(context.terminationCriteria);
 
@@ -882,11 +884,11 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         {
             return VisitFunctionCall(context.functionCall());
         }
-        else if (context.qualifiedId() != null)
+        else if (context.anyIdentifier() != null)
         {
             return new IdentifierExpressionNode(
                 lineNumber: context.Start.Line,
-                identifier: VisitQualifiedId(context.qualifiedId())
+                identifier: VisitAnyIdentifier(context.anyIdentifier())
             );
         }
         else if (context.@string() != null)
@@ -921,7 +923,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override FunctionCallNode VisitFunctionCall(AQLParser.FunctionCallContext context)
     {
-        SingleIdentifierNode functionIdentifierNode = VisitIdentifier(context.functionIdentifier);
+        IdentifierNode functionIdentifierNode = VisitAnyIdentifier(context.functionIdentifier);
 
         IEnumerable<ExpressionNode>? parameters = null;
         if (context.parameters != null)
@@ -936,6 +938,20 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         );
     }
 
+    public override IdentifierNode VisitAnyIdentifier([NotNull] AQLParser.AnyIdentifierContext context)
+    {
+        if (context.identifier() != null)
+        {
+            return VisitIdentifier(context.identifier());
+        }
+        else if (context.qualifiedId() != null)
+        {
+            return VisitQualifiedId(context.qualifiedId());
+        }
+
+        throw new($"Not a valid identifier! (Line: {context.Start.Line})");
+    }
+
     public override IEnumerable<ExpressionNode> VisitExpressionList([NotNull] AQLParser.ExpressionListContext context)
     {
         List<ExpressionNode> expressionNodes = [];
@@ -946,19 +962,6 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return expressionNodes;
-    }
-
-    public override IEnumerable<IdentifierNode> VisitQualifiedIdList([NotNull] AQLParser.QualifiedIdListContext context)
-    {
-        List<IdentifierNode> qualifiedIdentifiers = [];
-
-        foreach (AQLParser.QualifiedIdContext qualifiedIdContext in context.qualifiedId())
-        {
-            IdentifierNode qualifiedIdentifier = VisitQualifiedId(qualifiedIdContext);
-            qualifiedIdentifiers.Add(qualifiedIdentifier);
-        }
-
-        return qualifiedIdentifiers;
     }
 
     public override QualifiedIdentifierNode VisitQualifiedId([NotNull] AQLParser.QualifiedIdContext context)
@@ -988,491 +991,111 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     }
 
     #region Expressions
+
+    public class BinaryOperatorReturn(BinaryOperator binaryOperator)
+    {
+        public BinaryOperator BinaryOperator { get; } = binaryOperator;
+    }
+
+    public enum BinaryOperator
+    {
+        and = 0,
+        or = 1,
+        add = 2,
+        subtract = 3,
+        division = 4,
+        equal = 5,
+        inEqual = 6,
+        greaterThan = 7,
+        greaterThanOrEqual = 8,
+        lessThan = 9,
+        lessThanOrEqual = 10,
+        multiplication = 11,
+    }
+
     public override ExpressionNode VisitExpression([NotNull] AQLParser.ExpressionContext context)
     {
-        return VisitLogicalOrExpression(context.logicalOrExpression());
-    }
-
-    public override ExpressionNode VisitLogicalOrExpression([NotNull] AQLParser.LogicalOrExpressionContext context)
-    {
-        List<AQLParser.LogicalAndExpressionContext> logicalAndExpressionContexts = [.. context.logicalAndExpression()];
-        if (logicalAndExpressionContexts.Count > 0)
+        int ln = context.Start.Line;
+        if (context.unaryExpression() != null)
         {
-            ExpressionNode current = VisitLogicalAndExpression(logicalAndExpressionContexts[0]);
-            if (logicalAndExpressionContexts.Count == 1)
+            return VisitUnaryExpression(context.unaryExpression());
+        }
+        else if (context.binaryOperator() != null)
+        {
+            ExpressionNode leftExpressionNode = VisitExpression(context.left);
+            ExpressionNode rightExpressionNode = VisitExpression(context.right);
+            BinaryOperatorReturn binaryOperator = VisitBinaryOperator(context.binaryOperator());
+            return binaryOperator switch
             {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.LogicalAndExpressionContext logicalAndExpressionContext in logicalAndExpressionContexts.Skip(1))
-                {
-                    ExpressionNode logicalAndNode = VisitLogicalAndExpression(logicalAndExpressionContext);
-                    current = MakeOrUsingDeMorganSubstitution(lineNumber: context.Start.Line, current, logicalAndNode);
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    private static NotNode MakeOrUsingDeMorganSubstitution(int lineNumber, ExpressionNode left, ExpressionNode right)
-    {
-        return new NotNode(
-            lineNumber: lineNumber,
-            inner: new AndNode(
-                lineNumber: lineNumber,
-                left: new NotNode(
-                    lineNumber: lineNumber,
-                    inner: left
-                ),
-                right: new NotNode(
-                    lineNumber: lineNumber,
-                    inner: right
-                )
-            )
-        );
-    }
-
-    public override ExpressionNode VisitLogicalAndExpression([NotNull] AQLParser.LogicalAndExpressionContext context)
-    {
-        List<AQLParser.EqualityExpressionContext> equalityExpressionContexts = [.. context.equalityExpression()];
-        if (equalityExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitEqualityExpression(equalityExpressionContexts[0]);
-            if (equalityExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.EqualityExpressionContext equalExpressionContext in equalityExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitEqualityExpression(equalExpressionContext);
-                    current = new AndNode(
-                        lineNumber: context.Start.Line,
-                        left: current,
-                        right: equalityNode
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitEqualityExpression([NotNull] AQLParser.EqualityExpressionContext context)
-    {
-        if (context.equalExpression() != null)
-        {
-            return VisitEqualExpression(context.equalExpression());
-        }
-        else if (context.inEqualExpression() != null)
-        {
-            return VisitInEqualExpression(context.inEqualExpression());
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitEqualExpression([NotNull] AQLParser.EqualExpressionContext context)
-    {
-        List<AQLParser.RelationalExpressionContext> relationalExpressionContexts = [.. context.relationalExpression()];
-        if (relationalExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitRelationalExpression(relationalExpressionContexts[0]);
-            if (relationalExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.RelationalExpressionContext relationalContext in relationalExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitRelationalExpression(relationalContext);
-                    current = new EqualNode(
-                        lineNumber: context.Start.Line,
-                        left: current,
-                        right: equalityNode
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitInEqualExpression([NotNull] AQLParser.InEqualExpressionContext context)
-    {
-        List<AQLParser.RelationalExpressionContext> relationalExpressionContexts = [.. context.relationalExpression()];
-        if (relationalExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitRelationalExpression(relationalExpressionContexts[0]);
-            if (relationalExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.RelationalExpressionContext relationalExpressionContext in relationalExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitRelationalExpression(relationalExpressionContext);
-                    current = new NotNode(
-                        lineNumber: context.Start.Line,
-                        inner: new EqualNode(
-                            lineNumber: context.Start.Line,
-                            left: current,
-                            right: equalityNode
-                        )
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitRelationalExpression([NotNull] AQLParser.RelationalExpressionContext context)
-    {
-        if (context.lessThanExpression() != null)
-        {
-            return VisitLessThanExpression(context.lessThanExpression());
-        }
-        else if (context.lessThanOrEqualExpression() != null)
-        {
-            return VisitLessThanOrEqualExpression(context.lessThanOrEqualExpression());
-        }
-        else if (context.greaterThanExpression() != null)
-        {
-            return VisitGreaterThanExpression(context.greaterThanExpression());
-        }
-        else if (context.greaterThanOrEqualExpression() != null)
-        {
-            return VisitGreaterThanOrEqualExpression(context.greaterThanOrEqualExpression());
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitLessThanExpression([NotNull] AQLParser.LessThanExpressionContext context)
-    {
-        List<AQLParser.AdditiveExpressionContext> additiveExpressionContexts = [.. context.additiveExpression()];
-        if (additiveExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitAdditiveExpression(additiveExpressionContexts[0]);
-            if (additiveExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
-                    current = new LessThanNode(
-                        lineNumber: context.Start.Line,
-                        left: current,
-                        right: equalityNode
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitLessThanOrEqualExpression([NotNull] AQLParser.LessThanOrEqualExpressionContext context)
-    {
-        List<AQLParser.AdditiveExpressionContext> additiveExpressionContexts = [.. context.additiveExpression()];
-        if (additiveExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitAdditiveExpression(additiveExpressionContexts[0]);
-            if (additiveExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
-                    current = MakeLessThanOrEqualNode(lineNumber: context.Start.Line, current, equalityNode);
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    private static LessThanNode MakeLessThanOrEqualNode(int lineNumber, ExpressionNode left, ExpressionNode right)
-    {
-        return new LessThanNode(
-            lineNumber: lineNumber,
-            left: new AddNode(
-                lineNumber: lineNumber,
-                left: left,
-                right: new NegativeNode(
-                    lineNumber: lineNumber,
-                    inner: new IntLiteralNode(
-                        lineNumber: lineNumber,
-                        value: 1
+                { BinaryOperator: BinaryOperator.and } => new AndNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode),
+                // This is done by using De Morgans Law      P OR Q = NOT( (NOT P) AND (NOT Q) )
+                { BinaryOperator: BinaryOperator.or } => new NotNode(
+                    lineNumber: ln,
+                    inner: new AndNode(
+                        lineNumber: ln,
+                        left: new NotNode(lineNumber: ln, inner: leftExpressionNode),
+                        right: new NotNode(lineNumber: ln, inner: rightExpressionNode)
                     )
-                )
-            ),
-            right: right
-        );
-    }
-
-    public override ExpressionNode VisitGreaterThanExpression([NotNull] AQLParser.GreaterThanExpressionContext context)
-    {
-        List<AQLParser.AdditiveExpressionContext> additiveExpressionContexts = [.. context.additiveExpression()];
-        if (additiveExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitAdditiveExpression(additiveExpressionContexts[0]);
-            if (additiveExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
-                    LessThanNode lessThanOrEqualNode = MakeLessThanOrEqualNode(lineNumber: context.Start.Line, current, equalityNode);
-                    current = new NotNode(
-                        lineNumber: context.Start.Line,
-                        inner: lessThanOrEqualNode
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitGreaterThanOrEqualExpression([NotNull] AQLParser.GreaterThanOrEqualExpressionContext context)
-    {
-        List<AQLParser.AdditiveExpressionContext> additiveExpressionContexts = [.. context.additiveExpression()];
-        if (additiveExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitAdditiveExpression(additiveExpressionContexts[0]);
-            if (additiveExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.AdditiveExpressionContext additiveExpressionContext in additiveExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitAdditiveExpression(additiveExpressionContext);
-                    current = new NotNode(
-                        lineNumber: context.Start.Line,
-                        inner: new LessThanNode(
-                            lineNumber: context.Start.Line,
-                            left: current,
-                            right: equalityNode
+                ),
+                { BinaryOperator: BinaryOperator.add } => new AddNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode),
+                // This is done by adding the negative value of the right expression
+                { BinaryOperator: BinaryOperator.subtract } => new AddNode(
+                    lineNumber: ln,
+                    left: leftExpressionNode,
+                    right: new NegativeNode(lineNumber: ln, inner: rightExpressionNode)
+                ),
+                { BinaryOperator: BinaryOperator.multiplication } => new MultiplyNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode),
+                { BinaryOperator: BinaryOperator.division } => new DivisionNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode),
+                { BinaryOperator: BinaryOperator.equal } => new EqualNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode),
+                // This is done by doing:       P IN-EQUAL Q = NOT(P EQUAL Q)
+                { BinaryOperator: BinaryOperator.inEqual } => new NotNode(
+                    lineNumber: ln,
+                    inner: new EqualNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode)
+                ),
+                // This is done by doing  NOT( (L LESSTHAN R) OR (L EQUAL R) )
+                // Less thanOrEqual is made bellow so just taking the not of that leaves us with:
+                // NOT(L LESSTHAN R) AND NOT(L EQUAL R)         
+                { BinaryOperator: BinaryOperator.greaterThan } => new AndNode(
+                    lineNumber: ln,
+                    left: new NotNode(
+                        lineNumber: ln,
+                        inner: new LessThanNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode)
+                    ),
+                    right: new NotNode(
+                        lineNumber: ln,
+                        inner: new EqualNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode)
+                    )
+                ),
+                // This is done by doing NOT(L LESSTHAN R)
+                { BinaryOperator: BinaryOperator.greaterThanOrEqual } => new NotNode(
+                    lineNumber: ln,
+                    inner: new LessThanNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode)
+                ),
+                { BinaryOperator: BinaryOperator.lessThan } => new LessThanNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode),
+                // This is done by doing
+                // P = L LESSTHAN R
+                // Q = L EQUAL R
+                // Then Then by using De Morgans Law      P OR Q = NOT( (NOT P) AND (NOT Q) ) 
+                // NOT( NOT(L LESSTHAN R) AND NOT(L EQUAL R) )
+                { BinaryOperator: BinaryOperator.lessThanOrEqual } => new NotNode(
+                    lineNumber: ln,
+                    inner: new AndNode(
+                        lineNumber: ln,
+                        left: new NotNode(
+                            lineNumber: ln,
+                            inner: new LessThanNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode)
+                        ),
+                        right: new NotNode(
+                            lineNumber: ln,
+                            inner: new EqualNode(lineNumber: ln, left: leftExpressionNode, right: rightExpressionNode)
                         )
-                    );
-                }
+                    )
+                ),
+                _ => throw new($"Not a valid operator! (Line: {ln})"),
+            };
+        }
 
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitAdditiveExpression([NotNull] AQLParser.AdditiveExpressionContext context)
-    {
-        if (context.addExpression() != null)
-        {
-            return VisitAddExpression(context.addExpression());
-        }
-        else if (context.subtractExpression() != null)
-        {
-            return VisitSubtractExpression(context.subtractExpression());
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitAddExpression([NotNull] AQLParser.AddExpressionContext context)
-    {
-        List<AQLParser.MultiplicativeExpressionContext> multiplicativeExpressionContexts = [.. context.multiplicativeExpression()];
-        if (multiplicativeExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitMultiplicativeExpression(multiplicativeExpressionContexts[0]);
-            if (multiplicativeExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.MultiplicativeExpressionContext multiplicativeExpressionContext in multiplicativeExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitMultiplicativeExpression(multiplicativeExpressionContext);
-                    current = new AddNode(
-                        lineNumber: context.Start.Line,
-                        left: current,
-                        right: equalityNode
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitSubtractExpression([NotNull] AQLParser.SubtractExpressionContext context)
-    {
-        List<AQLParser.MultiplicativeExpressionContext> multiplicativeExpressionContexts = [.. context.multiplicativeExpression()];
-        if (multiplicativeExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitMultiplicativeExpression(multiplicativeExpressionContexts[0]);
-            if (multiplicativeExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.MultiplicativeExpressionContext multiplicativeExpressionContext in multiplicativeExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitMultiplicativeExpression(multiplicativeExpressionContext);
-                    current = new AddNode(
-                        lineNumber: context.Start.Line,
-                        left: current,
-                        right: new NegativeNode(
-                            lineNumber: context.Start.Line,
-                            inner: equalityNode
-                        )
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitMultiplicativeExpression([NotNull] AQLParser.MultiplicativeExpressionContext context)
-    {
-        if (context.multiplyExpression() != null)
-        {
-            return VisitMultiplyExpression(context.multiplyExpression());
-        }
-        else if (context.divisionExpression() != null)
-        {
-            return VisitDivisionExpression(context.divisionExpression());
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitMultiplyExpression([NotNull] AQLParser.MultiplyExpressionContext context)
-    {
-        List<AQLParser.UnaryExpressionContext> unaryExpressionContexts = [.. context.unaryExpression()];
-        if (unaryExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitUnaryExpression(unaryExpressionContexts[0]);
-            if (unaryExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.UnaryExpressionContext unaryExpressionContext in unaryExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitUnaryExpression(unaryExpressionContext);
-                    current = new MultiplyNode(
-                        lineNumber: context.Start.Line,
-                        left: current,
-                        right: equalityNode
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
-    }
-
-    public override ExpressionNode VisitDivisionExpression([NotNull] AQLParser.DivisionExpressionContext context)
-    {
-        List<AQLParser.UnaryExpressionContext> unaryExpressionContexts = [.. context.unaryExpression()];
-        if (unaryExpressionContexts.Count > 0)
-        {
-            ExpressionNode current = VisitUnaryExpression(unaryExpressionContexts[0]);
-            if (unaryExpressionContexts.Count == 1)
-            {
-                return current;
-            }
-            else
-            {
-                foreach (AQLParser.UnaryExpressionContext unaryExpressionContext in unaryExpressionContexts.Skip(1))
-                {
-                    ExpressionNode equalityNode = VisitUnaryExpression(unaryExpressionContext);
-                    current = new DivisionNode(
-                        lineNumber: context.Start.Line,
-                        left: current,
-                        right: equalityNode
-                    );
-                }
-
-                return current;
-            }
-        }
-        else
-        {
-            throw new("Not a valid expression.");
-        }
+        throw new($"Not a valid operator! (Line: {ln})");
     }
 
     public override ExpressionNode VisitUnaryExpression([NotNull] AQLParser.UnaryExpressionContext context)
@@ -1495,7 +1118,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
         else
         {
-            throw new("Not a valid expression.");
+            throw new($"Not a valid expression. (Line: {context.Start.Line})");
         }
     }
 
@@ -1527,6 +1150,24 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
             lineNumber: context.Start.Line,
             inner: innerNode
         );
+    }
+
+    public override BinaryOperatorReturn VisitBinaryOperator([NotNull] AQLParser.BinaryOperatorContext context)
+    {
+        if (context.andOperator() != null) return new(BinaryOperator.and);
+        else if (context.orOperator() != null) return new(BinaryOperator.or);
+        else if (context.addOperator() != null) return new(BinaryOperator.add);
+        else if (context.subtractOperator() != null) return new(BinaryOperator.subtract);
+        else if (context.multiplicationOperator() != null) return new(BinaryOperator.multiplication);
+        else if (context.divisionOperator() != null) return new(BinaryOperator.division);
+        else if (context.equalOperator() != null) return new(BinaryOperator.equal);
+        else if (context.inEqualOperator() != null) return new(BinaryOperator.inEqual);
+        else if (context.greaterThanOperator() != null) return new(BinaryOperator.greaterThan);
+        else if (context.greaterThanOrEqualOperator() != null) return new(BinaryOperator.greaterThanOrEqual);
+        else if (context.lessThanOperator() != null) return new(BinaryOperator.lessThan);
+        else if (context.lessThanOrEqualOperator() != null) return new(BinaryOperator.lessThanOrEqual);
+
+        throw new($"Not a valid operator. (Line: {context.Start.Line})");
     }
 
     #endregion

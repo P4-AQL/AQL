@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 
 namespace Interpreter.SemanticAnalysis;
+
 public class Table<T>()
 {
     // Identifier -> type
