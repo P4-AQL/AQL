@@ -1,4 +1,6 @@
 ﻿using System;
+using SimEngine.Core;
+using SimEngine.Metrics;
 
 class Program
 {
@@ -6,6 +8,10 @@ class Program
     {
         // We start by defining the engine to the a new instance of the SimulationEnigneAPI()
         var engine = new SimulationEngineAPI();
+        
+        // Set the seed for the random number generator shall be a INT
+        engine.SetSeed(1234);
+
 
         // This are the functions that the creations of the dispatcher and queues need
         Func<double> Exp(double rate) => () => -Math.Log(1 - Random.Shared.NextDouble()) / rate;
@@ -35,9 +41,7 @@ class Program
         engine.RunSimulation();
 
         // This are the print statements to get the metrics out with, this will with high likelyhood change
-        var results = engine.GetMetrics();
-        MetricsPrinter.Print(engine.GetMetrics());
-        MetricsPrinter.PrintNetworkMetrics(engine.GetNetworkMetrics());
-        MetricsPrinter.PrintEntityMetrics(engine.GetEntities());
+        var stats = engine.GetSimulationStats();
+        MetricsPrinter.Print(stats);
     }
 }

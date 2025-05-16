@@ -1,6 +1,6 @@
-using System;
+namespace SimEngine.Metrics;
+
 using System.Collections.Generic;
-using System.Linq;
 
 public class SimulationStats
 {
@@ -10,7 +10,6 @@ public class SimulationStats
     public List<QueueRuntimeStats> QueueStats { get; } = new();
 
     public void AddEntityCreated() => TotalEntitiesCreated++;
-
     public void AddSimulationRunTime(double time) => TotalSimulationTime += time;
 
     public double ArrivalRate => TotalSimulationTime > 0 ? TotalEntitiesCreated / TotalSimulationTime : 0.0;

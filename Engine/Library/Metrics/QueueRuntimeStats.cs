@@ -1,8 +1,11 @@
+namespace SimEngine.Metrics;
+
 public class QueueRuntimeStats
 {
     public string Name { get; init; } = "";
     public int TotalArrived { get; private set; } = 0;
     public int TotalServed { get; private set; } = 0;
+    public int DroppedEntities { get; private set; } = 0;
     public double TotalWaitingTime { get; private set; } = 0.0;
     public double TotalServiceTime { get; private set; } = 0.0;
     public double TotalBusyTime { get; private set; } = 0.0;
@@ -17,12 +20,13 @@ public class QueueRuntimeStats
         TotalWaitingTime += waitingTime;
         TotalServiceTime += serviceTime;
     }
-
     public void AddBusyTime(double time) => TotalBusyTime += time;
     public void IncrementRun() => RunCount++;
+    public void AddDropped() => DroppedEntities++;
 
     public double AvgWaitTime => TotalServed > 0 ? TotalWaitingTime / TotalServed : 0;
     public double AvgServiceTime => TotalServed > 0 ? TotalServiceTime / TotalServed : 0;
     public double Utilization => (RunCount * SimulationTimePerRun * ServerCount) > 0 ? TotalBusyTime / (RunCount * SimulationTimePerRun * ServerCount) : 0;
     public double Throughput => RunCount > 0 ? (double)TotalServed / RunCount : 0;
+    public double DropRate => TotalArrived > 0 ? (double)DroppedEntities / TotalArrived : 0;
 }
