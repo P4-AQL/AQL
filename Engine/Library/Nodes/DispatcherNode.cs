@@ -21,10 +21,9 @@ public class DispatcherNode : Node
     {
         Simulation.Schedule(_arrivalDist(), () =>
         {
-            var entity = new Entity(Simulation.Now)
-            {
-                CurrentNetworkName = _network
-            };
+            var entity = new Entity(Simulation.Now);
+
+            entity.NetworkStack.Push(_network);
 
             _engine.RegisterEntity(entity);
             _engine.RecordNetworkEntry(entity, _network, Simulation.Now);

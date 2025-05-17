@@ -18,7 +18,10 @@ public class RouterNode : Node
         if (NextNode == null && NextNodeChoices == null)
         {
             entity.DepartureTime = Simulation.Now;
-            _engine.RecordNetworkExit(entity, entity.CurrentNetworkName, Simulation.Now);
+
+            if (entity.NetworkStack.TryPeek(out var exitNetwork))
+                _engine.RecordNetworkExit(entity, exitNetwork, Simulation.Now);
+                
             return;
         }
 
@@ -41,11 +44,12 @@ public class RouterNode : Node
 
         if (target is QueueNode queue)
         {
-            if (entity.CurrentNetworkName != queue.Network)
+            if (!entity.NetworkStack.TryPeek(out var current) || current != queue.Network)
             {
-                _engine.RecordNetworkExit(entity, entity.CurrentNetworkName, Simulation.Now);
+                if (entity.NetworkStack.TryPeek(out var exitNetwork))
+                    _engine.RecordNetworkExit(entity, exitNetwork, Simulation.Now);
+
                 _engine.RecordNetworkEntry(entity, queue.Network, Simulation.Now);
-                entity.CurrentNetworkName = queue.Network;
             }
 
             Simulation.Schedule(0, () => queue.ProcessArrival(entity));

@@ -110,27 +110,46 @@ public class SimulationEngineAPI
 
     public void RecordNetworkEntry(Entity entity, string networkName, double time)
     {
-        if (_networks.TryGetValue(networkName, out var stats))
+        if (!_networks.TryGetValue(networkName, out var stats))
         {
-            stats.RecordEntry(entity, time);
+            stats = new NetworkStats(networkName);
+            _networks[networkName] = stats;
         }
+
+        stats.RecordEntry(entity, time);
+        entity.NetworkStack.Push(networkName);
+        entity.NetworkEntryTimes[networkName] = time;
     }
+
 
     public void RecordNetworkExit(Entity entity, string networkName, double time)
     {
-        if (_networks.TryGetValue(networkName, out var stats))
+        if (!_networks.TryGetValue(networkName, out var stats))
         {
-            stats.RecordExit(entity, time);
+            stats = new NetworkStats(networkName);
+            _networks[networkName] = stats;
+        }
 
+        stats.RecordExit(entity, time);
+
+        if (entity.NetworkStack.TryPeek(out var top) && top == networkName)
+            entity.NetworkStack.Pop();
+
+        // Calculate response time from entry
+        if (entity.NetworkEntryTimes.TryGetValue(networkName, out var entryTime))
+        {
             var runtimeStats = Stats.NetworkStats.FirstOrDefault(n => n.Name == networkName);
             if (runtimeStats == null)
             {
                 runtimeStats = new NetworkRuntimeStats { Name = networkName };
                 Stats.NetworkStats.Add(runtimeStats);
             }
-            runtimeStats.AddRespondTime(time - entity.CreationTime);
+
+            runtimeStats.AddRespondTime(time - entryTime);
+            entity.NetworkEntryTimes.Remove(networkName);
         }
     }
+
 
     public void RunSimulation()
     {
