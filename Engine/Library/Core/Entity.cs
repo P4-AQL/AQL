@@ -14,7 +14,9 @@ public class Entity
     public double TotalWaitingTime => WaitingTimesInQueues.Sum();
     public double TotalServiceTime => ServiceTimesInQueues.Sum();
     public double TotalTime => DepartureTime - CreationTime;
-    public string CurrentNetworkName { get; set; } = "";
+    public Stack<string> NetworkStack { get; } = new();
+    public Dictionary<string, double> NetworkEntryTimes { get; } = new();
+
 
     public Entity(double creationTime)
     {

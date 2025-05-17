@@ -1,46 +1,63 @@
 ﻿using System;
 using SimEngine.Core;
 using SimEngine.Metrics;
+using SimEngine.Networks;
 
 class Program
 {
     static void Main()
     {
-        // We start by defining the engine to the a new instance of the SimulationEnigneAPI()
         var engine = new SimulationEngineAPI();
-        
-        // Set the seed for the random number generator shall be a INT
+
+        // Use a fixed seed for deterministic runs
         engine.SetSeed(1234);
 
-
-        // This are the functions that the creations of the dispatcher and queues need
-        Func<double> Exp(double rate) => () => -Math.Log(1 - Random.Shared.NextDouble()) / rate;
+        // Utility distributions
+        Func<double> Exp(double rate) => () => -Math.Log(1 - engine.RandomGenerator.NextDouble()) / rate;
         Func<double> Const(double value) => () => value;
 
-        // To use the simulation library your names for dispatchers and queues shall follow the naming convention "NetworkName.NodeName" and shall all be unique to avoid overwrites
+        // Define the Kitchen network
+        var kitchen = new NetworkDefinition { Name = "Kitchen" };
+        kitchen.AddEntryPoint("In");
+        kitchen.AddQueue("PrepStation", 1, 10, Exp(1.5));
+        kitchen.AddQueue("Grill", 1, 5, Exp(1.2));
+        kitchen.AddExitPoint("Out");
 
-        // Creates a dispatcher for new entities in the system, it takes a name and a function that returns a double for the distribution 
-        engine.CreateDispatcherNode("Network1.D1", Const(1.0));
+        kitchen.Connect("In", "PrepStation");
+        kitchen.Connect("PrepStation", "Grill");
+        kitchen.Connect("Grill", "Out");
 
-        // Creates a queue for the system, it takes a name, the number of the servers i the queue, the max of entities that can be in the queue at the same time and a service distribution that are a function that returns a double
-        engine.CreateQueueNode("Network1.Q1", 2, 10, Exp(1.2));
-        engine.CreateQueueNode("Network1.Q2", 1, 10, Exp(1.15));
-        engine.CreateQueueNode("Network1.Q3", 1, 25, Exp(1.05));
+        // Define the Service network
+        var service = new NetworkDefinition { Name = "Service" };
+        service.AddEntryPoint("Start");
+        service.AddQueue("Cashier", 2, 15, Exp(1.0));
+        service.AddExitPoint("End");
 
-        // Creates a route in the system, it takes the name of the node where the entities comes from and then the name of the queue that the entities shall go to
-        engine.ConnectNode("Network1.D1", "Network1.Q1");
+        service.Connect("Start", "Cashier");
+        service.Connect("Cashier", "End");
 
-        // How to create a route in the system where the queue have two queues it outputs too
-        engine.ConnectNode("Network1.Q1", "Network1.Q2", 0.4);
-        engine.ConnectNode("Network1.Q1", "Network1.Q3", 0.6);
+        // Define the full Restaurant network
+        var restaurant = new NetworkDefinition { Name = "Restaurant" };
+        restaurant.AddSubNetwork(kitchen);
+        restaurant.AddSubNetwork(service);
 
-        // parameters for the simulation time it runs until and how many runs the simulation runs
-        engine.SetSimulationParameters(5000, 5);
+        engine.CreateNetwork(restaurant); // must come before cross-network connection
+        engine.ConnectNode("Restaurant.Kitchen.Out", "Restaurant.Service.Start");
+                
 
-        // We shall run the simulation after all queues, dispatchers and routes are created and simulation parameters are sat(if the parameters are not sat a set of standard parameters will be used)
+        // Dispatcher sends customers to Kitchen
+        engine.CreateDispatcherNode("Restaurant.D1", Const(0.8));
+        engine.ConnectNode("Restaurant.D1", "Restaurant.Kitchen.In");
+
+        // Final delivery point (queue outside the network)
+        engine.CreateQueueNode("Delivery", 1, 20, Exp(0.5));
+        engine.ConnectNode("Restaurant.Service.End", "Delivery");
+
+        // Run the simulation
+        engine.SetSimulationParameters(3000, 3);
         engine.RunSimulation();
 
-        // This are the print statements to get the metrics out with, this will with high likelyhood change
+        // Print metrics
         var stats = engine.GetSimulationStats();
         MetricsPrinter.Print(stats);
     }

@@ -12,8 +12,6 @@ public class QueueNode : Node
     private int _busyServers = 0;
     private Queue<Core.Entity> _waitingQueue = new();
     private readonly Func<double> _serviceTimeDist;
-    private string _network => Name.Split('.')[0];
-
     public int ServerCount => _servers;
     private Metrics.QueueRuntimeStats? _runtimeStats;
 
@@ -52,10 +50,9 @@ public class QueueNode : Node
             _waitingQueue.Enqueue(entity);
         }
 
-        if (entity.CurrentNetworkName != _network)
+        if (!entity.NetworkStack.TryPeek(out var current) || current != _network)
         {
             _engine.RecordNetworkEntry(entity, _network, Simulation.Now);
-            entity.CurrentNetworkName = _network;
         }
     }
 
@@ -81,12 +78,12 @@ public class QueueNode : Node
             StartService(_waitingQueue.Dequeue());
         }
 
-        QueueNode target = NextNode!;
+        Node target = NextNode!;
         if (NextNodeChoices is not null)
         {
             double r = _engine.RandomGenerator.NextDouble();
             double cumulative = 0;
-            foreach ((QueueNode node, double prob) in NextNodeChoices)
+            foreach ((Node node, double prob) in NextNodeChoices)
             {
                 cumulative += prob;
                 if (r <= cumulative)
@@ -99,19 +96,31 @@ public class QueueNode : Node
 
         if (target != null)
         {
-            if (entity.CurrentNetworkName != target._network)
+            if (!entity.NetworkStack.TryPeek(out var current) || current != target.Network)
             {
-                _engine.RecordNetworkExit(entity, entity.CurrentNetworkName, Simulation.Now);
-                _engine.RecordNetworkEntry(entity, target._network, Simulation.Now);
-                entity.CurrentNetworkName = target._network;
+                if (entity.NetworkStack.TryPeek(out var exitNetwork))
+                    _engine.RecordNetworkExit(entity, exitNetwork, Simulation.Now);
+
+                _engine.RecordNetworkEntry(entity, target.Network, Simulation.Now);
             }
-            Simulation.Schedule(0, () => target.ProcessArrival(entity));
+
+            if (target is QueueNode queue)
+            {
+                Simulation.Schedule(0, () => queue.ProcessArrival(entity));
+            }
+            else if (target is RouterNode router)
+            {
+                Simulation.Schedule(0, () => router.Route(entity));
+            }
         }
         else
         {
-            _engine.RecordNetworkExit(entity, entity.CurrentNetworkName, Simulation.Now);
+            if (entity.NetworkStack.TryPeek(out var exitNetwork))
+                _engine.RecordNetworkExit(entity, exitNetwork, Simulation.Now);
+
             entity.DepartureTime = Simulation.Now;
         }
+
     }
 
     public void Reset(Core.Simulation simulation)

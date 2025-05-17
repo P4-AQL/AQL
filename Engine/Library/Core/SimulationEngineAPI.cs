@@ -34,6 +34,42 @@ public class SimulationEngineAPI
         RandomGenerator = new Random(seed);
     }
 
+    public void CreateNetwork(NetworkDefinition network, string prefix = "")
+    {
+        string fullName = string.IsNullOrEmpty(prefix) ? network.Name : $"{prefix}.{network.Name}";
+
+        // Register queues
+        foreach (var (name, servers, capacity, serviceTime) in network.Queues)
+        {
+            CreateQueueNode($"{fullName}.{name}", servers, capacity, serviceTime);
+        }
+
+        // Register router entry/exit points
+        foreach (var entry in network.RouterEntries)
+        {
+            var node = new RouterNode(this, $"{fullName}.{entry}");
+            _nodes[$"{fullName}.{entry}"] = node;
+        }
+
+        foreach (var exit in network.RouterExits)
+        {
+            var node = new RouterNode(this, $"{fullName}.{exit}");
+            _nodes[$"{fullName}.{exit}"] = node;
+        }
+
+        // Register internal routes
+        foreach (var (from, to, prob) in network.Routes)
+        {
+            ConnectNode($"{fullName}.{from}", $"{fullName}.{to}", prob);
+        }
+
+        // Recursively register sub-networks
+        foreach (var sub in network.SubNetworks)
+        {
+            CreateNetwork(sub, fullName);
+        }
+    }
+
     public void CreateDispatcherNode(string name, Func<double> arrivalDist)
     {
         var dispatcher = new DispatcherNode(this, name, arrivalDist);
@@ -53,47 +89,67 @@ public class SimulationEngineAPI
     {
         if (!_nodes.TryGetValue(from, out var fromNode))
             throw new ArgumentException($"Node '{from}' not found.");
-
-        if (!_queues.TryGetValue(to, out var toQueue))
-            throw new ArgumentException($"Queue '{to}' not found.");
-
+    
+        if (!_nodes.TryGetValue(to, out var toNode))
+            throw new ArgumentException($"Target node '{to}' not found.");
+    
         if (fromNode.NextNodeChoices == null && probability < 1.0)
         {
-            fromNode.NextNodeChoices = new List<(QueueNode, double)> { (toQueue, probability) };
+            fromNode.NextNodeChoices = new List<(Node, double)> { (toNode, probability) };
         }
         else if (fromNode.NextNodeChoices != null)
         {
-            fromNode.NextNodeChoices.Add((toQueue, probability));
+            fromNode.NextNodeChoices.Add((toNode, probability));
         }
         else
         {
-            fromNode.NextNode = toQueue;
+            fromNode.NextNode = toNode;
         }
     }
+
 
     public void RecordNetworkEntry(Entity entity, string networkName, double time)
     {
-        if (_networks.TryGetValue(networkName, out var stats))
+        if (!_networks.TryGetValue(networkName, out var stats))
         {
-            stats.RecordEntry(entity, time);
+            stats = new NetworkStats(networkName);
+            _networks[networkName] = stats;
         }
+
+        stats.RecordEntry(entity, time);
+        entity.NetworkStack.Push(networkName);
+        entity.NetworkEntryTimes[networkName] = time;
     }
+
 
     public void RecordNetworkExit(Entity entity, string networkName, double time)
     {
-        if (_networks.TryGetValue(networkName, out var stats))
+        if (!_networks.TryGetValue(networkName, out var stats))
         {
-            stats.RecordExit(entity, time);
+            stats = new NetworkStats(networkName);
+            _networks[networkName] = stats;
+        }
 
+        stats.RecordExit(entity, time);
+
+        if (entity.NetworkStack.TryPeek(out var top) && top == networkName)
+            entity.NetworkStack.Pop();
+
+        // Calculate response time from entry
+        if (entity.NetworkEntryTimes.TryGetValue(networkName, out var entryTime))
+        {
             var runtimeStats = Stats.NetworkStats.FirstOrDefault(n => n.Name == networkName);
             if (runtimeStats == null)
             {
                 runtimeStats = new NetworkRuntimeStats { Name = networkName };
                 Stats.NetworkStats.Add(runtimeStats);
             }
-            runtimeStats.AddRespondTime(time - entity.CreationTime);
+
+            runtimeStats.AddRespondTime(time - entryTime);
+            entity.NetworkEntryTimes.Remove(networkName);
         }
     }
+
 
     public void RunSimulation()
     {
