@@ -254,7 +254,7 @@ public class InterpreterClass
 
     private void InterpretSimulate(SimulateNode simulateNode)
     {
-        throw new NotImplementedException();
+        SimulationEngineAPI engineAPI = new();
     }
 
     private object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
@@ -469,26 +469,32 @@ public class InterpreterClass
             }
             else
             {
-                return InterpretIdentifier(singleIdentifierNode, globalEnvironment);
+                return InterpretEnvironmentIdentifier(singleIdentifierNode, globalEnvironment);
             }
         }
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            object leftValue = InterpretIdentifier(qualifiedIdentifierNode.LeftIdentifier, globalEnvironment);
-            if (leftValue is not InterpretationEnvironment dependency)
+            SingleIdentifierNode leftIdentifier = qualifiedIdentifierNode.LeftIdentifier;
+            SingleIdentifierNode rightIdentifier = qualifiedIdentifierNode.RightIdentifier;
+            object leftValue = InterpretEnvironmentIdentifier(leftIdentifier, globalEnvironment);
+            if (leftValue is InterpretationEnvironment dependency)
             {
-                return leftValue;
+                return InterpretEnvironmentIdentifier(rightIdentifier, dependency);
+            }
+            else if (leftValue is NetworkDeclarationNode networkNode)
+            {
+                return InterpretNetworkIdentifier(rightIdentifier, networkNode);
             }
             else
             {
-                return InterpretIdentifier(qualifiedIdentifierNode.RightIdentifier, dependency);
+                throw new($"Invalid use of identifier '{qualifiedIdentifierNode.FullIdentifier}' (Line: {qualifiedIdentifierNode.LineNumber})");
             }
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
-    private object InterpretIdentifier(SingleIdentifierNode node, InterpretationEnvironment environment)
+    private object InterpretEnvironmentIdentifier(SingleIdentifierNode node, InterpretationEnvironment environment)
     {
         if (environment.FunctionState.Lookup(node.Identifier, out FunctionStateTuple function))
         {
@@ -510,28 +516,31 @@ public class InterpreterClass
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
-    private object InterpretImportIdentifier(QualifiedIdentifierNode node)
+    private object InterpretNetworkIdentifier(SingleIdentifierNode identifier, NetworkDeclarationNode network)
     {
-        string nodeIdentifier = node.LeftIdentifier.Identifier;
-        string expressionIdentifier = node.RightIdentifier.Identifier;
-        if (globalEnvironment.ModuleDependencies.Lookup(nodeIdentifier, out InterpretationEnvironment dependency))
+        IdentifierNode? networkInstance = network.Instances.FirstOrDefault(instance => instance.NewInstance.Identifier == identifier.Identifier)?.ExistingInstance;
+
+        if (networkInstance is not null)
         {
-            if (dependency.FunctionState.Lookup(expressionIdentifier, out FunctionStateTuple functionDependency))
+            object interpretedInstance = InterpretAnyIdentifier(networkInstance, shadowVariableState: null);
+
+            if (IsNetworkOrQueueTuple(interpretedInstance))
             {
-                return functionDependency;
+                return interpretedInstance;
             }
-            else if (dependency.VariableState.Lookup(expressionIdentifier, out object? variableDependency))
+            else
             {
-                return variableDependency;
-            }
-            else if (dependency.NetworkState.Lookup(expressionIdentifier, out NetworkDeclarationNode? networkDependency))
-            {
-                return networkDependency;
+                throw new($"Identifier error occured for '{networkInstance.FullIdentifier}' (Line: {networkInstance.LineNumber})");
             }
         }
+        else
+        {
 
-        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+            throw new($"Identifier error occured for '{identifier.Identifier}' (Line: {identifier.LineNumber})");
+        }
     }
+
+    private bool IsNetworkOrQueueTuple(object @object) => @object is NetworkDeclarationNode || @object is QueueTuple;
 
     private bool LookupVariableHelper(string identifier, Table<object>? shadowVariableState, [MaybeNullWhen(false)] out object @out)
     {
