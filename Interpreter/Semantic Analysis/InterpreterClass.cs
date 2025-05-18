@@ -8,8 +8,10 @@ using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
+using Interpreter.AST.Nodes.Routes;
 using Interpreter.AST.Nodes.Statements;
 using Interpreter.Utilities.Modules;
+using SimEngine.Core;
 
 namespace Interpreter.SemanticAnalysis;
 
@@ -41,7 +43,7 @@ public class InterpreterClass
     {
         if (node is ImportNode importNode)
         {
-            Console.WriteLine("We imported" + importNode.Namespace.Identifier);
+            InterpretImport(importNode);
         }
         else if (node is DefinitionProgramNode definitionNode)
         {
@@ -203,7 +205,7 @@ public class InterpreterClass
     {
         int capacity = (int)InterpretExpression(node.Capacity, null);
         int servers = (int)InterpretExpression(node.Servers, null);
-        object service() => InterpretExpression(node.Service, null);
+        double service() => (double)InterpretExpression(node.Service, null);
         IEnumerable<string> metrics = node.Metrics.Select(metric => metric.Name);
 
         QueueTuple queueTuple = new()
@@ -220,41 +222,65 @@ public class InterpreterClass
     private void InterpretNetworkDeclaration(NetworkDeclarationNode node)
     {
         NetworkState.ForceBind(node.Identifier.Identifier, node);
-
-        SimulationEngineAPI engineAPI = new();
-        foreach (InstanceDeclaration instanceDeclaration in node.Instances)
-        {
-            CreateQueueInEngine(engineAPI, node.Identifier.Identifier, instanceDeclaration);
-        }
     }
 
-    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, InstanceDeclaration instance)
-    {
-        object existingNetwork = InterpretAnyIdentifier(instance.ExistingInstance, shadowVariableState: null);
-        if (existingNetwork is not NetworkNode existingNetworkNode)
-        {
-            throw new($"Not a valid instance! (Line: {instance.LineNumber})");
-        }
-
-        string queueFullPath = networkIdentifier + "." + instance.NewInstance.Identifier;
-        CreateQueueInEngine(engineAPI, queueFullPath, existingNetworkNode);
-    }
-
-    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, NetworkNode network)
-    {
-        if (network is NetworkDeclarationNode networkDeclarationNode)
-        {
-
-        }
-        else if (network is QueueDeclarationNode queueDeclarationNode)
-        {
-
-        }
-    }
 
     private void InterpretSimulate(SimulateNode simulateNode)
     {
         SimulationEngineAPI engineAPI = new();
+        engineAPI.SetSeed(Random.Shared.Next());
+
+        int untilTime = (int)InterpretExpression(simulateNode.TerminationCriteria, shadowVariableState: null);
+        int runCount = (int)InterpretExpression(simulateNode.Runs, shadowVariableState: null);
+
+        engineAPI.SetSimulationParameters(untilTime: untilTime, runCount: runCount);
+
+        // Lookup identifier.
+        object network = InterpretAnyIdentifier(simulateNode.NetworkIdentifier, shadowVariableState: null);
+
+        // If identifier is not network, then the simulation will be useless, so that is the only case we care about.
+        if (network is NetworkDeclarationNode networkDeclarationNode)
+        {
+            CreateNetworkInEngine(
+                engineAPI,
+                networkDeclarationNode,
+                previousNetworkName: null
+            );
+        }
+
+        // One could check if it is a queue and create it anyway.
+    }
+
+    private void CreateNetworkInEngine(SimulationEngineAPI engineAPI, NetworkDeclarationNode networkDeclarationNode, string? previousNetworkName)
+    {
+        // Setup name for this network
+        string thisNetworkIdentifier = networkDeclarationNode.Identifier.FullIdentifier;
+        string thisNetworkName = previousNetworkName is null ? thisNetworkIdentifier : previousNetworkName + "." + thisNetworkIdentifier;
+
+        // Create queues for the inputs
+
+        // Create queues for the outputs
+
+        // Create instances        
+        CreateInstancesInEngine(engineAPI, networkDeclarationNode.Instances, thisNetworkName);
+
+        // 
+    }
+
+    private void CreateInstancesInEngine(SimulationEngineAPI engineAPI, IReadOnlyList<InstanceDeclaration> instances, string? previousNetworkName)
+    {
+        // Lookup existing instance
+
+        // if network 
+        CreateNetworkInEngine(engineAPI, , previousNetworkName);
+
+        // if queue
+        CreateQueueInEngine(engineAPI, /*instanceName*/, /*servers*/, /*service*/, null);
+    }
+
+    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string queueName, QueueTuple queueTuple, Func<double>? arrivalTime)
+    {
+        // Create queue in en
     }
 
     private object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)

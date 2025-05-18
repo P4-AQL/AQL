@@ -2,10 +2,11 @@
 
 
 namespace Interpreter.SemanticAnalysis;
+
 public struct QueueTuple
 {
-    public Func<object> Service;
-    public int Capacity;
     public int Servers;
+    public int Capacity;
+    public Func<double> Service;
     public IEnumerable<string> Metrics;
 }
