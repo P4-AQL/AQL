@@ -217,11 +217,42 @@ public class InterpreterClass
         };
 
         VariableState.ForceBind(node.Identifier.Identifier, queueTuple);
+
+        QueueableManager.Queueables.Add(
+            new Queue(
+                node.Identifier.Identifier,
+                servers,
+                capacity,
+                service,
+                metrics
+            )
+        );
     }
 
     private void InterpretNetworkDeclaration(NetworkDeclarationNode node)
     {
         NetworkState.ForceBind(node.Identifier.Identifier, node);
+
+        IEnumerable<Queue> inputs = node.Inputs.Select(QueueableManager.IdentifierToInstantQueue);
+        IEnumerable<Queue> outputs = node.Outputs.Select(QueueableManager.IdentifierToInstantQueue);
+
+        IEnumerable<Queueable> newInstances = node.Instances.Select(QueueableManager.GetNewInstance);
+
+        List<Route> routes = [];
+        foreach (RouteDefinitionNode routeDefinitionNode in node.Routes)
+        {
+            routes.AddRange(QueueableManager.GetRoute(routeDefinitionNode, inputs, outputs, [.. newInstances], this));
+        }
+
+        QueueableManager.Queueables.Add(
+            new Network(
+                node.Identifier.Identifier,
+                inputs,
+                outputs,
+                newInstances,
+                routes
+            )
+        );
     }
 
 
@@ -235,55 +266,209 @@ public class InterpreterClass
 
         engineAPI.SetSimulationParameters(untilTime: untilTime, runCount: runCount);
 
-        // Lookup identifier.
-        object network = InterpretAnyIdentifier(simulateNode.NetworkIdentifier, shadowVariableState: null);
+        IdentifierNode networkIdentifier = simulateNode.NetworkIdentifier;
+        Queueable queueable = QueueableManager.FindQueueable(networkIdentifier.FirstIdentifier);
 
-        // If identifier is not network, then the simulation will be useless, so that is the only case we care about.
-        if (network is NetworkDeclarationNode networkDeclarationNode)
+        if (networkIdentifier is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            CreateNetworkInEngine(
-                engineAPI,
-                networkDeclarationNode,
-                previousNetworkName: null
-            );
+            queueable = queueable.FindQueueable(qualifiedIdentifierNode.RightIdentifier.Identifier);
         }
 
-        // One could check if it is a queue and create it anyway.
+        CreateQueueableInEngine(engineAPI, queueable, networkIdentifier.FirstIdentifier);
     }
 
-    private void CreateNetworkInEngine(SimulationEngineAPI engineAPI, NetworkDeclarationNode networkDeclarationNode, string? previousNetworkName)
+    private void CreateQueueableInEngine(SimulationEngineAPI engineAPI, Queueable queueable, string thisNetworkName)
     {
-        // Setup name for this network
-        string thisNetworkIdentifier = networkDeclarationNode.Identifier.FullIdentifier;
-        string thisNetworkName = previousNetworkName is null ? thisNetworkIdentifier : previousNetworkName + "." + thisNetworkIdentifier;
+        string queueableName = string.Join('.', thisNetworkName, queueable.Name);
+        if (queueable is Queue queue)
+        {
+            CreateQueueInEngine(engineAPI, queue, queueableName);
+        }
+        else if (queueable is Network network)
+        {
+            CreateNetworkInEngine(engineAPI, network, queueableName);
+        }
+    }
 
+    private static void CreateQueueInEngine(SimulationEngineAPI engineAPI, Queue queue, string queueName)
+    {
+        engineAPI.CreateQueueNode(
+            queueName,
+            queue.Servers,
+            queue.Capacity,
+            queue.Service
+        );
+    }
+
+    private void CreateNetworkInEngine(SimulationEngineAPI engineAPI, Network network, string networkName)
+    {
+        foreach (Queue queue in network.Inputs)
+        {
+            CreateQueueInEngine(engineAPI, queue, networkName);
+        }
+        foreach (Queue queue in network.Outputs)
+        {
+            CreateQueueInEngine(engineAPI, queue, networkName);
+        }
+        foreach (Queueable queueable in network.NewInstances)
+        {
+            CreateQueueableInEngine(engineAPI, queueable, networkName);
+        }
+
+        int index = 0;
+        foreach (Route route in network.Routes)
+        {
+            CreateRouteInEngine(engineAPI, route, networkName, index);
+            index++;
+        }
+    }
+
+    private void CreateRouteInEngine(SimulationEngineAPI engineAPI, Route route, string networkName, int index)
+    {
+        if (route is FuncRoute funcRoute)
+        {
+            CreateFunctionRouteInEngine(engineAPI, funcRoute, networkName, index);
+        }
+        else if (route is QueueRoute queueRoute)
+        {
+            CreateQueueRouteInEngine(engineAPI, queueRoute, networkName);
+        }
+    }
+
+    private void CreateFunctionRouteInEngine(SimulationEngineAPI engineAPI, FuncRoute funcRoute, string networkName, int index)
+    {
+        string dispatcherIdentifier = "dispatcher" + index;
+        string dispatcherName = string.Join('.', networkName, dispatcherIdentifier);
+        engineAPI.CreateDispatcherNode(
+            dispatcherName,
+            funcRoute.FromRate
+        );
+
+        // Maybe need to find the network which contains the to queue
+        string queueName = string.Join('.', networkName, funcRoute.To);
+        engineAPI.ConnectNode(dispatcherName, queueName, funcRoute.To.Weight);
+    }
+
+    private void CreateQueueRouteInEngine(SimulationEngineAPI engineAPI, QueueRoute queueRoute, string networkName)
+    {
+        // Maybe need to find the network which contains the from and to queues
+        string fromQueueName = string.Join('.', networkName, queueRoute.FromQueue.Name);
+        string toQueueName = string.Join('.', networkName, queueRoute.To.ToQueue);
+
+        engineAPI.ConnectNode(fromQueueName, toQueueName, queueRoute.To.Weight);
+    }
+
+
+
+    /*private void G(SimulationEngineAPI engineAPI, Queueable queueable, string thisNetworkName)
+    {        
         // Create queues for the inputs
+        CreateQueuesForIdentifiers(engineAPI, networkDeclarationNode.Inputs, thisNetworkName);
 
         // Create queues for the outputs
+        CreateQueuesForIdentifiers(engineAPI, networkDeclarationNode.Outputs, thisNetworkName);
 
         // Create instances        
         CreateInstancesInEngine(engineAPI, networkDeclarationNode.Instances, thisNetworkName);
 
-        // 
+        // Create routes
+        CreateRoutesInEngine(engineAPI, networkDeclarationNode, thisNetworkName);
     }
 
-    private void CreateInstancesInEngine(SimulationEngineAPI engineAPI, IReadOnlyList<InstanceDeclaration> instances, string? previousNetworkName)
+    private void B(SimulationEngineAPI engineAPI, IReadOnlyList<SingleIdentifierNode> identifiers, string thisNetworkName)
     {
-        // Lookup existing instance
-
-        // if network 
-        // CreateNetworkInEngine(engineAPI, , previousNetworkName);
-
-        // if queue
-        // CreateQueueInEngine(engineAPI, /*instanceName*/, /*servers*/, /*service*/, arrivalTime: null);
+        // Create queue in engine
+        foreach (SingleIdentifierNode identifierNode in identifiers)
+        {
+            string queueName = string.Join('.', thisNetworkName, identifierNode.Identifier);
+            QueueTuple queueTuple = new()
+            {
+                Servers = 1,
+                Capacity = int.MaxValue,
+                Service = () => 0,
+            };
+            CreateQueueInEngine(engineAPI, queueName, queueTuple, arrivalTime: null);
+        }
     }
 
-    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string queueName, QueueTuple queueTuple, Func<double>? arrivalTime)
+    private void L(SimulationEngineAPI engineAPI, IReadOnlyList<InstanceDeclaration> instances, string thisNetworkName)
     {
-        // Create queue in en
+        foreach (InstanceDeclaration instanceDeclaration in instances)
+        {
+            // Lookup existing instance
+            object value = InterpretAnyIdentifier(instanceDeclaration.ExistingInstance, shadowVariableState: null);
+
+            // if network 
+            if (value is NetworkDeclarationNode network)
+            {
+                string newNetworkIdentifier = instanceDeclaration.NewInstance.FullIdentifier;
+                string newNetworkName = string.Join('.', thisNetworkName, newNetworkIdentifier);
+                CreateNetworkInEngine(engineAPI, network, newNetworkName);
+            }
+
+            // if queue
+            else if (value is QueueTuple queueTuple)
+            {
+                // get queuename
+                string instanceIdentifier = instanceDeclaration.ExistingInstance.FullIdentifier;
+                string queueName = string.Join('.', thisNetworkName, instanceIdentifier);
+                //create queue
+                CreateQueueInEngine(engineAPI, queueName, queueTuple, arrivalTime: null);
+            }
+        }
     }
 
-    private object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
+    private void M(SimulationEngineAPI engineAPI, NetworkDeclarationNode networkDeclarationNode, string thisNetworkName)
+    {
+        int index = 0;
+        foreach (RouteDefinitionNode route in networkDeclarationNode.Routes)
+        {
+            foreach (RouteValuePairNode routeTo in route.To)
+            {
+                bool shouldCreateNewInstance = routeTo.RouteTo switch
+                {
+                    SingleIdentifierNode routeToSingle =>
+                        IsIdentifierInputOrOutput(routeToSingle, networkDeclarationNode) == false
+                        && IsIdentifierInstance(routeToSingle, networkDeclarationNode.Instances) == false,
+                    QualifiedIdentifierNode routeToQualified =>
+                        IsIdentifierInputOrOutput(routeToQualified.LeftIdentifier, networkDeclarationNode) == false
+                        && IsIdentifierInstance(routeToQualified.LeftIdentifier, networkDeclarationNode.Instances) == false,
+                    _ => throw new($"{nameof(routeTo.RouteTo)} unhandled (Line {routeTo.RouteTo})"),
+                };
+
+                if (shouldCreateNewInstance)
+                {
+
+                }
+                else
+                {
+                    if (route.From is FunctionCallNode || route.From is LiteralNode)
+                    {
+                        double GetArrivalTime() => (double)InterpretExpression(route.From, shadowVariableState: null);
+
+                        string dispatcherIdentifier = "dispatcher" + index;
+                        string dispatcherName = string.Join('.', thisNetworkName, dispatcherIdentifier);
+                        CreateDispatcherInEngine(engineAPI, dispatcherName, GetArrivalTime);
+                    }
+                    else if (route.From is IdentifierExpressionNode identifierExpressionNode)
+                    {
+                        if (IsIdentifierInputOrOutput(identifierExpressionNode.Identifier, networkDeclarationNode))
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        throw new($"Invalid route term! (Line: {route.From.LineNumber})");
+                    }
+                }
+            }
+
+            index++;
+        }
+    }*/
+
+    public object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
     {
         return node switch
         {
