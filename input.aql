@@ -4,6 +4,7 @@ import airport
 const int x = 5 + 3;
 
 function bool someFunc (int y) {
+  x = true;
   return x == y;
 }
 
