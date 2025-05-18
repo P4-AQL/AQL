@@ -1,6 +1,7 @@
 namespace SimEngine.Nodes;
 
 using System;
+using System.Linq;
 using SimEngine.Core;
 
 public class DispatcherNode : Node
@@ -14,7 +15,6 @@ public class DispatcherNode : Node
     {
         _engine = engine;
         _arrivalDist = arrivalDist;
-        _network = name.Split('.')[0];
     }
 
     public void ScheduleInitialArrival()
@@ -22,8 +22,6 @@ public class DispatcherNode : Node
         Simulation.Schedule(_arrivalDist(), () =>
         {
             var entity = new Entity(Simulation.Now);
-
-            entity.NetworkStack.Push(_network);
 
             _engine.RegisterEntity(entity);
             _engine.RecordNetworkEntry(entity, _network, Simulation.Now);
@@ -43,9 +41,9 @@ public class DispatcherNode : Node
                     }
                 }
             }
-            
+
             if (target is QueueNode queue)
-            {    
+            {
                 Simulation.Schedule(0, () => queue.ProcessArrival(entity));
             }
             else if (target is RouterNode router)
@@ -53,7 +51,7 @@ public class DispatcherNode : Node
                 Simulation.Schedule(0, () => router.Route(entity));
             }
 
-            
+
             ScheduleInitialArrival();
         });
     }

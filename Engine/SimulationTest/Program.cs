@@ -8,56 +8,64 @@ class Program
     static void Main()
     {
         var engine = new SimulationEngineAPI();
+        engine.SetSeed(42);
 
-        // Use a fixed seed for deterministic runs
-        engine.SetSeed(1234);
-
-        // Utility distributions
         Func<double> Exp(double rate) => () => -Math.Log(1 - engine.RandomGenerator.NextDouble()) / rate;
         Func<double> Const(double value) => () => value;
 
-        // Define the Kitchen network
-        var kitchen = new NetworkDefinition { Name = "Kitchen" };
-        kitchen.AddEntryPoint("In");
-        kitchen.AddQueue("PrepStation", 1, 10, Exp(1.5));
-        kitchen.AddQueue("Grill", 1, 5, Exp(1.2));
-        kitchen.AddExitPoint("Out");
+        // --- Pizza Shop ---
+        var pizza = new NetworkDefinition { Name = "PizzaShop" };
+        pizza.AddEntryPoint("In");
+        pizza.AddQueue("PrepStation", 1, 10, Exp(1.2));
+        pizza.AddQueue("PizzaOven", 1, 5, Exp(1.0));
+        pizza.AddQueue("Cashier", 1, 8, Exp(0.9));
+        pizza.AddExitPoint("Out");
+        pizza.Connect("In", "PrepStation");
+        pizza.Connect("PrepStation", "PizzaOven");
+        pizza.Connect("PizzaOven", "Cashier");
+        pizza.Connect("Cashier", "Out");
 
-        kitchen.Connect("In", "PrepStation");
-        kitchen.Connect("PrepStation", "Grill");
-        kitchen.Connect("Grill", "Out");
+        // --- Chinese Shop ---
+        var chinese = new NetworkDefinition { Name = "ChineseShop" };
+        chinese.AddEntryPoint("In");
+        chinese.AddQueue("PrepStation", 1, 10, Exp(1.3));
+        chinese.AddQueue("SushiStation", 1, 6, Exp(0.8));
+        chinese.AddQueue("RamenStation", 1, 6, Exp(1.0));
+        chinese.AddQueue("Cashier", 1, 8, Exp(0.95));
+        chinese.AddExitPoint("Out");
+        chinese.Connect("In", "PrepStation");
+        chinese.Connect("PrepStation", "SushiStation", 0.4);
+        chinese.Connect("PrepStation", "RamenStation", 0.6);
+        chinese.Connect("SushiStation", "Cashier");
+        chinese.Connect("RamenStation", "Cashier");
+        chinese.Connect("Cashier", "Out");
 
-        // Define the Service network
-        var service = new NetworkDefinition { Name = "Service" };
-        service.AddEntryPoint("Start");
-        service.AddQueue("Cashier", 2, 15, Exp(1.0));
-        service.AddExitPoint("End");
+        // --- Mall wrapper ---
+        var mall = new NetworkDefinition { Name = "Mall" };
+        mall.AddEntryPoint("Entry");
+        mall.AddExitPoint("Out");
+        mall.AddSubNetwork(pizza);
+        mall.AddSubNetwork(chinese);
+        mall.Connect("Entry", "PizzaShop.In", 0.5);
+        mall.Connect("Entry", "ChineseShop.In", 0.5);
+        mall.Connect("PizzaShop.Out", "Out");
+        mall.Connect("ChineseShop.Out", "Out");
 
-        service.Connect("Start", "Cashier");
-        service.Connect("Cashier", "End");
+        engine.CreateNetwork(mall);
 
-        // Define the full Restaurant network
-        var restaurant = new NetworkDefinition { Name = "Restaurant" };
-        restaurant.AddSubNetwork(kitchen);
-        restaurant.AddSubNetwork(service);
+        // --- Dispatcher OUTSIDE mall ---
+        engine.CreateDispatcherNode("D1", Const(0.8));
+        engine.ConnectNode("D1", "Mall.Entry");
 
-        engine.CreateNetwork(restaurant); // must come before cross-network connection
-        engine.ConnectNode("Restaurant.Kitchen.Out", "Restaurant.Service.Start");
-                
+        // --- Final delivery queue ---
+        engine.CreateQueueNode("Delivery", 1, 30, Exp(1.2));
+        engine.ConnectNode("Mall.Out", "Delivery");
 
-        // Dispatcher sends customers to Kitchen
-        engine.CreateDispatcherNode("Restaurant.D1", Const(0.8));
-        engine.ConnectNode("Restaurant.D1", "Restaurant.Kitchen.In");
-
-        // Final delivery point (queue outside the network)
-        engine.CreateQueueNode("Delivery", 1, 20, Exp(0.5));
-        engine.ConnectNode("Restaurant.Service.End", "Delivery");
-
-        // Run the simulation
-        engine.SetSimulationParameters(3000, 3);
+        // --- Run simulation ---
+        engine.SetSimulationParameters(1000, 1);
         engine.RunSimulation();
 
-        // Print metrics
+        // --- Print results ---
         var stats = engine.GetSimulationStats();
         MetricsPrinter.Print(stats);
     }

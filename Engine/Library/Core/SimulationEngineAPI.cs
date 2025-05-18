@@ -6,7 +6,7 @@ using System.Linq;
 using SimEngine.Metrics;
 using SimEngine.Nodes;
 using SimEngine.Networks;
-
+using SimEngine.Utils;
 
 public class SimulationEngineAPI
 {
@@ -20,7 +20,7 @@ public class SimulationEngineAPI
     private Dictionary<string, Node> _nodes = new();
     private double _untilTime = 1000;
     private int _runCount = 1;
-
+    private readonly HashSet<string> _validNetworkNames = new();
     public SimulationStats Stats { get; private set; } = new();
 
     public void SetSimulationParameters(double untilTime, int runCount)
@@ -38,6 +38,8 @@ public class SimulationEngineAPI
     {
         string fullName = string.IsNullOrEmpty(prefix) ? network.Name : $"{prefix}.{network.Name}";
 
+        _validNetworkNames.Add(fullName);
+
         // Register queues
         foreach (var (name, servers, capacity, serviceTime) in network.Queues)
         {
@@ -47,9 +49,11 @@ public class SimulationEngineAPI
         // Register router entry/exit points
         foreach (var entry in network.RouterEntries)
         {
-            var node = new RouterNode(this, $"{fullName}.{entry}");
-            _nodes[$"{fullName}.{entry}"] = node;
+            var nodeName = $"{fullName}.{entry}";
+            var node = new RouterNode(this, nodeName);
+            _nodes[nodeName] = node;
         }
+
 
         foreach (var exit in network.RouterExits)
         {
@@ -57,17 +61,31 @@ public class SimulationEngineAPI
             _nodes[$"{fullName}.{exit}"] = node;
         }
 
-        // Register internal routes
-        foreach (var (from, to, prob) in network.Routes)
-        {
-            ConnectNode($"{fullName}.{from}", $"{fullName}.{to}", prob);
-        }
-
         // Recursively register sub-networks
         foreach (var sub in network.SubNetworks)
         {
-            CreateNetwork(sub, fullName);
+            CreateNetwork(sub, string.IsNullOrEmpty(prefix) ? network.Name : $"{prefix}.{network.Name}");
         }
+
+        // Register internal routes
+        foreach (var (from, to, prob) in network.Routes)
+        {
+            var qualifiedFrom = Qualify(fullName, from);
+            var qualifiedTo = Qualify(fullName, to);
+            ConnectNode(qualifiedFrom, qualifiedTo, prob);
+        }
+
+    }
+
+    private string Qualify(string prefix, string name)
+    {
+        // Already fully qualified with current prefix
+        if (name.StartsWith(prefix + ".")) return name;
+
+        // Already fully qualified with a deeper prefix (e.g., Mall.PizzaShop.X)
+        if (name.Split('.').Length > 1 && name.StartsWith(prefix)) return name;
+
+        return string.IsNullOrEmpty(prefix) ? name : $"{prefix}.{name}";
     }
 
     public void CreateDispatcherNode(string name, Func<double> arrivalDist)
@@ -89,10 +107,10 @@ public class SimulationEngineAPI
     {
         if (!_nodes.TryGetValue(from, out var fromNode))
             throw new ArgumentException($"Node '{from}' not found.");
-    
+
         if (!_nodes.TryGetValue(to, out var toNode))
             throw new ArgumentException($"Target node '{to}' not found.");
-    
+
         if (fromNode.NextNodeChoices == null && probability < 1.0)
         {
             fromNode.NextNodeChoices = new List<(Node, double)> { (toNode, probability) };
@@ -107,9 +125,19 @@ public class SimulationEngineAPI
         }
     }
 
-
     public void RecordNetworkEntry(Entity entity, string networkName, double time)
     {
+        if (!_validNetworkNames.Contains(networkName))
+            return;
+
+        if (entity.NetworkStack.Contains(networkName))
+            return;
+
+        entity.NetworkStack.Push(networkName);
+
+        //Console.WriteLine($"[ENTRY] {entity.CreationTime:F2} → {networkName} at {time:F2}");
+        //Console.WriteLine($"[STACK] {string.Join(" → ", entity.NetworkStack)}");
+
         if (!_networks.TryGetValue(networkName, out var stats))
         {
             stats = new NetworkStats(networkName);
@@ -117,25 +145,23 @@ public class SimulationEngineAPI
         }
 
         stats.RecordEntry(entity, time);
-        entity.NetworkStack.Push(networkName);
         entity.NetworkEntryTimes[networkName] = time;
     }
 
-
     public void RecordNetworkExit(Entity entity, string networkName, double time)
     {
-        if (!_networks.TryGetValue(networkName, out var stats))
-        {
-            stats = new NetworkStats(networkName);
-            _networks[networkName] = stats;
-        }
+        if (!_validNetworkNames.Contains(networkName))
+            return;
 
-        stats.RecordExit(entity, time);
+        if (!entity.NetworkStack.TryPeek(out var top) || top != networkName)
+            return;
 
-        if (entity.NetworkStack.TryPeek(out var top) && top == networkName)
-            entity.NetworkStack.Pop();
+        //Console.WriteLine($"[EXIT] {entity.CreationTime:F2} ← {networkName} at {time:F2}");
 
-        // Calculate response time from entry
+        _networks.TryAdd(networkName, new NetworkStats(networkName));
+        _networks[networkName].RecordExit(entity, time);
+        entity.NetworkStack.Pop();
+
         if (entity.NetworkEntryTimes.TryGetValue(networkName, out var entryTime))
         {
             var runtimeStats = Stats.NetworkStats.FirstOrDefault(n => n.Name == networkName);
@@ -150,6 +176,25 @@ public class SimulationEngineAPI
         }
     }
 
+    public void TransitionNetwork(Entity entity, string parentNetwork, string childNetwork, double time)
+    {
+        if (!_validNetworkNames.Contains(childNetwork))
+        {
+            while (entity.NetworkStack.TryPeek(out var current))
+            {
+                RecordNetworkExit(entity, current, time);
+            }
+            return;
+        }
+
+        while (entity.NetworkStack.TryPeek(out var current) &&
+               !NetworkUtils.IsSubnetwork(current, childNetwork))
+        {
+            RecordNetworkExit(entity, current, time);
+        }
+
+        RecordNetworkEntry(entity, childNetwork, time);
+    }
 
     public void RunSimulation()
     {
@@ -198,5 +243,18 @@ public class SimulationEngineAPI
     {
         _entities.Add(entity);
         Stats.AddEntityCreated();
+    }
+
+    public void SafePopAndRestore(Entity entity, double time)
+    {
+        if (entity.NetworkStack.Count == 0)
+            return;
+
+        var exited = entity.NetworkStack.Pop();
+
+        if (entity.NetworkStack.TryPeek(out var maybeParent) && _validNetworkNames.Contains(maybeParent))
+        {
+            RecordNetworkEntry(entity, maybeParent, time);
+        }
     }
 }

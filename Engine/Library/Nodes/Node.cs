@@ -1,6 +1,8 @@
 namespace SimEngine.Nodes;
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public abstract class Node
 {
@@ -14,6 +16,10 @@ public abstract class Node
     protected Node(string name)
     {
         Name = name;
-        _network = name.Split('.')[0];
+
+        var parts = name.Split('.');
+        _network = parts.Length > 1
+            ? string.Join('.', parts.Take(parts.Length - 1))
+            : name;
     }
 }

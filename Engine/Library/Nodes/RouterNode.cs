@@ -15,18 +15,11 @@ public class RouterNode : Node
 
     public void Route(Entity entity)
     {
-        if (NextNode == null && NextNodeChoices == null)
-        {
-            entity.DepartureTime = Simulation.Now;
+        string currentNetwork = entity.NetworkStack.TryPeek(out var top) ? top : string.Empty;
+        _engine.TransitionNetwork(entity, currentNetwork, _network, Simulation.Now);
 
-            if (entity.NetworkStack.TryPeek(out var exitNetwork))
-                _engine.RecordNetworkExit(entity, exitNetwork, Simulation.Now);
-                
-            return;
-        }
-
+        // Routing to next node
         Node target = NextNode!;
-
         if (NextNodeChoices is not null)
         {
             double r = _engine.RandomGenerator.NextDouble();
@@ -42,21 +35,18 @@ public class RouterNode : Node
             }
         }
 
+        Simulation.Schedule(0, () => RouteTo(target, entity));
+    }
+
+    private void RouteTo(Node target, Entity entity)
+    {
+        string nextNetwork = target.Network;
+        string currentNetwork = entity.NetworkStack.TryPeek(out var top) ? top : string.Empty;
+        _engine.TransitionNetwork(entity, currentNetwork, nextNetwork, Simulation.Now);
+
         if (target is QueueNode queue)
-        {
-            if (!entity.NetworkStack.TryPeek(out var current) || current != queue.Network)
-            {
-                if (entity.NetworkStack.TryPeek(out var exitNetwork))
-                    _engine.RecordNetworkExit(entity, exitNetwork, Simulation.Now);
-
-                _engine.RecordNetworkEntry(entity, queue.Network, Simulation.Now);
-            }
-
-            Simulation.Schedule(0, () => queue.ProcessArrival(entity));
-        }
+            queue.ProcessArrival(entity);
         else if (target is RouterNode router)
-        {
-            Simulation.Schedule(0, () => router.Route(entity));
-        }
+            router.Route(entity);
     }
 }
