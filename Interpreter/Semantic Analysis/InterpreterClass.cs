@@ -202,7 +202,7 @@ public class InterpreterClass
     private void InterpretQueueDeclaration(QueueDeclarationNode node)
     {
         int capacity = (int)InterpretExpression(node.Capacity, null);
-        int servers = (int)InterpretExpression(node.NumberOfServers, null);
+        int servers = (int)InterpretExpression(node.Servers, null);
         object service() => InterpretExpression(node.Service, null);
         IEnumerable<string> metrics = node.Metrics.Select(metric => metric.Name);
 
@@ -475,13 +475,13 @@ public class InterpreterClass
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
             object leftValue = InterpretIdentifier(qualifiedIdentifierNode.LeftIdentifier, globalEnvironment);
-            if (leftValue is not InterpretationEnvironment dependency)
+            if (leftValue is InterpretationEnvironment dependency)
             {
-                return leftValue;
+                return InterpretIdentifier(qualifiedIdentifierNode.RightIdentifier, dependency);
             }
             else
             {
-                return InterpretIdentifier(qualifiedIdentifierNode.RightIdentifier, dependency);
+                return leftValue;
             }
         }
 

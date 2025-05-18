@@ -16,11 +16,15 @@ namespace Interpreter.AST.Nodes.Programs
 
         public override IEnumerable<Node> GetChildren()
         {
-            return [
+            List<Node> children = [
                 .. base.GetChildren(),
                 Namespace,
-                NextProgram,
-             ];
+            ];
+            if (NextProgram is not null)
+            {
+                children.Add(NextProgram);
+            }
+            return children;
         }
 
         public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Namespace}";

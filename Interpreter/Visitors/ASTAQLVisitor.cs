@@ -147,7 +147,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         }
 
         return new(
-            lineNumber: context.Start.StartIndex,
+            lineNumber: context.Start.Line,
             nextDefinition: nextDefinition,
             type: typeNode,
             identifier: assignNode.Identifier,
@@ -212,15 +212,9 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         TypeNode typeNode = VisitType(context.type());
         AssignNode assignNode = VisitAssignStatement(context.assignStatement());
 
-        StatementNode? nextStatement = null;
-        if (context.statement() != null)
-        {
-            nextStatement = VisitStatement(context.nextStatement);
-        }
-
         return new(
                 lineNumber: context.Start.Line,
-                nextStatement: nextStatement,
+                nextStatement: assignNode.NextStatement,
                 type: typeNode,
                 identifier: assignNode.Identifier,
                 expression: assignNode.Expression
@@ -512,6 +506,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
                 existingInstance: exisitingInstance,
                 newInstance: newInstance
             );
+            instanceDeclarations.Add(instanceDeclaration);
         }
 
         return instanceDeclarations;
@@ -542,9 +537,15 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
         SingleIdentifierNode identifierNode = VisitIdentifier(context.identifier());
         ExpressionNode expressionNode = VisitExpression(context.expression());
 
+        StatementNode? nextStatement = null;
+        if (context.nextStatement != null)
+        {
+            nextStatement = VisitStatement(context.nextStatement);
+        }
+
         return new(
             lineNumber: context.Start.Line,
-            nextStatement: null,
+            nextStatement: nextStatement,
             identifier: identifierNode,
             expression: expressionNode
         );
