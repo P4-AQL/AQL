@@ -272,10 +272,10 @@ public class InterpreterClass
         // Lookup existing instance
 
         // if network 
-        CreateNetworkInEngine(engineAPI, , previousNetworkName);
+        // CreateNetworkInEngine(engineAPI, , previousNetworkName);
 
         // if queue
-        CreateQueueInEngine(engineAPI, /*instanceName*/, /*servers*/, /*service*/, null);
+        // CreateQueueInEngine(engineAPI, /*instanceName*/, /*servers*/, /*service*/, arrivalTime: null);
     }
 
     private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string queueName, QueueTuple queueTuple, Func<double>? arrivalTime)
