@@ -66,7 +66,7 @@ public static class QueueableManager
             double weight = (double)interpreter.InterpretExpression(routeValuePairNode.Probability, shadowVariableState: null);
             IdentifierNode routeToIdentifierNode = routeValuePairNode.RouteTo;
 
-            Queueable routeToQueueable = FindQueueableFromIdentifier(inputs, outputs, newInstances, routeToIdentifierNode);
+            Queueable routeToQueueable = FindQueueableFromFirstIdentifier(inputs, outputs, newInstances, routeToIdentifierNode);
 
             if (routeValuePairNode.RouteTo is QualifiedIdentifierNode qualifiedIdentifierNode)
             {
@@ -91,7 +91,7 @@ public static class QueueableManager
             }
             else if (routeDefinition.From is IdentifierExpressionNode identifierExpressionNode)
             {
-                Queueable fromQueueable = FindQueueableFromIdentifier(inputs, outputs, newInstances, identifierExpressionNode.Identifier);
+                Queueable fromQueueable = FindQueueableFromFirstIdentifier(inputs, outputs, newInstances, identifierExpressionNode.Identifier);
                 if (fromQueueable is not Queue fromQueue)
                 {
                     throw new($"Route '{routeDefinition.From}' is not a queue (Line: {routeDefinition.LineNumber})");
@@ -112,7 +112,7 @@ public static class QueueableManager
         return routes;
     }
 
-    private static Queueable FindQueueableFromIdentifier(IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, IdentifierNode routeToIdentifierNode)
+    private static Queueable FindQueueableFromFirstIdentifier(IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, IdentifierNode routeToIdentifierNode)
     {
         // Look for the queueable referencing creation of a new instance
         Queueable? newInstanceToCreate = FindQueueableOrDefault(routeToIdentifierNode.FirstIdentifier);
