@@ -1,4 +1,7 @@
-﻿namespace AQL.Tests;
+﻿
+
+
+namespace AQL.Tests;
 
 public class VisitorTests
 {

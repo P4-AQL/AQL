@@ -110,12 +110,12 @@ expression:
 	| unaryExpression;
 
 binaryOperator:
-	andOperator
-	| orOperator
+	divisionOperator
+	| multiplicationOperator
 	| addOperator
 	| subtractOperator
-	| multiplicationOperator
-	| divisionOperator
+	| andOperator
+	| orOperator
 	| equalOperator
 	| inEqualOperator
 	| greaterThanOperator
@@ -159,7 +159,7 @@ value:
 functionCall:
 	functionIdentifier = anyIdentifier '(' parameters = expressionList? ')';
 
-arrayInitialization: '{' expression* (',' expression)* '}';
+arrayInitialization: '{' expressionList? '}';
 arrayIndexing: target = identifier '[' index = expression ']';
 
 type: typeKeyword | arrayType;
@@ -198,11 +198,9 @@ DOUBLE: '-'? [0-9]* '.' [0-9]+;
 string: STRING;
 STRING: '"' ~["\\\r\n]* '"';
 
-WS: (WHITESPACE | TABS | NEWLINES)+ -> skip;
-WHITESPACE: ' ';
-TABS: '\t';
-NEWLINES: '\n' | '\r';
+WHITESPACE: [ ] -> skip;
+TABS: [\t] -> skip;
+NEWLINES: [\n\r] -> skip;
 
-COMMENTS: (ONE_LINE_COMMENT | MULTI_LINE_COMMENT)+ -> skip;
-ONE_LINE_COMMENT: '//' ~[\r\n];
-MULTI_LINE_COMMENT: '/*' .*? '*/';
+ONE_LINE_COMMENT: '//' ~[\r\n]* -> skip;
+MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;

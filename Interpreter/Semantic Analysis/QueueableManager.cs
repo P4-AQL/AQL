@@ -9,18 +9,18 @@ using Interpreter.AST.Nodes.Routes;
 
 namespace Interpreter.SemanticAnalysis;
 
-public static class QueueableManager
+public class QueueableManager
 {
-    public static List<Queueable> Queueables = [];
+    public List<Queueable> Queueables = [];
 
-    public static Queueable FindQueueable(string name) =>
+    public Queueable FindQueueable(string name) =>
         FindQueueableOrDefault(name)
         ?? throw new($"Queueable '{name}' not found");
 
-    public static Queueable? FindQueueableOrDefault(string name) =>
+    public Queueable? FindQueueableOrDefault(string name) =>
         Queueables.FirstOrDefault(q => q.Name == name);
 
-    public static Queueable GetNewInstance(InstanceDeclaration instanceDeclaration)
+    public Queueable GetNewInstance(InstanceDeclaration instanceDeclaration)
     {
         Queueable instance = FindQueueable(instanceDeclaration.ExistingInstance.FirstIdentifier);
         string newName = instanceDeclaration.NewInstance.Identifier;
@@ -49,7 +49,7 @@ public static class QueueableManager
         throw new($"Invalid instance type '{instance.GetType()}' (Line: {instance})");
     }
 
-    public static Queue IdentifierToInstantQueue(SingleIdentifierNode identifierNode) =>
+    public Queue IdentifierToInstantQueue(SingleIdentifierNode identifierNode) =>
         new(
             identifierNode.Identifier,
             servers: 1,
@@ -58,7 +58,7 @@ public static class QueueableManager
             metrics: []
         );
 
-    public static List<Route> GetRoute(RouteDefinitionNode routeDefinition, IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, InterpreterClass interpreter)
+    public List<Route> GetRoute(RouteDefinitionNode routeDefinition, IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, InterpreterClass interpreter)
     {
         List<Route> routes = [];
         foreach (RouteValuePairNode routeValuePairNode in routeDefinition.To)
@@ -112,7 +112,7 @@ public static class QueueableManager
         return routes;
     }
 
-    private static Queueable FindQueueableFromIdentifier(IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, IdentifierNode routeToIdentifierNode)
+    private Queueable FindQueueableFromIdentifier(IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, IdentifierNode routeToIdentifierNode)
     {
         // Look for the queueable referencing creation of a new instance
         Queueable? newInstanceToCreate = FindQueueableOrDefault(routeToIdentifierNode.FirstIdentifier);

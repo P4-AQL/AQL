@@ -18,7 +18,12 @@ public class Table<T>()
     public void ForceBind(string identifier, T @object) => Dictionary[identifier] = @object;
 
 
-    public bool Lookup(string id, [MaybeNullWhen(false)] out T @out) => Dictionary.TryGetValue(id, out @out);
+    public bool Lookup(string id, [MaybeNullWhen(false)] out T? @out)
+    {
+        bool found = Dictionary.TryGetValue(id, out T? value);
+        @out = value;
+        return found;
+    }
 
     /// <summary>
     /// Binds a identifier to the type table, if it does not exist.
