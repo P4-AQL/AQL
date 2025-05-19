@@ -1,5 +1,7 @@
 namespace SimEngine.Nodes;
 
+using System.Data.Common;
+using System.Runtime.CompilerServices;
 using SimEngine.Core;
 
 public class RouterNode : Node
@@ -19,7 +21,7 @@ public class RouterNode : Node
         _engine.TransitionNetwork(entity, currentNetwork, _network, Simulation.Now);
 
         // Routing to next node
-        Node target = NextNode!;
+        Node? target = NextNode;
         if (NextNodeChoices is not null)
         {
             double r = _engine.RandomGenerator.NextDouble();
@@ -35,11 +37,15 @@ public class RouterNode : Node
             }
         }
 
-        Simulation.Schedule(0, () => RouteTo(target, entity));
+        if (target != null)
+            Simulation.Schedule(0, () => RouteTo(target, entity));
+
     }
 
     private void RouteTo(Node target, Entity entity)
     {
+        if (target == null) return;
+
         string nextNetwork = target.Network;
         string currentNetwork = entity.NetworkStack.TryPeek(out var top) ? top : string.Empty;
         _engine.TransitionNetwork(entity, currentNetwork, nextNetwork, Simulation.Now);

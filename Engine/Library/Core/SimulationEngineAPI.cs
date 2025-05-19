@@ -23,6 +23,8 @@ public class SimulationEngineAPI
     private readonly HashSet<string> _validNetworkNames = new();
     public SimulationStats Stats { get; private set; } = new();
 
+    public QueueNode GetQueueNode(string name) => _queues[name];
+
     public void SetSimulationParameters(double untilTime, int runCount)
     {
         _untilTime = untilTime;

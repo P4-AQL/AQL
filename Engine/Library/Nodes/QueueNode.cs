@@ -78,7 +78,7 @@ public class QueueNode : Node
             StartService(_waitingQueue.Dequeue());
         }
 
-        Node target = NextNode!;
+        Node? target = NextNode;
         if (NextNodeChoices is not null)
         {
             double r = _engine.RandomGenerator.NextDouble();
@@ -94,33 +94,30 @@ public class QueueNode : Node
             }
         }
 
-        if (target != null)
+        if (target is QueueNode queue)
         {
-            if (!entity.NetworkStack.TryPeek(out var current) || current != target.Network)
+            if (!entity.NetworkStack.TryPeek(out var current) || current != queue.Network)
             {
                 if (entity.NetworkStack.TryPeek(out var exitNetwork))
                     _engine.RecordNetworkExit(entity, exitNetwork, Simulation.Now);
 
-                _engine.RecordNetworkEntry(entity, target.Network, Simulation.Now);
+                _engine.RecordNetworkEntry(entity, queue.Network, Simulation.Now);
             }
 
-            if (target is QueueNode queue)
-            {
-                Simulation.Schedule(0, () => queue.ProcessArrival(entity));
-            }
-            else if (target is RouterNode router)
-            {
-                Simulation.Schedule(0, () => router.Route(entity));
-            }
+            Simulation.Schedule(0, () => queue.ProcessArrival(entity));
+        }
+        else if (target is RouterNode router)
+        {
+            Simulation.Schedule(0, () => router.Route(entity));
         }
         else
         {
+            // No next node or unsupported target type — end of line
             if (entity.NetworkStack.TryPeek(out var exitNetwork))
                 _engine.RecordNetworkExit(entity, exitNetwork, Simulation.Now);
 
             entity.DepartureTime = Simulation.Now;
         }
-
     }
 
     public void Reset(Core.Simulation simulation)

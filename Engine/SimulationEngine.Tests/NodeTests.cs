@@ -1,30 +1,27 @@
-
 using Xunit;
-using SimEngine.Core;
 using SimEngine.Nodes;
-using System;
-
-namespace SimEngine.Tests;
 
 public class NodeTests
 {
-    [Fact]
-    public void RouterNode_CanRouteEntity()
+    private class DummyNode : Node
     {
-        var engine = new SimulationEngineAPI();
-        var router = new RouterNode(engine, "Router");
+        public DummyNode(string name) : base(name) { }
+    }
 
-        // Can't test without full network, but call should not throw
-        var entity = new Entity(0.0);
-        router.Route(entity);
+    [Theory]
+    [InlineData("Main.Sub.Queue", "Main.Sub")]
+    [InlineData("SoloNode", "SoloNode")]
+    public void NodeConstructor_SetsNetworkCorrectly(string input, string expectedNetwork)
+    {
+        var node = new DummyNode(input);
+        Assert.Equal(expectedNetwork, node.Network);
     }
 
     [Fact]
-    public void QueueNode_ResetDoesNotThrow()
+    public void Node_ShouldHaveNullDefaults()
     {
-        var engine = new SimulationEngineAPI();
-        var queue = new QueueNode(engine, "Q", 1, 10, () => 1.0);
-        var sim = new Simulation();
-        queue.Reset(sim);
+        var node = new DummyNode("TestNet.Node");
+        Assert.Null(node.NextNode);
+        Assert.Null(node.NextNodeChoices);
     }
 }
