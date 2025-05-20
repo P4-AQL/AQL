@@ -1,46 +1,71 @@
 ﻿using System;
 using SimEngine.Core;
 using SimEngine.Metrics;
+using SimEngine.Networks;
 
 class Program
 {
     static void Main()
     {
-        // We start by defining the engine to the a new instance of the SimulationEnigneAPI()
         var engine = new SimulationEngineAPI();
-        
-        // Set the seed for the random number generator shall be a INT
-        engine.SetSeed(1234);
+        engine.SetSeed(42);
 
-
-        // This are the functions that the creations of the dispatcher and queues need
-        Func<double> Exp(double rate) => () => -Math.Log(1 - Random.Shared.NextDouble()) / rate;
+        Func<double> Exp(double rate) => () => -Math.Log(1 - engine.RandomGenerator.NextDouble()) / rate;
         Func<double> Const(double value) => () => value;
 
-        // To use the simulation library your names for dispatchers and queues shall follow the naming convention "NetworkName.NodeName" and shall all be unique to avoid overwrites
+        // --- Pizza Shop ---
+        var pizza = new NetworkDefinition { Name = "PizzaShop" };
+        pizza.AddEntryPoint("In");
+        pizza.AddQueue("PrepStation", 1, 10, Exp(1.2));
+        pizza.AddQueue("PizzaOven", 1, 5, Exp(1.0));
+        pizza.AddQueue("Cashier", 1, 8, Exp(0.9));
+        pizza.AddExitPoint("Out");
+        pizza.Connect("In", "PrepStation");
+        pizza.Connect("PrepStation", "PizzaOven");
+        pizza.Connect("PizzaOven", "Cashier");
+        pizza.Connect("Cashier", "Out");
 
-        // Creates a dispatcher for new entities in the system, it takes a name and a function that returns a double for the distribution 
-        engine.CreateDispatcherNode("Network1.D1", Const(1.0));
+        // --- Chinese Shop ---
+        var chinese = new NetworkDefinition { Name = "ChineseShop" };
+        chinese.AddEntryPoint("In");
+        chinese.AddQueue("PrepStation", 1, 10, Exp(1.3));
+        chinese.AddQueue("SushiStation", 1, 6, Exp(0.8));
+        chinese.AddQueue("RamenStation", 1, 6, Exp(1.0));
+        chinese.AddQueue("Cashier", 1, 8, Exp(0.95));
+        chinese.AddExitPoint("Out");
+        chinese.Connect("In", "PrepStation");
+        chinese.Connect("PrepStation", "SushiStation", 0.4);
+        chinese.Connect("PrepStation", "RamenStation", 0.6);
+        chinese.Connect("SushiStation", "Cashier");
+        chinese.Connect("RamenStation", "Cashier");
+        chinese.Connect("Cashier", "Out");
 
-        // Creates a queue for the system, it takes a name, the number of the servers i the queue, the max of entities that can be in the queue at the same time and a service distribution that are a function that returns a double
-        engine.CreateQueueNode("Network1.Q1", 2, 10, Exp(1.2));
-        engine.CreateQueueNode("Network1.Q2", 1, 10, Exp(1.15));
-        engine.CreateQueueNode("Network1.Q3", 1, 25, Exp(1.05));
+        // --- Mall wrapper ---
+        var mall = new NetworkDefinition { Name = "Mall" };
+        mall.AddEntryPoint("Entry");
+        mall.AddExitPoint("Out");
+        mall.AddSubNetwork(pizza);
+        mall.AddSubNetwork(chinese);
+        mall.Connect("Entry", "PizzaShop.In", 0.5);
+        mall.Connect("Entry", "ChineseShop.In", 0.5);
+        mall.Connect("PizzaShop.Out", "Out");
+        mall.Connect("ChineseShop.Out", "Out");
 
-        // Creates a route in the system, it takes the name of the node where the entities comes from and then the name of the queue that the entities shall go to
-        engine.ConnectNode("Network1.D1", "Network1.Q1");
+        engine.CreateNetwork(mall);
 
-        // How to create a route in the system where the queue have two queues it outputs too
-        engine.ConnectNode("Network1.Q1", "Network1.Q2", 0.4);
-        engine.ConnectNode("Network1.Q1", "Network1.Q3", 0.6);
+        // --- Dispatcher OUTSIDE mall ---
+        engine.CreateDispatcherNode("D1", Const(0.8));
+        engine.ConnectNode("D1", "Mall.Entry");
 
-        // parameters for the simulation time it runs until and how many runs the simulation runs
-        engine.SetSimulationParameters(5000, 5);
+        // --- Final delivery queue ---
+        engine.CreateQueueNode("Delivery", 1, 30, Exp(1.2));
+        engine.ConnectNode("Mall.Out", "Delivery");
 
-        // We shall run the simulation after all queues, dispatchers and routes are created and simulation parameters are sat(if the parameters are not sat a set of standard parameters will be used)
+        // --- Run simulation ---
+        engine.SetSimulationParameters(1000, 1);
         engine.RunSimulation();
 
-        // This are the print statements to get the metrics out with, this will with high likelyhood change
+        // --- Print results ---
         var stats = engine.GetSimulationStats();
         MetricsPrinter.Print(stats);
     }
