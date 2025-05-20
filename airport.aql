@@ -1,0 +1,6 @@
+queue securityQueue {
+  servers: 8;
+  service: 5;
+  capacity: 100;
+  * *
+}

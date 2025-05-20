@@ -10,7 +10,7 @@ public class NetworkTypeNode(int lineNumber, SingleIdentifierNode identifier) : 
 {
     public SingleIdentifierNode Identifier { get; } = identifier;
 
-    public override string ToString() => $"NetworkType({Identifier})";
+    public override string ToString() => $"NetworkTypeNode({Identifier})";
 
     public override IEnumerable<Node> GetChildren()
     {

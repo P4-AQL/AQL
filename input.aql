@@ -4,7 +4,6 @@ import airport
 const int x = 5 + 3;
 
 function bool someFunc (int y) {
-  x = true;
   return x == y;
 }
 
@@ -14,9 +13,9 @@ function double main_entrance () {
   int number_of_hours_passed = current_time / 3600;
 
   if number_of_hours_passed > 10 {
-    return 350;
+    return 350.0;
   } else {
-    return 250;
+    return 250.0;
   }
 }
 
@@ -24,14 +23,14 @@ queue someQ {
   servers: 5;
   service: stdlib.exponential(10);
   capacity: 95;
-  * vrt, avgNum *
+  * vrt *
 }
 
 queue sometestyQ {
   servers: 5;
   service: stdlib.exponential(10);
   capacity: 95;
-  * vrt, avgNum *
+  * vrt *
 }
 
 queue someOtherQ {
@@ -42,8 +41,8 @@ queue someOtherQ {
 }
 
 network someNetwork {
-  firstInput, secondInput | singleOutput;
-  airport.sequrityQueue : secQueue1, secQueue2, secQueue3;
+  firstInput | singleOutput;
+  airport.securityQueue : secQueue1, secQueue2, secQueue3;
   
   firstInput -> secQueue1 -> secQueue2;
   secQueue2 -> secQueue3;
@@ -54,16 +53,16 @@ network someAdvancedNetwork {
   firstInput, secondInput | firstOutput, secondOutput;
   someNetwork : basicNetwork1, basicNetwork2;
   
-  firstInput -> [0.4 someOtherQ, 0.3 basicNetwork2.firstInput, 0.3 basicNetwork2.secondInput];
+  firstInput -> [0.4 someOtherQ, 0.3 basicNetwork2.firstInput];
   someOtherQ -> someQ -> basicNetwork1.firstInput;
   secondInput -> basicNetwork1.secondInput;
-  basicNetwork1.out -> firstOutput;
-  basicNetwork2.out -> secondOutput;
-  * mrt, throughput, utilization *
+  basicNetwork1.singleOutput -> firstOutput;
+  basicNetwork2.singleOutput -> secondOutput;
+  * throughput *
 }
 
 simulate {
-  run: bigNetwork;
+  run: someAdvancedNetwork;
   until: time > 10000;
   times: 500
 }

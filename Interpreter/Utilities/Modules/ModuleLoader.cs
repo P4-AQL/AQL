@@ -41,14 +41,14 @@ public static class ModuleLoader
         TypeChecker typeChecker = new();
         List<string> errors = [];
         typeChecker.TypeCheckNode(result, errors);
-        foreach (string error in errors)
+        foreach (string error in errors.Distinct()) // Distinct for no duplicates
         {
             Console.WriteLine(error);
         }
 
         InterpreterClass interpreter = new();
         InterpretationEnvironment environment = interpreter.StartInterpretation(result);
-
+        environment.typeChecker = typeChecker;
         return environment;
     }
 
