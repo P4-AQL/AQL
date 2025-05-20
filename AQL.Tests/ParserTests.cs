@@ -74,13 +74,19 @@ public class ParserTests
         {
             string input =
             @"
-                import test;
-                import test2;
+                import test
+                import test2
             ";
 
             AQLParser parser = SetupParser(input);
             var result = parser.program();
             Assert.NotNull(result);
+            var importStatement = result.importStatement();
+            Assert.NotNull(importStatement);
+            var nestedProgram = importStatement.program();
+            Assert.NotNull(nestedProgram);
+            var importStatement2 = nestedProgram.importStatement();
+            Assert.NotNull(importStatement2);
         }
 
 

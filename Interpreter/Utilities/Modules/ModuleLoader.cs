@@ -7,6 +7,7 @@ using Interpreter.SemanticAnalysis;
 using Interpreter.Visitors;
 
 namespace Interpreter.Utilities.Modules;
+
 public static class ModuleLoader
 {
     /// <summary>
@@ -46,8 +47,8 @@ public static class ModuleLoader
             Console.WriteLine(error);
         }
 
-        InterpreterClass interpreter = new();
-        InterpretationEnvironment environment = interpreter.StartInterpretation(result);
+        InterpreterClass interpreter = new(result);
+        InterpretationEnvironment environment = interpreter.StartInterpretation();
 
         return environment;
     }
