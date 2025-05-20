@@ -7,4 +7,4 @@ bin/
 obj/
 
 # Ignore the coverage report folder
-Tests/SimulationEngine.Tests/coverage-report
+Tests/SimulationEngine.Tests/coverage-report/
