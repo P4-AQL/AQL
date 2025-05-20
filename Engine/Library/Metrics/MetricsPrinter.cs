@@ -1,8 +1,6 @@
 namespace SimEngine.Metrics;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 public static class MetricsPrinter
 {
