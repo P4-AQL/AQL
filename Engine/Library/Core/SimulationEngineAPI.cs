@@ -3,10 +3,12 @@ namespace SimEngine.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SimEngine.Metrics;
+using NetworkDefinition = SimEngine.Networks.NetworkDefinition;
 using SimEngine.Nodes;
 using SimEngine.Networks;
+using SimEngine.Metrics;
 using SimEngine.Utils;
+
 
 public class SimulationEngineAPI
 {
@@ -24,6 +26,8 @@ public class SimulationEngineAPI
     public SimulationStats Stats { get; private set; } = new();
 
     public QueueNode GetQueueNode(string name) => _queues[name];
+
+    public void PrintMetric(SimulationStats stats) => MetricsPrinter.Print(stats);
 
     public void SetSimulationParameters(double untilTime, int runCount)
     {

@@ -1,9 +1,8 @@
 namespace SimEngine.Networks;
 
-using System;
 using System.Collections.Generic;
-using SimEngine.Core;
 
+using SimEngine.Core;
 public class NetworkStats
 {
     public string Name { get; }

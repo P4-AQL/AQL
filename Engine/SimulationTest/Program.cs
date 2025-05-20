@@ -1,7 +1,5 @@
 ﻿using System;
 using SimEngine.Core;
-using SimEngine.Metrics;
-using SimEngine.Networks;
 
 class Program
 {
@@ -14,7 +12,7 @@ class Program
         Func<double> Const(double value) => () => value;
 
         // --- Pizza Shop ---
-        var pizza = new NetworkDefinition { Name = "PizzaShop" };
+        var pizza = new SimEngine.Networks.NetworkDefinition { Name = "PizzaShop" };
         pizza.AddEntryPoint("In");
         pizza.AddQueue("PrepStation", 1, 10, Exp(1.2));
         pizza.AddQueue("PizzaOven", 1, 5, Exp(1.0));
@@ -26,7 +24,7 @@ class Program
         pizza.Connect("Cashier", "Out");
 
         // --- Chinese Shop ---
-        var chinese = new NetworkDefinition { Name = "ChineseShop" };
+        var chinese = new SimEngine.Networks.NetworkDefinition { Name = "ChineseShop" };
         chinese.AddEntryPoint("In");
         chinese.AddQueue("PrepStation", 1, 10, Exp(1.3));
         chinese.AddQueue("SushiStation", 1, 6, Exp(0.8));
@@ -41,7 +39,7 @@ class Program
         chinese.Connect("Cashier", "Out");
 
         // --- Mall wrapper ---
-        var mall = new NetworkDefinition { Name = "Mall" };
+        var mall = new SimEngine.Networks.NetworkDefinition { Name = "Mall" };
         mall.AddEntryPoint("Entry");
         mall.AddExitPoint("Out");
         mall.AddSubNetwork(pizza);
@@ -67,6 +65,6 @@ class Program
 
         // --- Print results ---
         var stats = engine.GetSimulationStats();
-        MetricsPrinter.Print(stats);
+        engine.PrintMetric(stats);
     }
 }
