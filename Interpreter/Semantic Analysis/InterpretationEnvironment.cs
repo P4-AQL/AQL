@@ -21,8 +21,6 @@ public struct InterpretationEnvironment
 
     public ProgramNode Root;
 
-    public TypeChecker typeChecker;
-
     public static InterpretationEnvironment Empty(ProgramNode root) => new()
     {
         _functionState = new(),

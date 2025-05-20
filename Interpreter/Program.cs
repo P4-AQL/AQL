@@ -13,7 +13,14 @@ using Interpreter.Visitors;
 
 try
 {
-    InterpretationEnvironment interpretedModule = ModuleLoader.LoadModuleByName("input");
+    ProgramNode astRoot = ModuleLoader.LoadModuleByName("input");
+    TypeChecker typeChecker = new();
+    List<string> errors = [];
+    typeChecker.TypeCheckNode(astRoot, errors);
+    foreach (string error in errors.Distinct()) // Distinct for no duplicates
+    {
+        Console.WriteLine(error);
+    }
 
     string? path = Environment.CurrentDirectory.EndsWith("net9.0")
     ? new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.FullName
@@ -22,7 +29,7 @@ try
     if (path is not null)
     {
         path = Path.Combine(path, "graphviz.dot");
-        ASTGraph.GenerateDotFile(root: interpretedModule.Root, filePath: path);
+        ASTGraph.GenerateDotFile(root: astRoot, filePath: path);
     }
     else
     {

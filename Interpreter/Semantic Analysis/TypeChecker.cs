@@ -15,12 +15,8 @@ namespace Interpreter.SemanticAnalysis;
 
 public class TypeChecker
 {
-    // E
-    readonly Table<Node> environment = new();
-    readonly Table<Node> constEnvironment = new();
+    TypeCheckerEnvironment globalEnvironment = new();
 
-    // Gamma
-    readonly Table<Table<Node>> localNetworkScopesEnvironment = new();
 
     // env for definitions and localEnv for statements? Return localEnv as new so it is not referenced
     public List<string> TypeCheckNode(Node node, List<string> errors)
@@ -39,39 +35,7 @@ public class TypeChecker
     {
         if (programNode is ImportNode importNode)
         {
-            try
-            {
-                string library = GetIdentifiers(importNode.Namespace);
-                InterpretationEnvironment interpretationEnvironment = ModuleLoader.LoadModuleByName(library);
-                //Add all environment variables
-                //global scope
-                foreach (string key in interpretationEnvironment.typeChecker.environment.Dictionary.Keys)
-                {
-                    interpretationEnvironment.typeChecker.environment.Lookup(key, out Node? node);
-                    if (node is not null) environment.TryBindIfNotExists(library + "." + key, node);
-                }
-                
-                //consts
-                foreach (string key in interpretationEnvironment.typeChecker.constEnvironment.Dictionary.Keys)
-                {
-                    interpretationEnvironment.typeChecker.constEnvironment.Lookup(key, out Node? node);
-                    if (node is not null) constEnvironment.TryBindIfNotExists(library + "." + key, node);
-                }
-
-                //network scope
-                foreach (string key in interpretationEnvironment.typeChecker.localNetworkScopesEnvironment.Dictionary.Keys)
-                {
-                    interpretationEnvironment.typeChecker.localNetworkScopesEnvironment.Lookup(key, out Table<Node>? env);
-                    if (env is not null) localNetworkScopesEnvironment.TryBindIfNotExists(library + "." + key, env);
-                }
-            }
-            catch (Exception)
-            {
-                errors.Add($"Import error. (Line {programNode.LineNumber})");
-            }
-
-            if (importNode.NextProgram is not null)
-                TypeCheckProgramNode(importNode.NextProgram, errors);
+            TypeCheckImportNode(errors, importNode);
         }
         else if (programNode is DefinitionProgramNode definitionProgramNode)
         {
@@ -81,6 +45,43 @@ public class TypeChecker
         {
             errors.Add($"Unexpected definition (Line {programNode.LineNumber})");
         }
+    }
+
+    private void TypeCheckImportNode(List<string> errors, ImportNode importNode)
+    {
+        try
+        {
+            string library = GetIdentifiers(importNode.Namespace);
+            InterpretationEnvironment interpretationEnvironment = ModuleLoader.LoadModuleByName(library);
+            //Add all environment variables
+            //global scope
+            foreach (string key in interpretationEnvironment.typeChecker.environment.Dictionary.Keys)
+            {
+                interpretationEnvironment.typeChecker.environment.Lookup(key, out Node? node);
+                if (node is not null) environment.TryBindIfNotExists(library + "." + key, node);
+            }
+
+            //consts
+            foreach (string key in interpretationEnvironment.typeChecker.constEnvironment.Dictionary.Keys)
+            {
+                interpretationEnvironment.typeChecker.constEnvironment.Lookup(key, out Node? node);
+                if (node is not null) constEnvironment.TryBindIfNotExists(library + "." + key, node);
+            }
+
+            //network scope
+            foreach (string key in interpretationEnvironment.typeChecker.localNetworkScopesEnvironment.Dictionary.Keys)
+            {
+                interpretationEnvironment.typeChecker.localNetworkScopesEnvironment.Lookup(key, out Table<Node>? env);
+                if (env is not null) localNetworkScopesEnvironment.TryBindIfNotExists(library + "." + key, env);
+            }
+        }
+        catch (Exception)
+        {
+            errors.Add($"Import error. (Line {importNode.LineNumber})");
+        }
+
+        if (importNode.NextProgram is not null)
+            TypeCheckProgramNode(importNode.NextProgram, errors);
     }
 
     private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
