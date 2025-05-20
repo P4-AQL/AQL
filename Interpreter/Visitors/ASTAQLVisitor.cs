@@ -1215,12 +1215,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
 
     public override ArrayLiteralNode VisitArrayInitialization([NotNull] AQLParser.ArrayInitializationContext context)
     {
-        List<ExpressionNode> elements = [];
-        foreach (AQLParser.ExpressionContext expressionContext in context.expression())
-        {
-            ExpressionNode element = VisitExpression(expressionContext);
-            elements.Add(element);
-        }
+        IEnumerable<ExpressionNode> elements = VisitExpressionList(context.expressionList());
 
         return new(
             lineNumber: context.Start.Line,
