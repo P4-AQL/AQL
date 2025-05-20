@@ -1,4 +1,3 @@
-
 namespace SimEngine.Core;
 
 using System;
