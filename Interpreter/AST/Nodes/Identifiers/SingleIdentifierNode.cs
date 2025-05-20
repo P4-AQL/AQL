@@ -19,5 +19,9 @@ public class SingleIdentifierNode(int lineNumber, string identifier) : Identifie
         return base.GetChildren();
     }
 
+    public override string FirstIdentifier => Identifier;
+
+    public override string FullIdentifier => Identifier;
+
     public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier}";
 }

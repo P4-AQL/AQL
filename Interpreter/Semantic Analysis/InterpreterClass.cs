@@ -8,10 +8,13 @@ using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
+using Interpreter.AST.Nodes.Routes;
 using Interpreter.AST.Nodes.Statements;
 using Interpreter.Utilities.Modules;
+using SimEngine.Core;
 
 namespace Interpreter.SemanticAnalysis;
+
 public class InterpreterClass
 {
     InterpretationEnvironment globalEnvironment;
@@ -40,7 +43,7 @@ public class InterpreterClass
     {
         if (node is ImportNode importNode)
         {
-            Console.WriteLine("We imported" + importNode.Namespace.Identifier);
+            InterpretImport(importNode);
         }
         else if (node is DefinitionProgramNode definitionNode)
         {
@@ -64,7 +67,7 @@ public class InterpreterClass
         }
         else if (node is SimulateNode simulateNode)
         {
-            throw new NotImplementedException("line:" + node.LineNumber);
+            InterpretSimulate(simulateNode);
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
@@ -201,8 +204,8 @@ public class InterpreterClass
     private void InterpretQueueDeclaration(QueueDeclarationNode node)
     {
         int capacity = (int)InterpretExpression(node.Capacity, null);
-        int servers = (int)InterpretExpression(node.NumberOfServers, null);
-        object service() => InterpretExpression(node.Service, null);
+        int servers = (int)InterpretExpression(node.Servers, null);
+        double service() => (double)InterpretExpression(node.Service, null);
         IEnumerable<string> metrics = node.Metrics.Select(metric => metric.Name);
 
         QueueTuple queueTuple = new()
@@ -214,18 +217,264 @@ public class InterpreterClass
         };
 
         VariableState.ForceBind(node.Identifier.Identifier, queueTuple);
+
+        QueueableManager.Queueables.Add(
+            new Queue(
+                node.Identifier.Identifier,
+                servers,
+                capacity,
+                service,
+                metrics
+            )
+        );
     }
 
     private void InterpretNetworkDeclaration(NetworkDeclarationNode node)
     {
         NetworkState.ForceBind(node.Identifier.Identifier, node);
+
+        IEnumerable<Queue> inputs = node.Inputs.Select(QueueableManager.IdentifierToInstantQueue);
+        IEnumerable<Queue> outputs = node.Outputs.Select(QueueableManager.IdentifierToInstantQueue);
+
+        IEnumerable<Queueable> newInstances = node.Instances.Select(QueueableManager.GetNewInstance);
+
+        List<Route> routes = [];
+        foreach (RouteDefinitionNode routeDefinitionNode in node.Routes)
+        {
+            routes.AddRange(QueueableManager.GetRoute(routeDefinitionNode, inputs, outputs, [.. newInstances], this));
+        }
+
+        QueueableManager.Queueables.Add(
+            new Network(
+                node.Identifier.Identifier,
+                inputs,
+                outputs,
+                newInstances,
+                routes
+            )
+        );
     }
 
-    private object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
+    private void InterpretSimulate(SimulateNode simulateNode)
+    {
+        SimulationEngineAPI engineAPI = new();
+        engineAPI.SetSeed(Random.Shared.Next());
+
+        int untilTime = (int)InterpretExpression(simulateNode.TerminationCriteria, shadowVariableState: null);
+        int runCount = (int)InterpretExpression(simulateNode.Runs, shadowVariableState: null);
+
+        engineAPI.SetSimulationParameters(untilTime: untilTime, runCount: runCount);
+
+        IdentifierNode networkIdentifier = simulateNode.NetworkIdentifier;
+        Queueable queueable = QueueableManager.FindQueueable(networkIdentifier.FirstIdentifier);
+
+        if (networkIdentifier is QualifiedIdentifierNode qualifiedIdentifierNode)
+        {
+            queueable = queueable.FindQueueable(qualifiedIdentifierNode.RightIdentifier.Identifier);
+        }
+
+        CreateQueueableInEngine(engineAPI, queueable, networkIdentifier.FirstIdentifier);
+
+        engineAPI.RunSimulation();
+        var stats = engineAPI.GetSimulationStats();
+    }
+
+    private void CreateQueueableInEngine(SimulationEngineAPI engineAPI, Queueable queueable, string thisNetworkName)
+    {
+        string queueableName = string.Join('.', thisNetworkName, queueable.Name);
+        if (queueable is Queue queue)
+        {
+            CreateQueueInEngine(engineAPI, queue, queueableName);
+        }
+        else if (queueable is Network network)
+        {
+            CreateNetworkInEngine(engineAPI, network, queueableName);
+        }
+    }
+
+    private static void CreateQueueInEngine(SimulationEngineAPI engineAPI, Queue queue, string queueName)
+    {
+        engineAPI.CreateQueueNode(
+            queueName,
+            queue.Servers,
+            queue.Capacity,
+            queue.Service
+        );
+    }
+
+    private void CreateNetworkInEngine(SimulationEngineAPI engineAPI, Network network, string networkName)
+    {
+        foreach (Queue queue in network.Inputs)
+        {
+            CreateQueueInEngine(engineAPI, queue, networkName);
+        }
+        foreach (Queue queue in network.Outputs)
+        {
+            CreateQueueInEngine(engineAPI, queue, networkName);
+        }
+        foreach (Queueable queueable in network.NewInstances)
+        {
+            CreateQueueableInEngine(engineAPI, queueable, networkName);
+        }
+
+        int index = 0;
+        foreach (Route route in network.Routes)
+        {
+            CreateRouteInEngine(engineAPI, route, networkName, index);
+            index++;
+        }
+    }
+
+    private void CreateRouteInEngine(SimulationEngineAPI engineAPI, Route route, string networkName, int index)
+    {
+        if (route is FuncRoute funcRoute)
+        {
+            CreateFunctionRouteInEngine(engineAPI, funcRoute, networkName, index);
+        }
+        else if (route is QueueRoute queueRoute)
+        {
+            CreateQueueRouteInEngine(engineAPI, queueRoute, networkName);
+        }
+    }
+
+    private void CreateFunctionRouteInEngine(SimulationEngineAPI engineAPI, FuncRoute funcRoute, string networkName, int index)
+    {
+        string dispatcherIdentifier = "dispatcher" + index;
+        string dispatcherName = string.Join('.', networkName, dispatcherIdentifier);
+        engineAPI.CreateDispatcherNode(
+            dispatcherName,
+            funcRoute.FromRate
+        );
+
+        // Maybe need to find the network which contains the to queue
+        string queueName = string.Join('.', networkName, funcRoute.To);
+        engineAPI.ConnectNode(dispatcherName, queueName, funcRoute.To.Weight);
+    }
+
+    private void CreateQueueRouteInEngine(SimulationEngineAPI engineAPI, QueueRoute queueRoute, string networkName)
+    {
+        // Maybe need to find the network which contains the from and to queues
+        string fromQueueName = string.Join('.', networkName, queueRoute.FromQueue.Name);
+        string toQueueName = string.Join('.', networkName, queueRoute.To.ToQueue);
+
+        engineAPI.ConnectNode(fromQueueName, toQueueName, queueRoute.To.Weight);
+    }
+
+
+
+    /*private void G(SimulationEngineAPI engineAPI, Queueable queueable, string thisNetworkName)
+    {        
+        // Create queues for the inputs
+        CreateQueuesForIdentifiers(engineAPI, networkDeclarationNode.Inputs, thisNetworkName);
+
+        // Create queues for the outputs
+        CreateQueuesForIdentifiers(engineAPI, networkDeclarationNode.Outputs, thisNetworkName);
+
+        // Create instances        
+        CreateInstancesInEngine(engineAPI, networkDeclarationNode.Instances, thisNetworkName);
+
+        // Create routes
+        CreateRoutesInEngine(engineAPI, networkDeclarationNode, thisNetworkName);
+    }
+
+    private void B(SimulationEngineAPI engineAPI, IReadOnlyList<SingleIdentifierNode> identifiers, string thisNetworkName)
+    {
+        // Create queue in engine
+        foreach (SingleIdentifierNode identifierNode in identifiers)
+        {
+            string queueName = string.Join('.', thisNetworkName, identifierNode.Identifier);
+            QueueTuple queueTuple = new()
+            {
+                Servers = 1,
+                Capacity = int.MaxValue,
+                Service = () => 0,
+            };
+            CreateQueueInEngine(engineAPI, queueName, queueTuple, arrivalTime: null);
+        }
+    }
+
+    private void L(SimulationEngineAPI engineAPI, IReadOnlyList<InstanceDeclaration> instances, string thisNetworkName)
+    {
+        foreach (InstanceDeclaration instanceDeclaration in instances)
+        {
+            // Lookup existing instance
+            object value = InterpretAnyIdentifier(instanceDeclaration.ExistingInstance, shadowVariableState: null);
+
+            // if network 
+            if (value is NetworkDeclarationNode network)
+            {
+                string newNetworkIdentifier = instanceDeclaration.NewInstance.FullIdentifier;
+                string newNetworkName = string.Join('.', thisNetworkName, newNetworkIdentifier);
+                CreateNetworkInEngine(engineAPI, network, newNetworkName);
+            }
+
+            // if queue
+            else if (value is QueueTuple queueTuple)
+            {
+                // get queuename
+                string instanceIdentifier = instanceDeclaration.ExistingInstance.FullIdentifier;
+                string queueName = string.Join('.', thisNetworkName, instanceIdentifier);
+                //create queue
+                CreateQueueInEngine(engineAPI, queueName, queueTuple, arrivalTime: null);
+            }
+        }
+    }
+
+    private void M(SimulationEngineAPI engineAPI, NetworkDeclarationNode networkDeclarationNode, string thisNetworkName)
+    {
+        int index = 0;
+        foreach (RouteDefinitionNode route in networkDeclarationNode.Routes)
+        {
+            foreach (RouteValuePairNode routeTo in route.To)
+            {
+                bool shouldCreateNewInstance = routeTo.RouteTo switch
+                {
+                    SingleIdentifierNode routeToSingle =>
+                        IsIdentifierInputOrOutput(routeToSingle, networkDeclarationNode) == false
+                        && IsIdentifierInstance(routeToSingle, networkDeclarationNode.Instances) == false,
+                    QualifiedIdentifierNode routeToQualified =>
+                        IsIdentifierInputOrOutput(routeToQualified.LeftIdentifier, networkDeclarationNode) == false
+                        && IsIdentifierInstance(routeToQualified.LeftIdentifier, networkDeclarationNode.Instances) == false,
+                    _ => throw new($"{nameof(routeTo.RouteTo)} unhandled (Line {routeTo.RouteTo})"),
+                };
+
+                if (shouldCreateNewInstance)
+                {
+
+                }
+                else
+                {
+                    if (route.From is FunctionCallNode || route.From is LiteralNode)
+                    {
+                        double GetArrivalTime() => (double)InterpretExpression(route.From, shadowVariableState: null);
+
+                        string dispatcherIdentifier = "dispatcher" + index;
+                        string dispatcherName = string.Join('.', thisNetworkName, dispatcherIdentifier);
+                        CreateDispatcherInEngine(engineAPI, dispatcherName, GetArrivalTime);
+                    }
+                    else if (route.From is IdentifierExpressionNode identifierExpressionNode)
+                    {
+                        if (IsIdentifierInputOrOutput(identifierExpressionNode.Identifier, networkDeclarationNode))
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        throw new($"Invalid route term! (Line: {route.From.LineNumber})");
+                    }
+                }
+            }
+
+            index++;
+        }
+    }*/
+
+    public object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
     {
         return node switch
         {
-            IdentifierExpressionNode identifierExpression => InterpretIdentifier(identifierExpression.Identifier, shadowVariableState),
+            IdentifierExpressionNode identifierExpression => InterpretAnyIdentifier(identifierExpression.Identifier, shadowVariableState),
             NegativeNode negativeNode => InterpretNegativeNode(negativeNode, shadowVariableState),
             MultiplyNode multiplyNode => InterpretMultiplyNode(multiplyNode, shadowVariableState),
             DivisionNode divisionNode => InterpretDivisionNode(divisionNode, shadowVariableState),
@@ -378,7 +627,7 @@ public class InterpreterClass
 
     private object InterpretIndexingNode(IndexingNode indexingNode, Table<object>? shadowVariableState)
     {
-        object target = InterpretIdentifier(indexingNode.Target, shadowVariableState);
+        object target = InterpretAnyIdentifier(indexingNode.Target, shadowVariableState);
         object index = InterpretExpression(indexingNode.Index, shadowVariableState);
 
         return (target, index) switch
@@ -400,7 +649,9 @@ public class InterpreterClass
             }
         }
 
-        if (FunctionState.Lookup(functionCallNode.Identifier.Identifier, out FunctionStateTuple state))
+        object identifierValue = InterpretAnyIdentifier(functionCallNode.Identifier, shadowVariableState);
+
+        if (identifierValue is FunctionStateTuple state)
         {
             Table<object>? shadowState = new(VariableState);
 
@@ -421,45 +672,88 @@ public class InterpreterClass
         throw new($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
     }
 
-    private object InterpretIdentifier(IdentifierNode node, Table<object>? shadowVariableState)
+    private object InterpretAnyIdentifier(IdentifierNode node, Table<object>? shadowVariableState)
     {
         if (node is SingleIdentifierNode singleIdentifierNode)
         {
-            if (LookupVariableHelper(singleIdentifierNode.Identifier, shadowVariableState, out object? boundValue))
+            if (shadowVariableState is not null && shadowVariableState.Lookup(singleIdentifierNode.Identifier, out object? @out))
             {
-                return boundValue;
+                return @out;
+            }
+            else
+            {
+                return InterpretEnvironmentIdentifier(singleIdentifierNode, globalEnvironment);
             }
         }
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            InterpretImportIdentifier(qualifiedIdentifierNode);
+            SingleIdentifierNode leftIdentifier = qualifiedIdentifierNode.LeftIdentifier;
+            SingleIdentifierNode rightIdentifier = qualifiedIdentifierNode.RightIdentifier;
+            object leftValue = InterpretEnvironmentIdentifier(leftIdentifier, globalEnvironment);
+            if (leftValue is InterpretationEnvironment dependency)
+            {
+                return InterpretEnvironmentIdentifier(rightIdentifier, dependency);
+            }
+            else if (leftValue is NetworkDeclarationNode networkNode)
+            {
+                return InterpretNetworkIdentifier(rightIdentifier, networkNode);
+            }
+            else
+            {
+                throw new($"Invalid use of identifier '{qualifiedIdentifierNode.FullIdentifier}' (Line: {qualifiedIdentifierNode.LineNumber})");
+            }
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
-    private object InterpretImportIdentifier(QualifiedIdentifierNode node)
+    private object InterpretEnvironmentIdentifier(SingleIdentifierNode node, InterpretationEnvironment environment)
     {
-        string nodeIdentifier = node.Identifier.Identifier;
-        string expressionIdentifier = node.Expression.Identifier;
-        if (globalEnvironment.ModuleDependencies.Lookup(nodeIdentifier, out InterpretationEnvironment dependency))
+        if (environment.FunctionState.Lookup(node.Identifier, out FunctionStateTuple function))
         {
-            if (dependency.FunctionState.Lookup(expressionIdentifier, out FunctionStateTuple functionDependency))
-            {
-                return functionDependency;
-            }
-            else if (dependency.VariableState.Lookup(expressionIdentifier, out object? variableDependency))
-            {
-                return variableDependency;
-            }
-            else if (dependency.NetworkState.Lookup(expressionIdentifier, out NetworkDeclarationNode? networkDependency))
-            {
-                return networkDependency;
-            }
+            return function;
+        }
+        else if (environment.VariableState.Lookup(node.Identifier, out object? variable))
+        {
+            return variable;
+        }
+        else if (environment.NetworkState.Lookup(node.Identifier, out NetworkDeclarationNode? network))
+        {
+            return network;
+        }
+        else if (environment.ModuleDependencies.Lookup(node.Identifier, out InterpretationEnvironment moduleDependency))
+        {
+            return moduleDependency;
         }
 
         throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
+
+    private object InterpretNetworkIdentifier(SingleIdentifierNode identifier, NetworkDeclarationNode network)
+    {
+        IdentifierNode? networkInstance = network.Instances.FirstOrDefault(instance => instance.NewInstance.Identifier == identifier.Identifier)?.ExistingInstance;
+
+        if (networkInstance is not null)
+        {
+            object interpretedInstance = InterpretAnyIdentifier(networkInstance, shadowVariableState: null);
+
+            if (IsNetworkOrQueueTuple(interpretedInstance))
+            {
+                return interpretedInstance;
+            }
+            else
+            {
+                throw new($"Identifier error occured for '{networkInstance.FullIdentifier}' (Line: {networkInstance.LineNumber})");
+            }
+        }
+        else
+        {
+
+            throw new($"Identifier error occured for '{identifier.Identifier}' (Line: {identifier.LineNumber})");
+        }
+    }
+
+    private bool IsNetworkOrQueueTuple(object @object) => @object is NetworkDeclarationNode || @object is QueueTuple;
 
     private bool LookupVariableHelper(string identifier, Table<object>? shadowVariableState, [MaybeNullWhen(false)] out object @out)
     {

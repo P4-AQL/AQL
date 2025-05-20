@@ -9,7 +9,7 @@ using Interpreter.AST.Nodes.Metrics;
 using Interpreter.AST.Nodes.Types;
 
 namespace Interpreter.AST.Nodes.NonTerminals;
-public class NetworkNode(int lineNumber, NetworkTypeNode customType, SingleIdentifierNode identifier, IEnumerable<NamedMetricNode> metrics) : Node(lineNumber)
+public abstract class NetworkNode(int lineNumber, NetworkTypeNode customType, SingleIdentifierNode identifier, IEnumerable<NamedMetricNode> metrics) : Node(lineNumber)
 {
     public NetworkTypeNode CustomType { get; } = customType;
     public SingleIdentifierNode Identifier { get; } = identifier;
