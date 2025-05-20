@@ -133,7 +133,7 @@ public class TypeChecker
             object? found = GetTypeFromIdentifier(simNode.NetworkIdentifier, globalEnvironment, null, errors);
             if (found is null)
                 errors.Add($"Network identifier not found (Line {simNode.NetworkIdentifier.LineNumber})");
-            else if (found.GetType() != typeof(NetworkDeclarationNode))
+            else if (found.GetType() != typeof(TypeCheckerNetworkState))
                 errors.Add($"Identifier is not of type network! (Line {simNode.NetworkIdentifier.LineNumber})");
 
             // Expression is int
@@ -608,7 +608,14 @@ public class TypeChecker
         if (localScope is not null)
         {
             localScope.Lookup(firstIdentifier, out Node? @out);
-            returnValue = @out;
+            if (@out is NetworkDeclarationNode networkDeclarationNode && idNode is QualifiedIdentifierNode qualifiedIdentifierNode)
+            {
+                returnValue = GetTypeFromIdentifier(new QualifiedIdentifierNode(@out.LineNumber, networkDeclarationNode.Identifier, qualifiedIdentifierNode.RightIdentifier), environmentToCheck, localScope, errors);
+            }
+            else
+            {
+                returnValue = @out;
+            }
         }
         if (returnValue is null)
         {
