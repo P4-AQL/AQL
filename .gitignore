@@ -7,4 +7,4 @@ bin/
 obj/
 
 
-/App/Tests/SimulationEngine.Tests/coverage-report/
+App/Tests/SimulationEngine.Tests/coverage-report/
