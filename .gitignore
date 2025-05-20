@@ -5,3 +5,6 @@ GeneratedCode/
 # Ignore build files
 bin/
 obj/
+
+
+/App/Tests/SimulationEngine.Tests/coverage-report/
