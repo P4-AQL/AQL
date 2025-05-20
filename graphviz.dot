@@ -1,543 +1,543 @@
 digraph G {
 node [shape=circle, style=filled, fillcolor=lightblue];
-  -939262875 [label="ImportNode
+  590703855 [label="ImportNode
 Identifier(stdlib)"];
-  1389791115 [label="SingleIdentifierNode
+  1641218595 [label="SingleIdentifierNode
 stdlib"];
-  -939262875 -> 1389791115;
-  20952970 [label="ImportNode
+  590703855 -> 1641218595;
+  -1257766811 [label="ImportNode
 Identifier(airport)"];
-  -939262875 -> 20952970;
-  1262485374 [label="SingleIdentifierNode
+  590703855 -> -1257766811;
+  19582630 [label="SingleIdentifierNode
 airport"];
-  20952970 -> 1262485374;
-  -1210141571 [label="DefinitionProgramNode"];
-  20952970 -> -1210141571;
-  1562988101 [label="ConstDeclarationNode
+  -1257766811 -> 19582630;
+  -2085413249 [label="DefinitionProgramNode"];
+  -1257766811 -> -2085413249;
+  -1147427475 [label="ConstDeclarationNode
 x"];
-  -1210141571 -> 1562988101;
-  1336806415 [label="IntTypeNode
+  -2085413249 -> -1147427475;
+  842815705 [label="IntTypeNode
 int"];
-  1562988101 -> 1336806415;
-  -1038767898 [label="SingleIdentifierNode
+  -1147427475 -> 842815705;
+  -214649822 [label="SingleIdentifierNode
 x"];
-  1562988101 -> -1038767898;
-  1708635197 [label="AddNode"];
-  1562988101 -> 1708635197;
-  872485185 [label="IntLiteralNode
+  -1147427475 -> -214649822;
+  -1083732344 [label="AddNode"];
+  -1147427475 -> -1083732344;
+  -482005661 [label="IntLiteralNode
 5"];
-  1708635197 -> 872485185;
-  -1947154053 [label="IntLiteralNode
+  -1083732344 -> -482005661;
+  -235337106 [label="IntLiteralNode
 3"];
-  1708635197 -> -1947154053;
-  -1321905774 [label="FunctionNode
+  -1083732344 -> -235337106;
+  1332031612 [label="FunctionNode
 someFunc"];
-  1562988101 -> -1321905774;
-  1449796483 [label="BoolTypeNode
+  -1147427475 -> 1332031612;
+  912057298 [label="BoolTypeNode
 bool"];
-  -1321905774 -> 1449796483;
-  143790072 [label="SingleIdentifierNode
+  1332031612 -> 912057298;
+  10771914 [label="SingleIdentifierNode
 someFunc"];
-  -1321905774 -> 143790072;
-  -892758430 [label="TypeAndIdentifier
+  1332031612 -> 10771914;
+  126009960 [label="TypeAndIdentifier
 y"];
-  -1321905774 -> -892758430;
-  966516917 [label="IntTypeNode
+  1332031612 -> 126009960;
+  -268679280 [label="IntTypeNode
 int"];
-  -892758430 -> 966516917;
-  2043330334 [label="SingleIdentifierNode
+  126009960 -> -268679280;
+  -324403754 [label="SingleIdentifierNode
 y"];
-  -892758430 -> 2043330334;
-  145919195 [label="ReturnNode"];
-  -1321905774 -> 145919195;
-  899829003 [label="EqualNode"];
-  145919195 -> 899829003;
-  -800174482 [label="IdentifierExpressionNode"];
-  899829003 -> -800174482;
-  -2063703410 [label="SingleIdentifierNode
+  126009960 -> -324403754;
+  28189626 [label="ReturnNode"];
+  1332031612 -> 28189626;
+  -1216558233 [label="EqualNode"];
+  28189626 -> -1216558233;
+  1982552821 [label="IdentifierExpressionNode"];
+  -1216558233 -> 1982552821;
+  2146747229 [label="SingleIdentifierNode
 x"];
-  -800174482 -> -2063703410;
-  -2062745852 [label="IdentifierExpressionNode"];
-  899829003 -> -2062745852;
-  -321703675 [label="SingleIdentifierNode
+  1982552821 -> 2146747229;
+  391774829 [label="IdentifierExpressionNode"];
+  -1216558233 -> 391774829;
+  -1365107026 [label="SingleIdentifierNode
 y"];
-  -2062745852 -> -321703675;
-  316504555 [label="FunctionNode
+  391774829 -> -1365107026;
+  274228342 [label="FunctionNode
 main_entrance"];
-  -1321905774 -> 316504555;
-  -1450597653 [label="DoubleTypeNode
+  1332031612 -> 274228342;
+  -1191434344 [label="DoubleTypeNode
 double"];
-  316504555 -> -1450597653;
-  -1434535452 [label="SingleIdentifierNode
+  274228342 -> -1191434344;
+  -51619898 [label="SingleIdentifierNode
 main_entrance"];
-  316504555 -> -1434535452;
-  -1579271441 [label="VariableDeclarationNode
+  274228342 -> -51619898;
+  -1651412122 [label="VariableDeclarationNode
 current_time"];
-  316504555 -> -1579271441;
-  1075671179 [label="IntTypeNode
+  274228342 -> -1651412122;
+  -698912463 [label="IntTypeNode
 int"];
-  -1579271441 -> 1075671179;
-  653290647 [label="SingleIdentifierNode
+  -1651412122 -> -698912463;
+  -333861808 [label="SingleIdentifierNode
 current_time"];
-  -1579271441 -> 653290647;
-  2044590855 [label="VariableDeclarationNode
+  -1651412122 -> -333861808;
+  -1830159751 [label="VariableDeclarationNode
 number_of_hours_passed"];
-  -1579271441 -> 2044590855;
-  -68410007 [label="IntTypeNode
+  -1651412122 -> -1830159751;
+  -1389912830 [label="IntTypeNode
 int"];
-  2044590855 -> -68410007;
-  1070036744 [label="SingleIdentifierNode
+  -1830159751 -> -1389912830;
+  -570855401 [label="SingleIdentifierNode
 number_of_hours_passed"];
-  2044590855 -> 1070036744;
-  146442477 [label="IfElseNode"];
-  2044590855 -> 146442477;
-  933159297 [label="AndNode"];
-  146442477 -> 933159297;
-  1296541200 [label="NotNode"];
-  933159297 -> 1296541200;
-  860433993 [label="LessThanNode"];
-  1296541200 -> 860433993;
-  1716434477 [label="IdentifierExpressionNode"];
-  860433993 -> 1716434477;
-  -16775548 [label="SingleIdentifierNode
+  -1830159751 -> -570855401;
+  -1119979708 [label="IfElseNode"];
+  -1830159751 -> -1119979708;
+  -439674321 [label="AndNode"];
+  -1119979708 -> -439674321;
+  1594601497 [label="NotNode"];
+  -439674321 -> 1594601497;
+  827630938 [label="LessThanNode"];
+  1594601497 -> 827630938;
+  -1140733029 [label="IdentifierExpressionNode"];
+  827630938 -> -1140733029;
+  -1733534641 [label="SingleIdentifierNode
 number_of_hours_passed"];
-  1716434477 -> -16775548;
-  -1693828977 [label="IntLiteralNode
+  -1140733029 -> -1733534641;
+  810713824 [label="IntLiteralNode
 10"];
-  860433993 -> -1693828977;
-  223249582 [label="NotNode"];
-  933159297 -> 223249582;
-  -1080136881 [label="EqualNode"];
-  223249582 -> -1080136881;
-  1376153991 [label="IdentifierExpressionNode"];
-  -1080136881 -> 1376153991;
-  -868993322 [label="SingleIdentifierNode
+  827630938 -> 810713824;
+  -862032339 [label="NotNode"];
+  -439674321 -> -862032339;
+  -828220808 [label="EqualNode"];
+  -862032339 -> -828220808;
+  -1813172927 [label="IdentifierExpressionNode"];
+  -828220808 -> -1813172927;
+  -1729641542 [label="SingleIdentifierNode
 number_of_hours_passed"];
-  1376153991 -> -868993322;
-  -173731924 [label="IntLiteralNode
+  -1813172927 -> -1729641542;
+  -1749240540 [label="IntLiteralNode
 10"];
-  -1080136881 -> -173731924;
-  -1923874769 [label="ReturnNode"];
-  146442477 -> -1923874769;
-  -1572009761 [label="DoubleLiteralNode
+  -828220808 -> -1749240540;
+  -1931517910 [label="ReturnNode"];
+  -1119979708 -> -1931517910;
+  -1150753566 [label="DoubleLiteralNode
 350"];
-  -1923874769 -> -1572009761;
-  -1085518098 [label="ReturnNode"];
-  146442477 -> -1085518098;
-  -735271622 [label="DoubleLiteralNode
+  -1931517910 -> -1150753566;
+  1867377017 [label="ReturnNode"];
+  -1119979708 -> 1867377017;
+  1153084307 [label="DoubleLiteralNode
 250"];
-  -1085518098 -> -735271622;
-  2098390746 [label="NetworkDefinitionNode"];
-  316504555 -> 2098390746;
-  663412170 [label="QueueDeclarationNode
+  1867377017 -> 1153084307;
+  -1184468038 [label="NetworkDefinitionNode"];
+  274228342 -> -1184468038;
+  1652983621 [label="QueueDeclarationNode
 someQ"];
-  2098390746 -> 663412170;
-  550689508 [label="FunctionCallNode
+  -1184468038 -> 1652983621;
+  591305693 [label="FunctionCallNode
 1 parameters"];
-  663412170 -> 550689508;
-  949596869 [label="QualifiedIdentifierNode
+  1652983621 -> 591305693;
+  -469642069 [label="QualifiedIdentifierNode
 stdlib"];
-  550689508 -> 949596869;
-  34317811 [label="SingleIdentifierNode
+  591305693 -> -469642069;
+  42806006 [label="SingleIdentifierNode
 stdlib"];
-  949596869 -> 34317811;
-  296620393 [label="SingleIdentifierNode
+  -469642069 -> 42806006;
+  1505135889 [label="SingleIdentifierNode
 exponential"];
-  949596869 -> 296620393;
-  1173389077 [label="IntLiteralNode
+  -469642069 -> 1505135889;
+  1662553471 [label="IntLiteralNode
 10"];
-  550689508 -> 1173389077;
-  1772199921 [label="IntLiteralNode
+  591305693 -> 1662553471;
+  -554011113 [label="IntLiteralNode
 95"];
-  663412170 -> 1772199921;
-  -1673503972 [label="IntLiteralNode
+  1652983621 -> -554011113;
+  -795725539 [label="IntLiteralNode
 5"];
-  663412170 -> -1673503972;
-  1980704252 [label="SingleIdentifierNode
+  1652983621 -> -795725539;
+  1624090577 [label="SingleIdentifierNode
 someQ"];
-  663412170 -> 1980704252;
-  1640491294 [label="NamedMetricNode
+  1652983621 -> 1624090577;
+  -1728412134 [label="NamedMetricNode
 vrt"];
-  663412170 -> 1640491294;
-  242789944 [label="NetworkDefinitionNode"];
-  2098390746 -> 242789944;
-  335489449 [label="QueueDeclarationNode
+  1652983621 -> -1728412134;
+  1245201396 [label="NetworkDefinitionNode"];
+  -1184468038 -> 1245201396;
+  -860581263 [label="QueueDeclarationNode
 sometestyQ"];
-  242789944 -> 335489449;
-  -2127321095 [label="FunctionCallNode
+  1245201396 -> -860581263;
+  -690963784 [label="FunctionCallNode
 1 parameters"];
-  335489449 -> -2127321095;
-  1739675732 [label="QualifiedIdentifierNode
+  -860581263 -> -690963784;
+  841548523 [label="QualifiedIdentifierNode
 stdlib"];
-  -2127321095 -> 1739675732;
-  1553424011 [label="SingleIdentifierNode
+  -690963784 -> 841548523;
+  1126208895 [label="SingleIdentifierNode
 stdlib"];
-  1739675732 -> 1553424011;
-  -1847411065 [label="SingleIdentifierNode
+  841548523 -> 1126208895;
+  760838156 [label="SingleIdentifierNode
 exponential"];
-  1739675732 -> -1847411065;
-  -2123605562 [label="IntLiteralNode
+  841548523 -> 760838156;
+  624952709 [label="IntLiteralNode
 10"];
-  -2127321095 -> -2123605562;
-  -694177477 [label="IntLiteralNode
+  -690963784 -> 624952709;
+  -1886363692 [label="IntLiteralNode
 95"];
-  335489449 -> -694177477;
-  -1666669103 [label="IntLiteralNode
+  -860581263 -> -1886363692;
+  -672921425 [label="IntLiteralNode
 5"];
-  335489449 -> -1666669103;
-  -841577691 [label="SingleIdentifierNode
+  -860581263 -> -672921425;
+  1616280977 [label="SingleIdentifierNode
 sometestyQ"];
-  335489449 -> -841577691;
-  -1287480421 [label="NamedMetricNode
+  -860581263 -> 1616280977;
+  -753647868 [label="NamedMetricNode
 vrt"];
-  335489449 -> -1287480421;
-  232139418 [label="NetworkDefinitionNode"];
-  242789944 -> 232139418;
-  175053087 [label="QueueDeclarationNode
+  -860581263 -> -753647868;
+  -1517480939 [label="NetworkDefinitionNode"];
+  1245201396 -> -1517480939;
+  -1056070901 [label="QueueDeclarationNode
 someOtherQ"];
-  232139418 -> 175053087;
-  1621481622 [label="IntLiteralNode
+  -1517480939 -> -1056070901;
+  -258364595 [label="IntLiteralNode
 20"];
-  175053087 -> 1621481622;
-  -1029682586 [label="IntLiteralNode
+  -1056070901 -> -258364595;
+  -1235991826 [label="IntLiteralNode
 10"];
-  175053087 -> -1029682586;
-  1717620293 [label="IntLiteralNode
+  -1056070901 -> -1235991826;
+  -456965277 [label="IntLiteralNode
 7"];
-  175053087 -> 1717620293;
-  -994386583 [label="SingleIdentifierNode
+  -1056070901 -> -456965277;
+  1640718351 [label="SingleIdentifierNode
 someOtherQ"];
-  175053087 -> -994386583;
-  1347278105 [label="NetworkDefinitionNode"];
-  232139418 -> 1347278105;
-  -712726700 [label="NetworkDeclarationNode
+  -1056070901 -> 1640718351;
+  900853913 [label="NetworkDefinitionNode"];
+  -1517480939 -> 900853913;
+  354041791 [label="NetworkDeclarationNode
 someNetwork"];
-  1347278105 -> -712726700;
-  -1806677875 [label="SingleIdentifierNode
+  900853913 -> 354041791;
+  1161970430 [label="SingleIdentifierNode
 firstInput"];
-  -712726700 -> -1806677875;
-  670432696 [label="SingleIdentifierNode
+  354041791 -> 1161970430;
+  721442120 [label="SingleIdentifierNode
 singleOutput"];
-  -712726700 -> 670432696;
-  -541271684 [label="InstanceDeclaration
+  354041791 -> 721442120;
+  -1806214288 [label="InstanceDeclaration
 Identifier(secQueue1)"];
-  -712726700 -> -541271684;
-  319040599 [label="QualifiedIdentifierNode
+  354041791 -> -1806214288;
+  -636055727 [label="QualifiedIdentifierNode
 airport"];
-  -541271684 -> 319040599;
-  1706486785 [label="SingleIdentifierNode
+  -1806214288 -> -636055727;
+  1994108455 [label="SingleIdentifierNode
 airport"];
-  319040599 -> 1706486785;
-  975476907 [label="SingleIdentifierNode
+  -636055727 -> 1994108455;
+  -158769961 [label="SingleIdentifierNode
 securityQueue"];
-  319040599 -> 975476907;
-  -465908885 [label="SingleIdentifierNode
+  -636055727 -> -158769961;
+  1090394200 [label="SingleIdentifierNode
 secQueue1"];
-  -541271684 -> -465908885;
-  -810028922 [label="InstanceDeclaration
+  -1806214288 -> 1090394200;
+  151022486 [label="InstanceDeclaration
 Identifier(secQueue2)"];
-  -712726700 -> -810028922;
-  1616275719 [label="QualifiedIdentifierNode
+  354041791 -> 151022486;
+  -245243905 [label="QualifiedIdentifierNode
 airport"];
-  -810028922 -> 1616275719;
-  1064892386 [label="SingleIdentifierNode
+  151022486 -> -245243905;
+  -709477960 [label="SingleIdentifierNode
 airport"];
-  1616275719 -> 1064892386;
-  -551416731 [label="SingleIdentifierNode
+  -245243905 -> -709477960;
+  -586051987 [label="SingleIdentifierNode
 securityQueue"];
-  1616275719 -> -551416731;
-  -809763786 [label="SingleIdentifierNode
+  -245243905 -> -586051987;
+  1556778759 [label="SingleIdentifierNode
 secQueue2"];
-  -810028922 -> -809763786;
-  2077197802 [label="InstanceDeclaration
+  151022486 -> 1556778759;
+  988846848 [label="InstanceDeclaration
 Identifier(secQueue3)"];
-  -712726700 -> 2077197802;
-  197099868 [label="QualifiedIdentifierNode
+  354041791 -> 988846848;
+  -1220369073 [label="QualifiedIdentifierNode
 airport"];
-  2077197802 -> 197099868;
-  -605838627 [label="SingleIdentifierNode
+  988846848 -> -1220369073;
+  72993595 [label="SingleIdentifierNode
 airport"];
-  197099868 -> -605838627;
-  -1176567295 [label="SingleIdentifierNode
+  -1220369073 -> 72993595;
+  -331120572 [label="SingleIdentifierNode
 securityQueue"];
-  197099868 -> -1176567295;
-  -1764925564 [label="SingleIdentifierNode
+  -1220369073 -> -331120572;
+  -1110025649 [label="SingleIdentifierNode
 secQueue3"];
-  2077197802 -> -1764925564;
-  -558859998 [label="RouteDefinitionNode
+  988846848 -> -1110025649;
+  126677786 [label="RouteDefinitionNode
 1 destinations"];
-  -712726700 -> -558859998;
-  -361089060 [label="IdentifierExpressionNode"];
-  -558859998 -> -361089060;
-  -125697766 [label="SingleIdentifierNode
+  354041791 -> 126677786;
+  -196202364 [label="IdentifierExpressionNode"];
+  126677786 -> -196202364;
+  1976448893 [label="SingleIdentifierNode
 secQueue1"];
-  -361089060 -> -125697766;
-  107653413 [label="RouteValuePairNode"];
-  -558859998 -> 107653413;
-  -247577607 [label="IntLiteralNode
+  -196202364 -> 1976448893;
+  -1546606170 [label="RouteValuePairNode"];
+  126677786 -> -1546606170;
+  1891056978 [label="IntLiteralNode
 1"];
-  107653413 -> -247577607;
-  -807462558 [label="SingleIdentifierNode
+  -1546606170 -> 1891056978;
+  -622827795 [label="SingleIdentifierNode
 secQueue2"];
-  107653413 -> -807462558;
-  -594987764 [label="RouteDefinitionNode
+  -1546606170 -> -622827795;
+  -192922203 [label="RouteDefinitionNode
 1 destinations"];
-  -712726700 -> -594987764;
-  1781516048 [label="IdentifierExpressionNode"];
-  -594987764 -> 1781516048;
-  762133089 [label="SingleIdentifierNode
+  354041791 -> -192922203;
+  1910642591 [label="IdentifierExpressionNode"];
+  -192922203 -> 1910642591;
+  -563220212 [label="SingleIdentifierNode
 firstInput"];
-  1781516048 -> 762133089;
-  -745353181 [label="RouteValuePairNode"];
-  -594987764 -> -745353181;
-  1951659564 [label="IntLiteralNode
+  1910642591 -> -563220212;
+  1316733896 [label="RouteValuePairNode"];
+  -192922203 -> 1316733896;
+  -713874362 [label="IntLiteralNode
 1"];
-  -745353181 -> 1951659564;
-  -431783548 [label="SingleIdentifierNode
+  1316733896 -> -713874362;
+  -1161454186 [label="SingleIdentifierNode
 secQueue1"];
-  -745353181 -> -431783548;
-  880412659 [label="RouteDefinitionNode
+  1316733896 -> -1161454186;
+  1406997896 [label="RouteDefinitionNode
 1 destinations"];
-  -712726700 -> 880412659;
-  -1665898476 [label="IdentifierExpressionNode"];
-  880412659 -> -1665898476;
-  -1732839580 [label="SingleIdentifierNode
+  354041791 -> 1406997896;
+  1901647864 [label="IdentifierExpressionNode"];
+  1406997896 -> 1901647864;
+  1013886375 [label="SingleIdentifierNode
 secQueue2"];
-  -1665898476 -> -1732839580;
-  783433647 [label="RouteValuePairNode"];
-  880412659 -> 783433647;
-  -1786244918 [label="IntLiteralNode
+  1901647864 -> 1013886375;
+  1633435848 [label="RouteValuePairNode"];
+  1406997896 -> 1633435848;
+  1623212760 [label="IntLiteralNode
 1"];
-  783433647 -> -1786244918;
-  -1702612757 [label="SingleIdentifierNode
+  1633435848 -> 1623212760;
+  592991429 [label="SingleIdentifierNode
 secQueue3"];
-  783433647 -> -1702612757;
-  -2126169460 [label="RouteDefinitionNode
+  1633435848 -> 592991429;
+  -297644789 [label="RouteDefinitionNode
 1 destinations"];
-  -712726700 -> -2126169460;
-  1995071421 [label="IdentifierExpressionNode"];
-  -2126169460 -> 1995071421;
-  1559873196 [label="SingleIdentifierNode
+  354041791 -> -297644789;
+  989342711 [label="IdentifierExpressionNode"];
+  -297644789 -> 989342711;
+  1247154605 [label="SingleIdentifierNode
 secQueue3"];
-  1995071421 -> 1559873196;
-  -973647948 [label="RouteValuePairNode"];
-  -2126169460 -> -973647948;
-  -1449929744 [label="IntLiteralNode
+  989342711 -> 1247154605;
+  845313350 [label="RouteValuePairNode"];
+  -297644789 -> 845313350;
+  1667838733 [label="IntLiteralNode
 1"];
-  -973647948 -> -1449929744;
-  -1939042387 [label="SingleIdentifierNode
+  845313350 -> 1667838733;
+  -2024359886 [label="SingleIdentifierNode
 singleOutput"];
-  -973647948 -> -1939042387;
-  -1230762215 [label="SingleIdentifierNode
+  845313350 -> -2024359886;
+  -397157047 [label="SingleIdentifierNode
 someNetwork"];
-  -712726700 -> -1230762215;
-  1050479214 [label="NetworkDefinitionNode"];
-  1347278105 -> 1050479214;
-  193891273 [label="NetworkDeclarationNode
+  354041791 -> -397157047;
+  -1016774976 [label="NetworkDefinitionNode"];
+  900853913 -> -1016774976;
+  674353690 [label="NetworkDeclarationNode
 someAdvancedNetwork"];
-  1050479214 -> 193891273;
-  -241414287 [label="SingleIdentifierNode
+  -1016774976 -> 674353690;
+  -319571575 [label="SingleIdentifierNode
 firstInput"];
-  193891273 -> -241414287;
-  -301655588 [label="SingleIdentifierNode
+  674353690 -> -319571575;
+  517127480 [label="SingleIdentifierNode
 secondInput"];
-  193891273 -> -301655588;
-  1986544742 [label="SingleIdentifierNode
+  674353690 -> 517127480;
+  1040106943 [label="SingleIdentifierNode
 firstOutput"];
-  193891273 -> 1986544742;
-  2135754436 [label="SingleIdentifierNode
+  674353690 -> 1040106943;
+  653058475 [label="SingleIdentifierNode
 secondOutput"];
-  193891273 -> 2135754436;
-  -239869922 [label="InstanceDeclaration
+  674353690 -> 653058475;
+  -588022191 [label="InstanceDeclaration
 Identifier(basicNetwork1)"];
-  193891273 -> -239869922;
-  381929780 [label="SingleIdentifierNode
+  674353690 -> -588022191;
+  -445810395 [label="SingleIdentifierNode
 someNetwork"];
-  -239869922 -> 381929780;
-  1244312705 [label="SingleIdentifierNode
+  -588022191 -> -445810395;
+  191580417 [label="SingleIdentifierNode
 basicNetwork1"];
-  -239869922 -> 1244312705;
-  -611633578 [label="InstanceDeclaration
+  -588022191 -> 191580417;
+  -292933374 [label="InstanceDeclaration
 Identifier(basicNetwork2)"];
-  193891273 -> -611633578;
-  1161274742 [label="SingleIdentifierNode
+  674353690 -> -292933374;
+  1120908546 [label="SingleIdentifierNode
 someNetwork"];
-  -611633578 -> 1161274742;
-  962519082 [label="SingleIdentifierNode
+  -292933374 -> 1120908546;
+  194808967 [label="SingleIdentifierNode
 basicNetwork2"];
-  -611633578 -> 962519082;
-  -185256467 [label="RouteDefinitionNode
+  -292933374 -> 194808967;
+  -305309122 [label="RouteDefinitionNode
 2 destinations"];
-  193891273 -> -185256467;
-  228184627 [label="IdentifierExpressionNode"];
-  -185256467 -> 228184627;
-  -1939096361 [label="SingleIdentifierNode
+  674353690 -> -305309122;
+  -1069433977 [label="IdentifierExpressionNode"];
+  -305309122 -> -1069433977;
+  -683763250 [label="SingleIdentifierNode
 firstInput"];
-  228184627 -> -1939096361;
-  -1518103577 [label="RouteValuePairNode"];
-  -185256467 -> -1518103577;
-  1772986744 [label="DoubleLiteralNode
+  -1069433977 -> -683763250;
+  -177601798 [label="RouteValuePairNode"];
+  -305309122 -> -177601798;
+  -214772647 [label="DoubleLiteralNode
 0.4"];
-  -1518103577 -> 1772986744;
-  178385538 [label="SingleIdentifierNode
+  -177601798 -> -214772647;
+  -1784103245 [label="SingleIdentifierNode
 someOtherQ"];
-  -1518103577 -> 178385538;
-  -1074003912 [label="RouteValuePairNode"];
-  -185256467 -> -1074003912;
-  237831332 [label="DoubleLiteralNode
+  -177601798 -> -1784103245;
+  -1265578231 [label="RouteValuePairNode"];
+  -305309122 -> -1265578231;
+  954318999 [label="DoubleLiteralNode
 0.3"];
-  -1074003912 -> 237831332;
-  -98658722 [label="QualifiedIdentifierNode
+  -1265578231 -> 954318999;
+  1807583832 [label="QualifiedIdentifierNode
 basicNetwork2"];
-  -1074003912 -> -98658722;
-  -661043677 [label="SingleIdentifierNode
+  -1265578231 -> 1807583832;
+  1653743594 [label="SingleIdentifierNode
 basicNetwork2"];
-  -98658722 -> -661043677;
-  -1761129849 [label="SingleIdentifierNode
+  1807583832 -> 1653743594;
+  655796404 [label="SingleIdentifierNode
 firstInput"];
-  -98658722 -> -1761129849;
-  -1588052411 [label="RouteDefinitionNode
+  1807583832 -> 655796404;
+  249816901 [label="RouteDefinitionNode
 1 destinations"];
-  193891273 -> -1588052411;
-  41786097 [label="IdentifierExpressionNode"];
-  -1588052411 -> 41786097;
-  -1659448980 [label="SingleIdentifierNode
+  674353690 -> 249816901;
+  -1121714302 [label="IdentifierExpressionNode"];
+  249816901 -> -1121714302;
+  333304706 [label="SingleIdentifierNode
 someQ"];
-  41786097 -> -1659448980;
-  -685372501 [label="RouteValuePairNode"];
-  -1588052411 -> -685372501;
-  744231402 [label="IntLiteralNode
+  -1121714302 -> 333304706;
+  2024596308 [label="RouteValuePairNode"];
+  249816901 -> 2024596308;
+  -132784369 [label="IntLiteralNode
 1"];
-  -685372501 -> 744231402;
-  1603254839 [label="QualifiedIdentifierNode
+  2024596308 -> -132784369;
+  -459953721 [label="QualifiedIdentifierNode
 basicNetwork1"];
-  -685372501 -> 1603254839;
-  -913294973 [label="SingleIdentifierNode
+  2024596308 -> -459953721;
+  1654237384 [label="SingleIdentifierNode
 basicNetwork1"];
-  1603254839 -> -913294973;
-  -524502710 [label="SingleIdentifierNode
+  -459953721 -> 1654237384;
+  -1690327239 [label="SingleIdentifierNode
 firstInput"];
-  1603254839 -> -524502710;
-  -794118519 [label="RouteDefinitionNode
+  -459953721 -> -1690327239;
+  333938626 [label="RouteDefinitionNode
 1 destinations"];
-  193891273 -> -794118519;
-  337431582 [label="IdentifierExpressionNode"];
-  -794118519 -> 337431582;
-  -1874098690 [label="SingleIdentifierNode
+  674353690 -> 333938626;
+  -1709527042 [label="IdentifierExpressionNode"];
+  333938626 -> -1709527042;
+  479523304 [label="SingleIdentifierNode
 someOtherQ"];
-  337431582 -> -1874098690;
-  -15218373 [label="RouteValuePairNode"];
-  -794118519 -> -15218373;
-  -569472688 [label="IntLiteralNode
+  -1709527042 -> 479523304;
+  1849980445 [label="RouteValuePairNode"];
+  333938626 -> 1849980445;
+  -327745153 [label="IntLiteralNode
 1"];
-  -15218373 -> -569472688;
-  1046371324 [label="SingleIdentifierNode
+  1849980445 -> -327745153;
+  672694116 [label="SingleIdentifierNode
 someQ"];
-  -15218373 -> 1046371324;
-  -2089793835 [label="RouteDefinitionNode
+  1849980445 -> 672694116;
+  918395032 [label="RouteDefinitionNode
 1 destinations"];
-  193891273 -> -2089793835;
-  1189633475 [label="IdentifierExpressionNode"];
-  -2089793835 -> 1189633475;
-  -1406376079 [label="SingleIdentifierNode
+  674353690 -> 918395032;
+  -911027204 [label="IdentifierExpressionNode"];
+  918395032 -> -911027204;
+  988981401 [label="SingleIdentifierNode
 secondInput"];
-  1189633475 -> -1406376079;
-  1260390318 [label="RouteValuePairNode"];
-  -2089793835 -> 1260390318;
-  1202475095 [label="IntLiteralNode
+  -911027204 -> 988981401;
+  73431186 [label="RouteValuePairNode"];
+  918395032 -> 73431186;
+  -615227124 [label="IntLiteralNode
 1"];
-  1260390318 -> 1202475095;
-  1181502247 [label="QualifiedIdentifierNode
+  73431186 -> -615227124;
+  -913994996 [label="QualifiedIdentifierNode
 basicNetwork1"];
-  1260390318 -> 1181502247;
-  2068212088 [label="SingleIdentifierNode
+  73431186 -> -913994996;
+  283027272 [label="SingleIdentifierNode
 basicNetwork1"];
-  1181502247 -> 2068212088;
-  -2013205183 [label="SingleIdentifierNode
+  -913994996 -> 283027272;
+  359604912 [label="SingleIdentifierNode
 secondInput"];
-  1181502247 -> -2013205183;
-  119680528 [label="RouteDefinitionNode
+  -913994996 -> 359604912;
+  2045997736 [label="RouteDefinitionNode
 1 destinations"];
-  193891273 -> 119680528;
-  1764147489 [label="IdentifierExpressionNode"];
-  119680528 -> 1764147489;
-  692269705 [label="QualifiedIdentifierNode
+  674353690 -> 2045997736;
+  565862737 [label="IdentifierExpressionNode"];
+  2045997736 -> 565862737;
+  1677048378 [label="QualifiedIdentifierNode
 basicNetwork1"];
-  1764147489 -> 692269705;
-  728656652 [label="SingleIdentifierNode
+  565862737 -> 1677048378;
+  1872637650 [label="SingleIdentifierNode
 basicNetwork1"];
-  692269705 -> 728656652;
-  -974114069 [label="SingleIdentifierNode
+  1677048378 -> 1872637650;
+  -1470627405 [label="SingleIdentifierNode
 singleOutput"];
-  692269705 -> -974114069;
-  -54577500 [label="RouteValuePairNode"];
-  119680528 -> -54577500;
-  1191800524 [label="IntLiteralNode
+  1677048378 -> -1470627405;
+  -1439505411 [label="RouteValuePairNode"];
+  2045997736 -> -1439505411;
+  761583160 [label="IntLiteralNode
 1"];
-  -54577500 -> 1191800524;
-  -1588052696 [label="SingleIdentifierNode
+  -1439505411 -> 761583160;
+  1200509817 [label="SingleIdentifierNode
 firstOutput"];
-  -54577500 -> -1588052696;
-  -895783817 [label="RouteDefinitionNode
+  -1439505411 -> 1200509817;
+  1443692335 [label="RouteDefinitionNode
 1 destinations"];
-  193891273 -> -895783817;
-  786473802 [label="IdentifierExpressionNode"];
-  -895783817 -> 786473802;
-  -2147226918 [label="QualifiedIdentifierNode
+  674353690 -> 1443692335;
+  284778001 [label="IdentifierExpressionNode"];
+  1443692335 -> 284778001;
+  -90743239 [label="QualifiedIdentifierNode
 basicNetwork2"];
-  786473802 -> -2147226918;
-  -342508068 [label="SingleIdentifierNode
+  284778001 -> -90743239;
+  468674948 [label="SingleIdentifierNode
 basicNetwork2"];
-  -2147226918 -> -342508068;
-  -2077652085 [label="SingleIdentifierNode
+  -90743239 -> 468674948;
+  2012645011 [label="SingleIdentifierNode
 singleOutput"];
-  -2147226918 -> -2077652085;
-  1524910051 [label="RouteValuePairNode"];
-  -895783817 -> 1524910051;
-  -1714112432 [label="IntLiteralNode
+  -90743239 -> 2012645011;
+  -1506669373 [label="RouteValuePairNode"];
+  1443692335 -> -1506669373;
+  1551342918 [label="IntLiteralNode
 1"];
-  1524910051 -> -1714112432;
-  76933101 [label="SingleIdentifierNode
+  -1506669373 -> 1551342918;
+  -2013979356 [label="SingleIdentifierNode
 secondOutput"];
-  1524910051 -> 76933101;
-  624615389 [label="SingleIdentifierNode
+  -1506669373 -> -2013979356;
+  1263589318 [label="SingleIdentifierNode
 someAdvancedNetwork"];
-  193891273 -> 624615389;
-  1886302325 [label="NamedMetricNode
+  674353690 -> 1263589318;
+  637526347 [label="NamedMetricNode
 throughput"];
-  193891273 -> 1886302325;
-  1915384846 [label="SimulateNode"];
-  1050479214 -> 1915384846;
-  -888243467 [label="SingleIdentifierNode
+  674353690 -> 637526347;
+  -354398408 [label="SimulateNode"];
+  -1016774976 -> -354398408;
+  -391544519 [label="SingleIdentifierNode
 someAdvancedNetwork"];
-  1915384846 -> -888243467;
-  22191688 [label="IntLiteralNode
+  -354398408 -> -391544519;
+  943600536 [label="IntLiteralNode
 500"];
-  1915384846 -> 22191688;
-  -1221929605 [label="AndNode"];
-  1915384846 -> -1221929605;
-  1802754882 [label="NotNode"];
-  -1221929605 -> 1802754882;
-  1151948910 [label="LessThanNode"];
-  1802754882 -> 1151948910;
-  145358333 [label="IdentifierExpressionNode"];
-  1151948910 -> 145358333;
-  -1195504179 [label="SingleIdentifierNode
+  -354398408 -> 943600536;
+  732854868 [label="AndNode"];
+  -354398408 -> 732854868;
+  980829131 [label="NotNode"];
+  732854868 -> 980829131;
+  1941178157 [label="LessThanNode"];
+  980829131 -> 1941178157;
+  87659306 [label="IdentifierExpressionNode"];
+  1941178157 -> 87659306;
+  -1801320326 [label="SingleIdentifierNode
 time"];
-  145358333 -> -1195504179;
-  820514128 [label="IntLiteralNode
+  87659306 -> -1801320326;
+  -134781212 [label="IntLiteralNode
 10000"];
-  1151948910 -> 820514128;
-  -1927192582 [label="NotNode"];
-  -1221929605 -> -1927192582;
-  571699963 [label="EqualNode"];
-  -1927192582 -> 571699963;
-  151439891 [label="IdentifierExpressionNode"];
-  571699963 -> 151439891;
-  -238908000 [label="SingleIdentifierNode
+  1941178157 -> -134781212;
+  -2078697013 [label="NotNode"];
+  732854868 -> -2078697013;
+  1514967597 [label="EqualNode"];
+  -2078697013 -> 1514967597;
+  -1426555586 [label="IdentifierExpressionNode"];
+  1514967597 -> -1426555586;
+  290515132 [label="SingleIdentifierNode
 time"];
-  151439891 -> -238908000;
-  -1050865098 [label="IntLiteralNode
+  -1426555586 -> 290515132;
+  1341757336 [label="IntLiteralNode
 10000"];
-  571699963 -> -1050865098;
+  1514967597 -> 1341757336;
 }

@@ -7,6 +7,7 @@ using Interpreter.SemanticAnalysis;
 using Interpreter.Visitors;
 
 namespace Interpreter.Utilities.Modules;
+
 public static class ModuleLoader
 {
     /// <summary>
@@ -38,11 +39,7 @@ public static class ModuleLoader
         ASTAQLVisitor visitor = new();
         ProgramNode result = visitor.VisitProgramEOF(progContext);
 
-        
 
-        InterpreterClass interpreter = new();
-        InterpretationEnvironment environment = interpreter.StartInterpretation(result);
-        environment.typeChecker = typeChecker;
         return result;
     }
 

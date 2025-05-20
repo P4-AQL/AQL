@@ -22,6 +22,12 @@ try
         Console.WriteLine(error);
     }
 
+    if (errors.Count == 0)
+    {
+        InterpreterClass interpreter = new(astRoot);
+        interpreter.StartInterpretation();
+    }
+
     string? path = Environment.CurrentDirectory.EndsWith("net9.0")
     ? new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.FullName
     : Environment.CurrentDirectory;

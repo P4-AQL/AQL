@@ -4,6 +4,7 @@
 using Interpreter.AST.Nodes.NonTerminals;
 
 namespace Interpreter.AST.Nodes.Identifiers;
+
 public class QualifiedIdentifierNode(int lineNumber, SingleIdentifierNode leftIdentifier, SingleIdentifierNode rightIdentifier) : IdentifierNode(lineNumber)
 {
     public SingleIdentifierNode LeftIdentifier { get; } = leftIdentifier;
@@ -19,6 +20,10 @@ public class QualifiedIdentifierNode(int lineNumber, SingleIdentifierNode leftId
             .. base.GetChildren(),
         ];
     }
+
+    public override string FirstIdentifier => LeftIdentifier.Identifier;
+
+    public override string FullIdentifier => LeftIdentifier.Identifier + RightIdentifier.Identifier;
 
     public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{LeftIdentifier.Identifier}";
 }

@@ -8,56 +8,60 @@ using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
+using Interpreter.AST.Nodes.Routes;
 using Interpreter.AST.Nodes.Statements;
 using Interpreter.Utilities.Modules;
+using SimEngine.Core;
 
 namespace Interpreter.SemanticAnalysis;
 
-public class InterpreterClass
+public class InterpreterClass(ProgramNode node)
 {
-    InterpretationEnvironment globalEnvironment;
+    public InterpretationEnvironment GlobalEnvironment => globalEnvironment;
+    InterpretationEnvironment globalEnvironment = InterpretationEnvironment.Empty(node);
 
     Table<FunctionStateTuple> FunctionState => globalEnvironment.FunctionState;
     Table<object> VariableState => globalEnvironment.VariableState;
     Table<NetworkDeclarationNode> NetworkState => globalEnvironment.NetworkState;
 
+    QueueableManager QueueableManager => globalEnvironment.QueueableManager;
 
-    public InterpretationEnvironment StartInterpretation(ProgramNode node)
+    public InterpretationEnvironment StartInterpretation()
     {
-        globalEnvironment = InterpretationEnvironment.Empty(node);
         try
         {
-            InterpretProgram(node);
+            InterpretProgram(globalEnvironment.Root);
         }
         catch (Exception ex)
         {
-            globalEnvironment.Errors.Add(ex.Message);
+            globalEnvironment.SetError(ex.Message);
         }
 
         return globalEnvironment;
     }
 
-    private void InterpretProgram(ProgramNode node)
+    public void InterpretProgram(ProgramNode node)
     {
         if (node is ImportNode importNode)
         {
-            Console.WriteLine("We imported" + importNode.Namespace.Identifier);
+            InterpretImport(importNode);
         }
         else if (node is DefinitionProgramNode definitionNode)
         {
             InterpretDefinition(definitionNode.Definition);
         }
 
-        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
     public void InterpretImport(ImportNode node)
     {
-        InterpretationEnvironment dependency = ModuleLoader.LoadModuleByName(node.Namespace.Identifier);
+        ProgramNode astRoot = ModuleLoader.LoadModuleByName(node.Namespace.Identifier);
+        InterpretationEnvironment dependency = new InterpreterClass(astRoot).StartInterpretation();
         globalEnvironment.ModuleDependencies.ForceBind(node.Namespace.Identifier, dependency);
     }
 
-    private void InterpretDefinition(DefinitionNode node)
+    public void InterpretDefinition(DefinitionNode node)
     {
         if (node is DefinitionCompositionNode compositionNode)
         {
@@ -68,10 +72,10 @@ public class InterpreterClass
             InterpretSimulate(simulateNode);
         }
 
-        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
-    private void InterpretDefinitionComposition(DefinitionCompositionNode node)
+    public void InterpretDefinitionComposition(DefinitionCompositionNode node)
     {
         if (node is FunctionNode functionNode)
         {
@@ -92,31 +96,31 @@ public class InterpreterClass
         }
     }
 
-    private void InterpretFunctionDeclaration(FunctionNode functionNode)
+    public void InterpretFunctionDeclaration(FunctionNode functionNode)
     {
         FunctionStateTuple functionState = new(function: functionNode, variableState: VariableState);
         FunctionState.ForceBind(functionNode.Identifier.Identifier, functionState);
     }
 
-    private void InterpretConstDeclaration(ConstDeclarationNode constNode)
+    public void InterpretConstDeclaration(ConstDeclarationNode constNode)
     {
         object value = InterpretExpression(constNode.Expression, shadowVariableState: null);
         VariableState.ForceBind(constNode.Identifier.Identifier, value);
     }
 
 
-    private object? InterpretStatement(StatementNode node, Table<object> shadowVariableState)
+    public object? InterpretStatement(StatementNode node, Table<object> shadowVariableState)
     {
         return node switch
         {
             StatementCompositionNode castNode => InterpretCompositionStatement(castNode, shadowVariableState),
             ReturnNode castNode => InterpretExpression(castNode.Expression, shadowVariableState),
             SkipNode => null,
-            _ => throw new($"{nameof(node)} unhandled (Line {node.LineNumber})"),
+            _ => throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})"),
         };
     }
 
-    private object? InterpretCompositionStatement(StatementCompositionNode node, Table<object> shadowVariableState)
+    public object? InterpretCompositionStatement(StatementCompositionNode node, Table<object> shadowVariableState)
     {
 
         object? @return = null;
@@ -149,19 +153,19 @@ public class InterpreterClass
         return null;
     }
 
-    private void InterpretVariableDeclaration(VariableDeclarationNode node, Table<object> shadowVariableState)
+    public void InterpretVariableDeclaration(VariableDeclarationNode node, Table<object> shadowVariableState)
     {
         object value = InterpretExpression(node.Expression, shadowVariableState);
         shadowVariableState.ForceBind(node.Identifier.Identifier, value);
     }
 
-    private void InterpretAssignment(AssignNode node, Table<object> shadowVariableState)
+    public void InterpretAssignment(AssignNode node, Table<object> shadowVariableState)
     {
         object value = InterpretExpression(node.Expression, shadowVariableState);
         shadowVariableState.ForceBind(node.Identifier.Identifier, value);
     }
 
-    private object? InterpretIfElseNode(IfElseNode node, Table<object> shadowVariableState)
+    public object? InterpretIfElseNode(IfElseNode node, Table<object> shadowVariableState)
     {
         object condition = InterpretExpression(node.Condition, shadowVariableState);
 
@@ -170,7 +174,7 @@ public class InterpreterClass
             : InterpretStatement(node.ElseBody, shadowVariableState);
     }
 
-    private object? InterpretWhileNode(WhileNode node, Table<object> shadowVariableState)
+    public object? InterpretWhileNode(WhileNode node, Table<object> shadowVariableState)
     {
 
         while ((bool)InterpretExpression(node.Condition, shadowVariableState))
@@ -185,7 +189,7 @@ public class InterpreterClass
         return null;
     }
 
-    private void InterpretNetwork(NetworkNode node)
+    public void InterpretNetwork(NetworkNode node)
     {
         if (node is QueueDeclarationNode queue)
         {
@@ -196,14 +200,14 @@ public class InterpreterClass
             InterpretNetworkDeclaration(network);
         }
 
-        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
-    private void InterpretQueueDeclaration(QueueDeclarationNode node)
+    public void InterpretQueueDeclaration(QueueDeclarationNode node)
     {
         int capacity = (int)InterpretExpression(node.Capacity, null);
         int servers = (int)InterpretExpression(node.Servers, null);
-        object service() => InterpretExpression(node.Service, null);
+        double service() => (double)InterpretExpression(node.Service, null);
         IEnumerable<string> metrics = node.Metrics.Select(metric => metric.Name);
 
         QueueTuple queueTuple = new()
@@ -215,49 +219,150 @@ public class InterpreterClass
         };
 
         VariableState.ForceBind(node.Identifier.Identifier, queueTuple);
+
+        QueueableManager.Queueables.Add(
+            new Queue(
+                node.Identifier.Identifier,
+                servers,
+                capacity,
+                service,
+                metrics
+            )
+        );
     }
 
-    private void InterpretNetworkDeclaration(NetworkDeclarationNode node)
+    public void InterpretNetworkDeclaration(NetworkDeclarationNode node)
     {
         NetworkState.ForceBind(node.Identifier.Identifier, node);
 
+        IEnumerable<Queue> inputs = node.Inputs.Select(QueueableManager.IdentifierToInstantQueue);
+        IEnumerable<Queue> outputs = node.Outputs.Select(QueueableManager.IdentifierToInstantQueue);
+
+        IEnumerable<Queueable> newInstances = node.Instances.Select(QueueableManager.GetNewInstance);
+
+        List<Route> routes = [];
+        foreach (RouteDefinitionNode routeDefinitionNode in node.Routes)
+        {
+            routes.AddRange(QueueableManager.GetRoute(routeDefinitionNode, inputs, outputs, [.. newInstances], this));
+        }
+
+        QueueableManager.Queueables.Add(
+            new Network(
+                node.Identifier.Identifier,
+                inputs,
+                outputs,
+                newInstances,
+                routes
+            )
+        );
+    }
+
+    public void InterpretSimulate(SimulateNode simulateNode)
+    {
         SimulationEngineAPI engineAPI = new();
-        foreach (InstanceDeclaration instanceDeclaration in node.Instances)
+        engineAPI.SetSeed(Random.Shared.Next());
+
+        int untilTime = (int)InterpretExpression(simulateNode.TerminationCriteria, shadowVariableState: null);
+        int runCount = (int)InterpretExpression(simulateNode.Runs, shadowVariableState: null);
+
+        engineAPI.SetSimulationParameters(untilTime: untilTime, runCount: runCount);
+
+        IdentifierNode networkIdentifier = simulateNode.NetworkIdentifier;
+        Queueable queueable = QueueableManager.FindQueueable(networkIdentifier.FirstIdentifier);
+
+        if (networkIdentifier is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            CreateQueueInEngine(engineAPI, node.Identifier.Identifier, instanceDeclaration);
+            queueable = queueable.FindQueueable(qualifiedIdentifierNode.RightIdentifier.Identifier);
         }
+
+        CreateQueueableInEngine(engineAPI, queueable, networkIdentifier.FirstIdentifier);
+
+        engineAPI.RunSimulation();
+        var stats = engineAPI.GetSimulationStats();
     }
 
-    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, InstanceDeclaration instance)
+    public void CreateQueueableInEngine(SimulationEngineAPI engineAPI, Queueable queueable, string thisNetworkName)
     {
-        object existingNetwork = InterpretAnyIdentifier(instance.ExistingInstance, shadowVariableState: null);
-        if (existingNetwork is not NetworkNode existingNetworkNode)
+        string queueableName = string.Join('.', thisNetworkName, queueable.Name);
+        if (queueable is Queue queue)
         {
-            throw new($"Not a valid instance! (Line: {instance.LineNumber})");
+            CreateQueueInEngine(engineAPI, queue, queueableName);
         }
-
-        string queueFullPath = networkIdentifier + "." + instance.NewInstance.Identifier;
-        CreateQueueInEngine(engineAPI, queueFullPath, existingNetworkNode);
+        else if (queueable is Network network)
+        {
+            CreateNetworkInEngine(engineAPI, network, queueableName);
+        }
     }
 
-    private void CreateQueueInEngine(SimulationEngineAPI engineAPI, string networkIdentifier, NetworkNode network)
+    public static void CreateQueueInEngine(SimulationEngineAPI engineAPI, Queue queue, string queueName)
     {
-        if (network is NetworkDeclarationNode networkDeclarationNode)
-        {
-
-        }
-        else if (network is QueueDeclarationNode queueDeclarationNode)
-        {
-
-        }
+        engineAPI.CreateQueueNode(
+            queueName,
+            queue.Servers,
+            queue.Capacity,
+            queue.Service
+        );
     }
 
-    private void InterpretSimulate(SimulateNode simulateNode)
+    public void CreateNetworkInEngine(SimulationEngineAPI engineAPI, Network network, string networkName)
     {
-        throw new NotImplementedException();
+        foreach (Queue queue in network.Inputs)
+        {
+            CreateQueueInEngine(engineAPI, queue, networkName);
+        }
+        foreach (Queue queue in network.Outputs)
+        {
+            CreateQueueInEngine(engineAPI, queue, networkName);
+        }
+        foreach (Queueable queueable in network.NewInstances)
+        {
+            CreateQueueableInEngine(engineAPI, queueable, networkName);
+        }
+
+        int index = 0;
+        foreach (Route route in network.Routes)
+        {
+            CreateRouteInEngine(engineAPI, route, networkName, index);
+            index++;
+        }
     }
 
-    private object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
+    public void CreateRouteInEngine(SimulationEngineAPI engineAPI, Route route, string networkName, int index)
+    {
+        if (route is FuncRoute funcRoute)
+        {
+            CreateFunctionRouteInEngine(engineAPI, funcRoute, networkName, index);
+        }
+        else if (route is QueueRoute queueRoute)
+        {
+            CreateQueueRouteInEngine(engineAPI, queueRoute, networkName);
+        }
+    }
+
+    public static void CreateFunctionRouteInEngine(SimulationEngineAPI engineAPI, FuncRoute funcRoute, string networkName, int index)
+    {
+        string dispatcherIdentifier = "dispatcher" + index;
+        string dispatcherName = string.Join('.', networkName, dispatcherIdentifier);
+        engineAPI.CreateDispatcherNode(
+            dispatcherName,
+            funcRoute.FromRate
+        );
+
+        // Maybe need to find the network which contains the to queue
+        string queueName = string.Join('.', networkName, funcRoute.To);
+        engineAPI.ConnectNode(dispatcherName, queueName, funcRoute.To.Weight);
+    }
+
+    private static void CreateQueueRouteInEngine(SimulationEngineAPI engineAPI, QueueRoute queueRoute, string networkName)
+    {
+        // Maybe need to find the network which contains the from and to queues
+        string fromQueueName = string.Join('.', networkName, queueRoute.FromQueue.Name);
+        string toQueueName = string.Join('.', networkName, queueRoute.To.ToQueue);
+
+        engineAPI.ConnectNode(fromQueueName, toQueueName, queueRoute.To.Weight);
+    }
+
+    public object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
     {
         return node switch
         {
@@ -277,11 +382,11 @@ public class InterpreterClass
             IndexingNode indexingNode => InterpretIndexingNode(indexingNode, shadowVariableState),
             FunctionCallNode functionCallNode => InterpretFunctionCallNode(functionCallNode, shadowVariableState),
             ParenthesesNode parenthesesNode => InterpretExpression(parenthesesNode.Inner, shadowVariableState),
-            _ => throw new($"{nameof(node)} unhandled (Line {node.LineNumber})"),
+            _ => throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})"),
         };
     }
 
-    private double InterpretNegativeNode(NegativeNode negativeNode, Table<object>? shadowVariableState)
+    public double InterpretNegativeNode(NegativeNode negativeNode, Table<object>? shadowVariableState)
     {
         object innerValue = InterpretExpression(negativeNode.Inner, shadowVariableState);
 
@@ -289,11 +394,11 @@ public class InterpreterClass
         {
             int intValue => -intValue,
             double doubleValue => -doubleValue,
-            _ => throw new($"{nameof(negativeNode)} unhandled (Line {negativeNode.LineNumber})"),
+            _ => throw new InterpretationException($"{nameof(negativeNode)} unhandled (Line {negativeNode.LineNumber})"),
         };
     }
 
-    private double InterpretMultiplyNode(MultiplyNode multiplyNode, Table<object>? shadowVariableState)
+    public double InterpretMultiplyNode(MultiplyNode multiplyNode, Table<object>? shadowVariableState)
     {
         object leftValue = InterpretExpression(multiplyNode.Left, shadowVariableState);
         object rightValue = InterpretExpression(multiplyNode.Right, shadowVariableState);
@@ -304,11 +409,11 @@ public class InterpreterClass
             (int left, double right) => left * right,
             (double left, int right) => left * right,
             (double left, double right) => left * right,
-            (_, _) => throw new($"{nameof(multiplyNode)} unhandled (Line {multiplyNode.LineNumber})"),
+            (_, _) => throw new InterpretationException($"{nameof(multiplyNode)} unhandled (Line {multiplyNode.LineNumber})"),
         };
     }
 
-    private object InterpretDivisionNode(DivisionNode divisionNode, Table<object>? shadowVariableState)
+    public object InterpretDivisionNode(DivisionNode divisionNode, Table<object>? shadowVariableState)
     {
         object leftValue = InterpretExpression(divisionNode.Left, shadowVariableState);
         object rightValue = InterpretExpression(divisionNode.Right, shadowVariableState);
@@ -319,11 +424,11 @@ public class InterpreterClass
             (int left, double right) => left / right,
             (double left, int right) => left / right,
             (double left, double right) => left / right,
-            (_, _) => throw new($"{nameof(divisionNode)} unhandled (Line {divisionNode.LineNumber})"),
+            (_, _) => throw new InterpretationException($"{nameof(divisionNode)} unhandled (Line {divisionNode.LineNumber})"),
         };
     }
 
-    private double InterpretAddNode(AddNode addNode, Table<object>? shadowVariableState)
+    public object InterpretAddNode(AddNode addNode, Table<object>? shadowVariableState)
     {
         object leftValue = InterpretExpression(addNode.Left, shadowVariableState);
         object rightValue = InterpretExpression(addNode.Right, shadowVariableState);
@@ -334,11 +439,11 @@ public class InterpreterClass
             (int left, double right) => left + right,
             (double left, int right) => left + right,
             (double left, double right) => left + right,
-            (_, _) => throw new($"{nameof(addNode)} unhandled (Line {addNode.LineNumber})"),
+            (_, _) => throw new InterpretationException($"{nameof(addNode)} unhandled (Line {addNode.LineNumber})"),
         };
     }
 
-    private bool InterpretLessThanNode(LessThanNode lessThanNode, Table<object>? shadowVariableState)
+    public bool InterpretLessThanNode(LessThanNode lessThanNode, Table<object>? shadowVariableState)
     {
         object leftValue = InterpretExpression(lessThanNode.Left, shadowVariableState);
         object rightValue = InterpretExpression(lessThanNode.Right, shadowVariableState);
@@ -349,11 +454,11 @@ public class InterpreterClass
             (int left, double right) => left < right,
             (double left, int right) => left < right,
             (double left, double right) => left < right,
-            (_, _) => throw new($"{nameof(lessThanNode)} unhandled (Line {lessThanNode.LineNumber})"),
+            (_, _) => throw new InterpretationException($"{nameof(lessThanNode)} unhandled (Line {lessThanNode.LineNumber})"),
         };
     }
 
-    private bool InterpretEqualNode(EqualNode equalNode, Table<object>? shadowVariableState)
+    public bool InterpretEqualNode(EqualNode equalNode, Table<object>? shadowVariableState)
     {
         object leftValue = InterpretExpression(equalNode.Left, shadowVariableState);
         object rightValue = InterpretExpression(equalNode.Right, shadowVariableState);
@@ -363,11 +468,11 @@ public class InterpreterClass
             (int left, int right) => left == right,
             (double left, double right) => left == right,
             (bool left, bool right) => left == right,
-            (_, _) => throw new($"{nameof(equalNode)} unhandled (Line {equalNode.LineNumber})"),
+            (_, _) => throw new InterpretationException($"{nameof(equalNode)} unhandled (Line {equalNode.LineNumber})"),
         };
     }
 
-    private bool InterpretAndNode(AndNode andNode, Table<object>? shadowVariableState)
+    public bool InterpretAndNode(AndNode andNode, Table<object>? shadowVariableState)
     {
         object leftValue = InterpretExpression(andNode.Left, shadowVariableState);
         object rightValue = InterpretExpression(andNode.Right, shadowVariableState);
@@ -382,10 +487,10 @@ public class InterpreterClass
             }
         }
 
-        throw new($"{nameof(andNode)} unhandled (Line {andNode.LineNumber})");
+        throw new InterpretationException($"{nameof(andNode)} unhandled (Line {andNode.LineNumber})");
     }
 
-    private bool InterpretNotNode(NotNode notNode, Table<object>? shadowVariableState)
+    public bool InterpretNotNode(NotNode notNode, Table<object>? shadowVariableState)
     {
         object innerValue = InterpretExpression(notNode.Inner, shadowVariableState);
 
@@ -394,10 +499,10 @@ public class InterpreterClass
             return !boolValue;
         }
 
-        throw new($"{nameof(notNode)} unhandled (Line {notNode.LineNumber})");
+        throw new InterpretationException($"{nameof(notNode)} unhandled (Line {notNode.LineNumber})");
     }
 
-    private object[] InterpretArrayNode(ArrayLiteralNode arrayNode, Table<object>? shadowVariableState)
+    public object[] InterpretArrayNode(ArrayLiteralNode arrayNode, Table<object>? shadowVariableState)
     {
         object[] array = new object[arrayNode.Elements.Count];
 
@@ -412,7 +517,7 @@ public class InterpreterClass
         return array;
     }
 
-    private object InterpretIndexingNode(IndexingNode indexingNode, Table<object>? shadowVariableState)
+    public object InterpretIndexingNode(IndexingNode indexingNode, Table<object>? shadowVariableState)
     {
         object target = InterpretAnyIdentifier(indexingNode.Target, shadowVariableState);
         object index = InterpretExpression(indexingNode.Index, shadowVariableState);
@@ -420,11 +525,11 @@ public class InterpreterClass
         return (target, index) switch
         {
             (object[] array, int indexValue) => array[indexValue],
-            (_, _) => throw new($"{nameof(indexingNode)} unhandled (Line {indexingNode.LineNumber})"),
+            (_, _) => throw new InterpretationException($"{nameof(indexingNode)} unhandled (Line {indexingNode.LineNumber})"),
         };
     }
 
-    private object InterpretFunctionCallNode(FunctionCallNode functionCallNode, Table<object>? shadowVariableState)
+    public object InterpretFunctionCallNode(FunctionCallNode functionCallNode, Table<object>? shadowVariableState)
     {
         List<object> parameterValues = [];
         foreach (ExpressionNode expression in functionCallNode.ActualParameters)
@@ -456,39 +561,45 @@ public class InterpreterClass
             }
         }
 
-        throw new($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
+        throw new InterpretationException($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
     }
 
-    private object InterpretAnyIdentifier(IdentifierNode node, Table<object>? shadowVariableState)
+    public object InterpretAnyIdentifier(IdentifierNode node, Table<object>? shadowVariableState)
     {
         if (node is SingleIdentifierNode singleIdentifierNode)
         {
-            if (shadowVariableState is not null && shadowVariableState.Lookup(singleIdentifierNode.Identifier, out object? @out))
+            if (shadowVariableState is not null && LookupVariableHelper(singleIdentifierNode.Identifier, shadowVariableState, out object? @out))
             {
                 return @out;
             }
             else
             {
-                return InterpretIdentifier(singleIdentifierNode, globalEnvironment);
+                return InterpretEnvironmentIdentifier(singleIdentifierNode, globalEnvironment);
             }
         }
         else if (node is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
-            object leftValue = InterpretIdentifier(qualifiedIdentifierNode.LeftIdentifier, globalEnvironment);
+            SingleIdentifierNode leftIdentifier = qualifiedIdentifierNode.LeftIdentifier;
+            SingleIdentifierNode rightIdentifier = qualifiedIdentifierNode.RightIdentifier;
+            object leftValue = InterpretEnvironmentIdentifier(leftIdentifier, globalEnvironment);
             if (leftValue is InterpretationEnvironment dependency)
             {
-                return InterpretIdentifier(qualifiedIdentifierNode.RightIdentifier, dependency);
+                return InterpretEnvironmentIdentifier(rightIdentifier, dependency);
+            }
+            else if (leftValue is NetworkDeclarationNode networkNode)
+            {
+                return InterpretNetworkIdentifier(rightIdentifier, networkNode);
             }
             else
             {
-                return leftValue;
+                throw new InterpretationException($"Invalid use of identifier '{qualifiedIdentifierNode.FullIdentifier}' (Line: {qualifiedIdentifierNode.LineNumber})");
             }
         }
 
-        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
-    private object InterpretIdentifier(SingleIdentifierNode node, InterpretationEnvironment environment)
+    public static object InterpretEnvironmentIdentifier(SingleIdentifierNode node, InterpretationEnvironment environment)
     {
         if (environment.FunctionState.Lookup(node.Identifier, out FunctionStateTuple function))
         {
@@ -507,33 +618,36 @@ public class InterpreterClass
             return moduleDependency;
         }
 
-        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
     }
 
-    private object InterpretImportIdentifier(QualifiedIdentifierNode node)
+    public object InterpretNetworkIdentifier(SingleIdentifierNode identifier, NetworkDeclarationNode network)
     {
-        string nodeIdentifier = node.LeftIdentifier.Identifier;
-        string expressionIdentifier = node.RightIdentifier.Identifier;
-        if (globalEnvironment.ModuleDependencies.Lookup(nodeIdentifier, out InterpretationEnvironment dependency))
+        IdentifierNode? networkInstance = network.Instances.FirstOrDefault(instance => instance.NewInstance.Identifier == identifier.Identifier)?.ExistingInstance;
+
+        if (networkInstance is not null)
         {
-            if (dependency.FunctionState.Lookup(expressionIdentifier, out FunctionStateTuple functionDependency))
+            object interpretedInstance = InterpretAnyIdentifier(networkInstance, shadowVariableState: null);
+
+            if (IsNetworkOrQueueTuple(interpretedInstance))
             {
-                return functionDependency;
+                return interpretedInstance;
             }
-            else if (dependency.VariableState.Lookup(expressionIdentifier, out object? variableDependency))
+            else
             {
-                return variableDependency;
-            }
-            else if (dependency.NetworkState.Lookup(expressionIdentifier, out NetworkDeclarationNode? networkDependency))
-            {
-                return networkDependency;
+                throw new InterpretationException($"Identifier error occured for '{networkInstance.FullIdentifier}' (Line: {networkInstance.LineNumber})");
             }
         }
+        else
+        {
 
-        throw new($"{nameof(node)} unhandled (Line {node.LineNumber})");
+            throw new InterpretationException($"Identifier error occured for '{identifier.Identifier}' (Line: {identifier.LineNumber})");
+        }
     }
 
-    private bool LookupVariableHelper(string identifier, Table<object>? shadowVariableState, [MaybeNullWhen(false)] out object @out)
+    public static bool IsNetworkOrQueueTuple(object @object) => @object is NetworkDeclarationNode || @object is QueueTuple;
+
+    public bool LookupVariableHelper(string identifier, Table<object>? shadowVariableState, [MaybeNullWhen(false)] out object @out)
     {
         if (shadowVariableState is not null)
         {
