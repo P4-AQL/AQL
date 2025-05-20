@@ -6,5 +6,5 @@ GeneratedCode/
 bin/
 obj/
 
-
-App/Tests/SimulationEngine.Tests/coverage-report/
+# Ignore the coverage report folder
+Tests/SimulationEngine.Tests/coverage-report
