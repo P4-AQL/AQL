@@ -11,8 +11,8 @@ public class TypeCheckerEnvironment
     readonly Table<Node> _constEnvironment = new();
 
     // Gamma
-    public Table<Table<Node>> LocalNetworkScopesEnvironment => _localNetworkScopesEnvironment;
-    readonly Table<Table<Node>> _localNetworkScopesEnvironment = new();
+    public Table<TypeCheckerNetworkState> LocalNetworkScopesEnvironment => _localNetworkScopesEnvironment;
+    readonly Table<TypeCheckerNetworkState> _localNetworkScopesEnvironment = new();
 
     public Table<TypeCheckerEnvironment> Dependencies => _dependencies;
     readonly Table<TypeCheckerEnvironment> _dependencies = new();

@@ -20,7 +20,7 @@ public class TypeChecker
     TypeCheckerEnvironment globalEnvironment = new();
     Table<Node> ConstEnvironment => globalEnvironment.ConstEnvironment;
     Table<Node> Environment => globalEnvironment.Environment;
-    Table<Table<Node>> LocalNetworkScopesEnvironment => globalEnvironment.LocalNetworkScopesEnvironment;
+    Table<TypeCheckerNetworkState> LocalNetworkScopesEnvironment => globalEnvironment.LocalNetworkScopesEnvironment;
 
 
     // env for definitions and localEnv for statements? Return localEnv as new so it is not referenced
@@ -173,28 +173,28 @@ public class TypeChecker
                 errors.Add($"Identifier already declared (Line {networkDeclarationNode.LineNumber})");
 
             // Make Sigma
-            Table<Node> localNetwork = new(Environment);
+            TypeCheckerNetworkState typeCheckerNetworkState = new(networkDeclarationNode, Environment);
 
             // input
-            TypeCheckInputs(networkDeclarationNode.Inputs, localNetwork, errors);
+            TypeCheckInputs(typeCheckerNetworkState, errors);
 
             // output
-            TypeCheckOutputs(networkDeclarationNode.Outputs, localNetwork, errors);
+            TypeCheckOutputs(typeCheckerNetworkState, errors);
 
             // instances
-            TypeCheckInstances(networkDeclarationNode.Instances, localNetwork, errors);
+            TypeCheckInstances(typeCheckerNetworkState, errors);
 
             // routes
-            TypeCheckRoutes(networkDeclarationNode.Routes, localNetwork, errors);
+            TypeCheckRoutes(typeCheckerNetworkState, errors);
 
             // metrics
-            TypeCheckNetworkMetricList(networkDeclarationNode.Metrics, errors);
+            TypeCheckNetworkMetricList(typeCheckerNetworkState, errors);
 
             // bind to network env
-            LocalNetworkScopesEnvironment.TryBindIfNotExists(networkDeclarationNode.Identifier.Identifier, localNetwork);
+            LocalNetworkScopesEnvironment.TryBindIfNotExists(networkDeclarationNode.Identifier.Identifier, typeCheckerNetworkState);
 
             /// isvalid? Check that there is routing from all inputs, routing from all instances and routing to all outputs
-            NetworkIsValid(errors, networkDeclarationNode, localNetwork);
+            NetworkIsValid(errors, networkDeclarationNode, typeCheckerNetworkState.localScope);
         }
         else if (networkDefinitionNode.Network is QueueDeclarationNode queueDeclarationNode)
         {
@@ -622,10 +622,10 @@ public class TypeChecker
         }
         if (returnValue is null)
         {
-            environmentToCheck.LocalNetworkScopesEnvironment.Lookup(firstIdentifier, out Table<Node>? outNetwork);
+            environmentToCheck.LocalNetworkScopesEnvironment.Lookup(firstIdentifier, out TypeCheckerNetworkState? outNetwork);
             if (outNetwork is not null && idNode is QualifiedIdentifierNode qualifiedIdentifierNode)
             {
-                outNetwork.Lookup(qualifiedIdentifierNode.RightIdentifier.Identifier, out Node? @out);
+                outNetwork.localScope.Lookup(qualifiedIdentifierNode.RightIdentifier.Identifier, out Node? @out);
                 returnValue = @out;
             }
             else
@@ -651,16 +651,16 @@ public class TypeChecker
     }
 
     //These 2 methods could probably be combined, but it is not important
-    private void TypeCheckInputs(IReadOnlyList<SingleIdentifierNode> io, Table<TypeCheckerNetworkState> localNetworkTable, List<string> errors)
+    private void TypeCheckInputs(TypeCheckerNetworkState localNetworkTable, List<string> errors)
     {
-        foreach (SingleIdentifierNode node in io)
+        foreach (SingleIdentifierNode node in localNetworkTable.NetworkNode.Inputs)
         {
             // not in dom(E) or dom(Sigma)
             if (Environment.Lookup(node.Identifier, out Node? _))
                 errors.Add($"Identifier already declared (Line {node.LineNumber})");
 
             // i != j => x_i != x_j
-            if (localNetworkTable.TryBindIfNotExists(node.Identifier, new InputTypeNode(node.LineNumber)) == false)
+            if (localNetworkTable.localScope.TryBindIfNotExists(node.Identifier, new InputTypeNode(node.LineNumber)) == false)
             {
                 errors.Add($"Duplicate identifier '{node.Identifier}' in network! (Line {node.LineNumber})");
             }
@@ -668,16 +668,16 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckOutputs(IReadOnlyList<SingleIdentifierNode> io, Table<Node> localNetworkTable, List<string> errors)
+    private void TypeCheckOutputs(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
     {
-        foreach (SingleIdentifierNode node in io)
+        foreach (SingleIdentifierNode node in typeCheckerNetworkState.NetworkNode.Outputs)
         {
             // not in dom(E) or dom(Sigma)
             if (Environment.Lookup(node.Identifier, out Node? _))
                 errors.Add($"Identifier already declared (Line {node.LineNumber})");
 
             // i != j => x_i != x_j
-            if (localNetworkTable.TryBindIfNotExists(node.Identifier, new OutputTypeNode(node.LineNumber)) == false)
+            if (typeCheckerNetworkState.localScope.TryBindIfNotExists(node.Identifier, new OutputTypeNode(node.LineNumber)) == false)
             {
                 errors.Add($"Duplicate identifier '{node.Identifier}' in network! (Line {node.LineNumber})");
             }
@@ -710,20 +710,20 @@ public class TypeChecker
         "expected_num_entities"
     ];
 
-    private static void TypeCheckNetworkMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
+    private static void TypeCheckNetworkMetricList(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
     {
-        foreach (NamedMetricNode metric in metricList)
+        foreach (NamedMetricNode metric in typeCheckerNetworkState.NetworkNode.Metrics)
         {
             if (networkMetricNames.Contains(metric.Name) == false)
                 errors.Add($"'{metric.Name}' is not a valid metric for networks! (Line {metric.LineNumber})");
         }
     }
 
-    private void TypeCheckInstances(IReadOnlyList<InstanceDeclaration> instances, Table<Node> localNetwork, List<string> errors)
+    private void TypeCheckInstances(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
     {
-        object? Get(IdentifierNode identifierNode) => GetTypeFromIdentifier(identifierNode, globalEnvironment, localNetwork, errors);
+        object? Get(IdentifierNode identifierNode) => GetTypeFromIdentifier(identifierNode, globalEnvironment, typeCheckerNetworkState.localScope, errors);
 
-        foreach (InstanceDeclaration instance in instances)
+        foreach (InstanceDeclaration instance in typeCheckerNetworkState.NetworkNode.Instances)
         {
             //Start by checking if existing instance is proper
             object? network = Get(instance.ExistingInstance);
@@ -736,29 +736,32 @@ public class TypeChecker
             }
 
             // If the instance exists and is a network or a queue, then it is all good
-            if (network is not (QueueDeclarationNode or NetworkDeclarationNode))
+            if (network is TypeCheckerNetworkState networkState)
             {
-                errors.Add($"Instance identifier is not queue or network. (Line {instance.LineNumber})");
+                typeCheckerNetworkState.localScope.TryBindIfNotExists(instance.NewInstance.FirstIdentifier, networkState.NetworkNode);
+            }
+            else if (network is NetworkNode networkNode)
+            {
+                typeCheckerNetworkState.localScope.TryBindIfNotExists(instance.NewInstance.FirstIdentifier, networkNode);
             }
             else
             {
-                Node castNetwork = (Node)network;
-                localNetwork.TryBindIfNotExists(instance.NewInstance.Identifier, castNetwork);
+                errors.Add($"Instance identifier is not queue or network. (Line {instance.LineNumber})");
             }
         }
     }
 
-    private void TypeCheckRoutes(IReadOnlyList<RouteDefinitionNode> routes, Table<Node> localNetwork, List<string> errors)
+    private void TypeCheckRoutes(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
     {
-        foreach (RouteDefinitionNode routeDefinitionNode in routes)
+        foreach (RouteDefinitionNode routeDefinitionNode in typeCheckerNetworkState.NetworkNode.Routes)
         {
             ExpressionNode from = routeDefinitionNode.From;
             IReadOnlyList<RouteValuePairNode> to = routeDefinitionNode.To;
             // Check destination
-            TypeCheckRouteDestination(to, localNetwork, errors);
+            TypeCheckRouteDestination(to, typeCheckerNetworkState.localScope, errors);
 
 
-            object? type = FindExpressionType(routeDefinitionNode.From, errors, localNetwork);
+            object? type = FindExpressionType(routeDefinitionNode.From, errors, typeCheckerNetworkState.localScope);
             if (type is IntTypeNode or DoubleTypeNode)
             {
 
@@ -789,7 +792,8 @@ public class TypeChecker
                 continue;
             }
 
-            object? @object = GetTypeFromIdentifier(identifierNode, globalEnvironment, localNetwork, errors);
+            object? @object = GetTypeFromIdentifier(destination.RouteTo, globalEnvironment, localNetwork, errors);
+
             if (destination.RouteTo is SingleIdentifierNode singleIdentifierNode)
             {
                 if (@object is not (QueueDeclarationNode or OutputTypeNode))
