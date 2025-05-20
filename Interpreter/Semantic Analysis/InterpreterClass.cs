@@ -274,6 +274,9 @@ public class InterpreterClass
         }
 
         CreateQueueableInEngine(engineAPI, queueable, networkIdentifier.FirstIdentifier);
+
+        engineAPI.RunSimulation();
+        var stats = engineAPI.GetSimulationStats();
     }
 
     private void CreateQueueableInEngine(SimulationEngineAPI engineAPI, Queueable queueable, string thisNetworkName)
