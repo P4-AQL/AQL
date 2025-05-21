@@ -146,8 +146,9 @@ public class ParserTests
             Assert.Equal("int b", paramList[1]);
             Console.WriteLine(paramList[0]);
             Console.WriteLine(paramList[1]);
+            Console.WriteLine(paramList[1]);
 
-
+ 
             Console.WriteLine(funcDef.ToStringTree(parser));
 
 
