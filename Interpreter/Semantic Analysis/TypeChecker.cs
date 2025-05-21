@@ -396,7 +396,7 @@ public class TypeChecker
 
     }
 
-    private object? FindExpressionType(ExpressionNode topExpression, List<string> errors, Table<Node>? localEnvironment)
+    public object? FindExpressionType(ExpressionNode topExpression, List<string> errors, Table<Node>? localEnvironment)
     {
         try
         {
@@ -599,7 +599,7 @@ public class TypeChecker
         }
     }
 
-    static bool IsTypeIntOrDouble(object? typeNode) => typeNode is IntTypeNode || typeNode is DoubleTypeNode;
+    public static bool IsTypeIntOrDouble(object? typeNode) => typeNode is IntTypeNode || typeNode is DoubleTypeNode;
 
     private object? GetTypeFromIdentifier(IdentifierNode idNode, TypeCheckerEnvironment environmentToCheck, Table<Node>? localScope, List<string> errors)
     {
@@ -702,7 +702,7 @@ public class TypeChecker
         "throughput"
     ];
 
-    private static void TypeCheckQueueMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
+    public static void TypeCheckQueueMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
     {
         foreach (NamedMetricNode metric in metricList)
         {
