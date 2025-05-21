@@ -55,7 +55,7 @@ network someAdvancedNetwork {
   
   firstInput -> [0.4 someOtherQ, 0.3 basicNetwork2.firstInput];
   someOtherQ -> someQ -> basicNetwork1.firstInput;
-  secondInput -> basicNetwork1.secondInput;
+  secondInput -> basicNetwork1.firstInput;
   basicNetwork1.singleOutput -> firstOutput;
   basicNetwork2.singleOutput -> secondOutput;
   * throughput *
@@ -63,6 +63,6 @@ network someAdvancedNetwork {
 
 simulate {
   run: someAdvancedNetwork;
-  until: time > 10000;
+  until: 10000;
   times: 500
 }
