@@ -63,6 +63,11 @@ public class InterpreterClass(ProgramNode node)
         ProgramNode astRoot = ModuleLoader.LoadModuleByName(node.Namespace.Identifier);
         InterpretationEnvironment dependency = new InterpreterClass(astRoot).StartInterpretation();
         globalEnvironment.ModuleDependencies.ForceBind(node.Namespace.Identifier, dependency);
+
+        if (node.NextProgram is not null)
+        {
+            InterpretProgram(node.NextProgram);
+        }
     }
 
     public void InterpretDefinition(DefinitionNode node)
