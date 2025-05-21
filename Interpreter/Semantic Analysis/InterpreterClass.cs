@@ -23,8 +23,9 @@ public class InterpreterClass(ProgramNode node)
     Table<FunctionStateTuple> FunctionState => globalEnvironment.FunctionState;
     Table<object> VariableState => globalEnvironment.VariableState;
     Table<NetworkDeclarationNode> NetworkState => globalEnvironment.NetworkState;
+    public SimulationEngineAPI? LastEngine { get; private set; }
 
-    QueueableManager QueueableManager => globalEnvironment.QueueableManager;
+    internal QueueableManager QueueableManager => globalEnvironment.QueueableManager;
 
     public InterpretationEnvironment StartInterpretation()
     {
@@ -603,19 +604,19 @@ public class InterpreterClass(ProgramNode node)
     {
         if (environment.FunctionState.Lookup(node.Identifier, out FunctionStateTuple function))
         {
-            return function;
+            return function!;
         }
         else if (environment.VariableState.Lookup(node.Identifier, out object? variable))
         {
-            return variable;
+            return variable!;
         }
         else if (environment.NetworkState.Lookup(node.Identifier, out NetworkDeclarationNode? network))
         {
-            return network;
+            return network!;
         }
         else if (environment.ModuleDependencies.Lookup(node.Identifier, out InterpretationEnvironment moduleDependency))
         {
-            return moduleDependency;
+            return moduleDependency!;
         }
 
         throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");

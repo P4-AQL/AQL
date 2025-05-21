@@ -1,4 +1,4 @@
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Utils/Utils.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Utils/Utils.cs
 FN:5,System.Boolean SimEngine.Utils.NetworkUtils::IsSubnetwork(System.String,System.String)
 FNDA:0,System.Boolean SimEngine.Utils.NetworkUtils::IsSubnetwork(System.String,System.String)
 DA:6,0
@@ -20,7 +20,7 @@ BRH:0
 FNF:2
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Nodes/DispatcherNode.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Nodes/DispatcherNode.cs
 FN:8,SimEngine.Core.Simulation SimEngine.Nodes.DispatcherNode::get_Simulation()
 FNDA:0,SimEngine.Core.Simulation SimEngine.Nodes.DispatcherNode::get_Simulation()
 DA:9,0
@@ -77,7 +77,7 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Nodes/Node.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Nodes/Node.cs
 FN:7,System.String SimEngine.Nodes.Node::get_Name()
 FNDA:0,System.String SimEngine.Nodes.Node::get_Name()
 DA:8,0
@@ -109,7 +109,7 @@ BRH:0
 FNF:5
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Nodes/QueueNode.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Nodes/QueueNode.cs
 FN:8,SimEngine.Core.Simulation SimEngine.Nodes.QueueNode::get_Simulation()
 FNDA:0,SimEngine.Core.Simulation SimEngine.Nodes.QueueNode::get_Simulation()
 DA:9,0
@@ -262,7 +262,7 @@ BRH:0
 FNF:8
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Nodes/RouterNode.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Nodes/RouterNode.cs
 FN:6,SimEngine.Core.Simulation SimEngine.Nodes.RouterNode::get_Simulation()
 FNDA:0,SimEngine.Core.Simulation SimEngine.Nodes.RouterNode::get_Simulation()
 DA:7,0
@@ -331,7 +331,7 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Networks/NetworkDefinition.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Networks/NetworkDefinition.cs
 FN:7,System.String SimEngine.Networks.NetworkDefinition::get_Name()
 FNDA:0,System.String SimEngine.Networks.NetworkDefinition::get_Name()
 DA:8,0
@@ -372,7 +372,7 @@ BRH:0
 FNF:11
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Networks/NetworkRegistry.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Networks/NetworkRegistry.cs
 FN:7,System.String SimEngine.Networks.NetworkStats::get_Name()
 FNDA:0,System.String SimEngine.Networks.NetworkStats::get_Name()
 DA:8,0
@@ -404,7 +404,7 @@ BRH:0
 FNF:5
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Metrics/MetricsPrinter.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Metrics/MetricsPrinter.cs
 FN:7,System.Void SimEngine.Metrics.MetricsPrinter::Print(SimEngine.Metrics.SimulationStats)
 FNDA:0,System.Void SimEngine.Metrics.MetricsPrinter::Print(SimEngine.Metrics.SimulationStats)
 DA:8,0
@@ -454,7 +454,7 @@ BRH:0
 FNF:1
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Metrics/NetworkRuntimeStats.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Metrics/NetworkRuntimeStats.cs
 FN:9,System.String SimEngine.Metrics.NetworkRuntimeStats::get_Name()
 FNDA:0,System.String SimEngine.Metrics.NetworkRuntimeStats::get_Name()
 DA:10,0
@@ -495,7 +495,7 @@ BRH:0
 FNF:6
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Metrics/QueueRuntimeStats.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Metrics/QueueRuntimeStats.cs
 FN:4,System.String SimEngine.Metrics.QueueRuntimeStats::get_Name()
 FNDA:0,System.String SimEngine.Metrics.QueueRuntimeStats::get_Name()
 DA:5,0
@@ -577,43 +577,55 @@ BRH:0
 FNF:20
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Metrics/SimulationStats.cs
-FN:6,System.Double SimEngine.Metrics.SimulationStats::get_TotalSimulationTime()
+SF:/home/vorherre/Documents/AQL/Engine/Library/Metrics/SimulationStats.cs
+FN:7,System.Double SimEngine.Metrics.SimulationStats::get_TotalSimulationTime()
 FNDA:0,System.Double SimEngine.Metrics.SimulationStats::get_TotalSimulationTime()
-DA:7,0
-FN:7,System.Int32 SimEngine.Metrics.SimulationStats::get_TotalEntitiesCreated()
-FNDA:0,System.Int32 SimEngine.Metrics.SimulationStats::get_TotalEntitiesCreated()
 DA:8,0
-FN:8,System.Collections.Generic.List`1<SimEngine.Metrics.NetworkRuntimeStats> SimEngine.Metrics.SimulationStats::get_NetworkStats()
-FNDA:0,System.Collections.Generic.List`1<SimEngine.Metrics.NetworkRuntimeStats> SimEngine.Metrics.SimulationStats::get_NetworkStats()
+FN:8,System.Int32 SimEngine.Metrics.SimulationStats::get_TotalEntitiesCreated()
+FNDA:0,System.Int32 SimEngine.Metrics.SimulationStats::get_TotalEntitiesCreated()
 DA:9,0
-FN:9,System.Collections.Generic.List`1<SimEngine.Metrics.QueueRuntimeStats> SimEngine.Metrics.SimulationStats::get_QueueStats()
-FNDA:0,System.Collections.Generic.List`1<SimEngine.Metrics.QueueRuntimeStats> SimEngine.Metrics.SimulationStats::get_QueueStats()
+FN:9,System.Collections.Generic.List`1<SimEngine.Metrics.NetworkRuntimeStats> SimEngine.Metrics.SimulationStats::get_NetworkStats()
+FNDA:0,System.Collections.Generic.List`1<SimEngine.Metrics.NetworkRuntimeStats> SimEngine.Metrics.SimulationStats::get_NetworkStats()
 DA:10,0
-FN:11,System.Void SimEngine.Metrics.SimulationStats::AddEntityCreated()
+FN:10,System.Collections.Generic.List`1<SimEngine.Metrics.QueueRuntimeStats> SimEngine.Metrics.SimulationStats::get_QueueStats()
+FNDA:0,System.Collections.Generic.List`1<SimEngine.Metrics.QueueRuntimeStats> SimEngine.Metrics.SimulationStats::get_QueueStats()
+DA:11,0
+FN:13,System.Void SimEngine.Metrics.SimulationStats::AddEntityCreated()
 FNDA:0,System.Void SimEngine.Metrics.SimulationStats::AddEntityCreated()
-DA:12,0
-FN:12,System.Void SimEngine.Metrics.SimulationStats::AddSimulationRunTime(System.Double)
+DA:14,0
+FN:16,System.Void SimEngine.Metrics.SimulationStats::AddSimulationRunTime(System.Double)
 FNDA:0,System.Void SimEngine.Metrics.SimulationStats::AddSimulationRunTime(System.Double)
-DA:13,0
-FN:14,System.Double SimEngine.Metrics.SimulationStats::get_ArrivalRate()
+DA:17,0
+DA:18,0
+DA:19,0
+DA:20,0
+FN:21,System.Collections.Generic.IReadOnlyList`1<System.Double> SimEngine.Metrics.SimulationStats::get_SimulationRunTimes()
+FNDA:0,System.Collections.Generic.IReadOnlyList`1<System.Double> SimEngine.Metrics.SimulationStats::get_SimulationRunTimes()
+DA:22,0
+FN:22,System.Int32 SimEngine.Metrics.SimulationStats::get_RunCount()
+FNDA:0,System.Int32 SimEngine.Metrics.SimulationStats::get_RunCount()
+DA:23,0
+FN:24,System.Double SimEngine.Metrics.SimulationStats::get_ArrivalRate()
 FNDA:0,System.Double SimEngine.Metrics.SimulationStats::get_ArrivalRate()
-DA:15,0
-BRDA:15,15,0,0
-BRDA:15,15,1,0
-FN:15,System.Double SimEngine.Metrics.SimulationStats::get_MeanInterarrivalTime()
+DA:25,0
+BRDA:25,15,0,0
+BRDA:25,15,1,0
+FN:25,System.Double SimEngine.Metrics.SimulationStats::get_MeanInterarrivalTime()
 FNDA:0,System.Double SimEngine.Metrics.SimulationStats::get_MeanInterarrivalTime()
-DA:16,0
-BRDA:16,15,0,0
-BRDA:16,15,1,0
-LF:8
+DA:26,0
+BRDA:26,15,0,0
+BRDA:26,15,1,0
+FN:11,System.Void SimEngine.Metrics.SimulationStats::.ctor()
+FNDA:0,System.Void SimEngine.Metrics.SimulationStats::.ctor()
+DA:12,0
+LF:14
 LH:0
 BRF:4
 BRH:0
-FNF:8
+FNF:11
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Core/Entity.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Core/Entity.cs
 FN:7,System.Double SimEngine.Core.Entity::get_ArrivalTime()
 FNDA:0,System.Double SimEngine.Core.Entity::get_ArrivalTime()
 DA:8,0
@@ -655,7 +667,7 @@ BRH:0
 FNF:10
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Core/Event.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Core/Event.cs
 FN:6,System.Double SimEngine.Core.Event::get_Time()
 FNDA:0,System.Double SimEngine.Core.Event::get_Time()
 DA:7,0
@@ -676,7 +688,7 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Core/Simulation.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Core/Simulation.cs
 FN:9,System.Double SimEngine.Core.Simulation::get_Now()
 FNDA:0,System.Double SimEngine.Core.Simulation::get_Now()
 DA:10,0
@@ -714,7 +726,7 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Engine/Library/Core/SimulationEngineAPI.cs
+SF:/home/vorherre/Documents/AQL/Engine/Library/Core/SimulationEngineAPI.cs
 FN:15,System.Random SimEngine.Core.SimulationEngineAPI::get_RandomGenerator()
 FNDA:0,System.Random SimEngine.Core.SimulationEngineAPI::get_RandomGenerator()
 DA:16,0
@@ -1011,7 +1023,7 @@ BRH:0
 FNF:20
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AQLBaseVisitor.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AQLBaseVisitor.cs
 FN:45,Result AQLBaseVisitor`1::VisitProgramEOF(AQLParser/ProgramEOFContext)
 FNDA:0,Result AQLBaseVisitor`1::VisitProgramEOF(AQLParser/ProgramEOFContext)
 DA:46,0
@@ -1226,7 +1238,7 @@ BRH:0
 FNF:69
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AQLLexer.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AQLLexer.cs
 FN:98,Antlr4.Runtime.IVocabulary AQLLexer::get_Vocabulary()
 FNDA:0,Antlr4.Runtime.IVocabulary AQLLexer::get_Vocabulary()
 DA:99,0
@@ -1464,7 +1476,7 @@ BRH:2
 FNF:9
 FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AQLParser.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AQLParser.cs
 FN:111,Antlr4.Runtime.IVocabulary AQLParser::get_Vocabulary()
 FNDA:1,Antlr4.Runtime.IVocabulary AQLParser::get_Vocabulary()
 DA:112,1
@@ -6160,7 +6172,7 @@ BRH:136
 FNF:428
 FNH:156
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Program.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Program.cs
 FN:14,System.Void Program::<Main>$(System.String[])
 FNDA:0,System.Void Program::<Main>$(System.String[])
 DA:15,0
@@ -6213,7 +6225,7 @@ BRH:0
 FNF:1
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Visitors/ASTAQLVisitor.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Visitors/ASTAQLVisitor.cs
 FN:22,Interpreter.AST.Nodes.NonTerminals.ProgramNode Interpreter.Visitors.ASTAQLVisitor::VisitProgramEOF(AQLParser/ProgramEOFContext)
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.ProgramNode Interpreter.Visitors.ASTAQLVisitor::VisitProgramEOF(AQLParser/ProgramEOFContext)
 DA:23,0
@@ -7407,7 +7419,7 @@ BRH:0
 FNF:60
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Utilities/SemanticError.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Utilities/SemanticError.cs
 FN:6,System.String Interpreter.Utilities.SemanticError::get_Message()
 FNDA:0,System.String Interpreter.Utilities.SemanticError::get_Message()
 DA:7,0
@@ -7437,7 +7449,7 @@ BRH:0
 FNF:5
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Utilities/Modules/ModuleContext.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Utilities/Modules/ModuleContext.cs
 FN:8,System.String Interpreter.Utilities.Modules.ModuleContext::get_ModuleName()
 FNDA:0,System.String Interpreter.Utilities.Modules.ModuleContext::get_ModuleName()
 DA:9,0
@@ -7516,7 +7528,7 @@ BRH:0
 FNF:9
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Utilities/Modules/ModuleLoader.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Utilities/Modules/ModuleLoader.cs
 FN:18,Interpreter.AST.Nodes.NonTerminals.ProgramNode Interpreter.Utilities.Modules.ModuleLoader::LoadModuleByPath(System.String)
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.ProgramNode Interpreter.Utilities.Modules.ModuleLoader::LoadModuleByPath(System.String)
 DA:19,0
@@ -7562,7 +7574,7 @@ BRH:1
 FNF:2
 FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Utilities/Modules/ModuleResolver.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Utilities/Modules/ModuleResolver.cs
 FN:9,System.Lazy`1<System.Collections.Generic.List`1<System.String>> Interpreter.Utilities.Modules.ModuleResolver::get_SearchPaths()
 FNDA:1,System.Lazy`1<System.Collections.Generic.List`1<System.String>> Interpreter.Utilities.Modules.ModuleResolver::get_SearchPaths()
 DA:10,1
@@ -7617,55 +7629,55 @@ BRH:9
 FNF:3
 FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/FunctionStateTuple.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/FunctionStateTuple.cs
 FN:8,Interpreter.AST.Nodes.Definitions.FunctionNode Interpreter.SemanticAnalysis.FunctionStateTuple::get_Function()
-FNDA:0,Interpreter.AST.Nodes.Definitions.FunctionNode Interpreter.SemanticAnalysis.FunctionStateTuple::get_Function()
-DA:9,0
+FNDA:4,Interpreter.AST.Nodes.Definitions.FunctionNode Interpreter.SemanticAnalysis.FunctionStateTuple::get_Function()
+DA:9,4
 FN:9,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.FunctionStateTuple::get_VariableState()
-FNDA:0,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.FunctionStateTuple::get_VariableState()
-DA:10,0
+FNDA:2,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.FunctionStateTuple::get_VariableState()
+DA:10,2
 LF:2
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:2
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/InterpretationEnvironment.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/InterpretationEnvironment.cs
 FN:10,System.Boolean Interpreter.SemanticAnalysis.InterpretationEnvironment::get_EncounteredError()
 FNDA:1,System.Boolean Interpreter.SemanticAnalysis.InterpretationEnvironment::get_EncounteredError()
 DA:11,1
 FN:12,System.String Interpreter.SemanticAnalysis.InterpretationEnvironment::get_ErrorMessage()
-FNDA:0,System.String Interpreter.SemanticAnalysis.InterpretationEnvironment::get_ErrorMessage()
-DA:13,0
+FNDA:1,System.String Interpreter.SemanticAnalysis.InterpretationEnvironment::get_ErrorMessage()
+DA:13,1
 FN:14,Interpreter.SemanticAnalysis.Table`1<Interpreter.SemanticAnalysis.FunctionStateTuple> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_FunctionState()
-FNDA:0,Interpreter.SemanticAnalysis.Table`1<Interpreter.SemanticAnalysis.FunctionStateTuple> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_FunctionState()
-DA:15,0
+FNDA:4,Interpreter.SemanticAnalysis.Table`1<Interpreter.SemanticAnalysis.FunctionStateTuple> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_FunctionState()
+DA:15,4
 FN:16,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_VariableState()
-FNDA:0,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_VariableState()
-DA:17,0
+FNDA:5,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_VariableState()
+DA:17,5
 FN:18,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Networks.NetworkDeclarationNode> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_NetworkState()
-FNDA:0,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Networks.NetworkDeclarationNode> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_NetworkState()
-DA:19,0
+FNDA:1,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Networks.NetworkDeclarationNode> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_NetworkState()
+DA:19,1
 FN:20,Interpreter.SemanticAnalysis.QueueableManager Interpreter.SemanticAnalysis.InterpretationEnvironment::get_QueueableManager()
-FNDA:0,Interpreter.SemanticAnalysis.QueueableManager Interpreter.SemanticAnalysis.InterpretationEnvironment::get_QueueableManager()
-DA:21,0
+FNDA:6,Interpreter.SemanticAnalysis.QueueableManager Interpreter.SemanticAnalysis.InterpretationEnvironment::get_QueueableManager()
+DA:21,6
 FN:23,Interpreter.SemanticAnalysis.Table`1<Interpreter.SemanticAnalysis.InterpretationEnvironment> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_ModuleDependencies()
 FNDA:0,Interpreter.SemanticAnalysis.Table`1<Interpreter.SemanticAnalysis.InterpretationEnvironment> Interpreter.SemanticAnalysis.InterpretationEnvironment::get_ModuleDependencies()
 DA:24,0
 FN:28,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpretationEnvironment::Empty(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
-FNDA:1,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpretationEnvironment::Empty(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
-DA:29,1
-DA:30,1
-DA:31,1
-DA:32,1
-DA:33,1
-DA:34,1
-DA:35,1
-DA:36,1
-DA:37,1
-DA:38,1
-DA:39,1
+FNDA:20,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpretationEnvironment::Empty(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
+DA:29,20
+DA:30,20
+DA:31,20
+DA:32,20
+DA:33,20
+DA:34,20
+DA:35,20
+DA:36,20
+DA:37,20
+DA:38,20
+DA:39,20
 FN:41,System.Void Interpreter.SemanticAnalysis.InterpretationEnvironment::SetError(System.String)
 FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpretationEnvironment::SetError(System.String)
 DA:42,1
@@ -7673,13 +7685,13 @@ DA:43,1
 DA:44,1
 DA:45,1
 LF:22
-LH:16
+LH:21
 BRF:0
 BRH:0
 FNF:9
-FNH:3
+FNH:8
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/InterpretationException.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/InterpretationException.cs
 FN:5,System.Void Interpreter.SemanticAnalysis.InterpretationException::.ctor(System.String)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpretationException::.ctor(System.String)
 DA:6,0
@@ -7690,60 +7702,62 @@ BRH:0
 FNF:1
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/InterpreterClass.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/InterpreterClass.cs
 FN:19,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpreterClass::get_GlobalEnvironment()
-FNDA:1,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpreterClass::get_GlobalEnvironment()
-DA:20,1
+FNDA:4,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpreterClass::get_GlobalEnvironment()
+DA:20,4
 FN:22,Interpreter.SemanticAnalysis.Table`1<Interpreter.SemanticAnalysis.FunctionStateTuple> Interpreter.SemanticAnalysis.InterpreterClass::get_FunctionState()
-FNDA:0,Interpreter.SemanticAnalysis.Table`1<Interpreter.SemanticAnalysis.FunctionStateTuple> Interpreter.SemanticAnalysis.InterpreterClass::get_FunctionState()
-DA:23,0
+FNDA:1,Interpreter.SemanticAnalysis.Table`1<Interpreter.SemanticAnalysis.FunctionStateTuple> Interpreter.SemanticAnalysis.InterpreterClass::get_FunctionState()
+DA:23,1
 FN:23,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.InterpreterClass::get_VariableState()
-FNDA:0,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.InterpreterClass::get_VariableState()
-DA:24,0
+FNDA:4,Interpreter.SemanticAnalysis.Table`1<System.Object> Interpreter.SemanticAnalysis.InterpreterClass::get_VariableState()
+DA:24,4
 FN:24,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Networks.NetworkDeclarationNode> Interpreter.SemanticAnalysis.InterpreterClass::get_NetworkState()
-FNDA:0,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Networks.NetworkDeclarationNode> Interpreter.SemanticAnalysis.InterpreterClass::get_NetworkState()
-DA:25,0
-FN:26,Interpreter.SemanticAnalysis.QueueableManager Interpreter.SemanticAnalysis.InterpreterClass::get_QueueableManager()
-FNDA:0,Interpreter.SemanticAnalysis.QueueableManager Interpreter.SemanticAnalysis.InterpreterClass::get_QueueableManager()
-DA:27,0
-FN:29,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpreterClass::StartInterpretation()
+FNDA:1,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Networks.NetworkDeclarationNode> Interpreter.SemanticAnalysis.InterpreterClass::get_NetworkState()
+DA:25,1
+FN:25,SimEngine.Core.SimulationEngineAPI Interpreter.SemanticAnalysis.InterpreterClass::get_LastEngine()
+FNDA:0,SimEngine.Core.SimulationEngineAPI Interpreter.SemanticAnalysis.InterpreterClass::get_LastEngine()
+DA:26,0
+FN:27,Interpreter.SemanticAnalysis.QueueableManager Interpreter.SemanticAnalysis.InterpreterClass::get_QueueableManager()
+FNDA:6,Interpreter.SemanticAnalysis.QueueableManager Interpreter.SemanticAnalysis.InterpreterClass::get_QueueableManager()
+DA:28,6
+FN:30,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpreterClass::StartInterpretation()
 FNDA:1,Interpreter.SemanticAnalysis.InterpretationEnvironment Interpreter.SemanticAnalysis.InterpreterClass::StartInterpretation()
-DA:30,1
-DA:32,1
+DA:31,1
 DA:33,1
-DA:34,0
-DA:35,1
+DA:34,1
+DA:35,0
 DA:36,1
 DA:37,1
 DA:38,1
-DA:40,1
+DA:39,1
 DA:41,1
-FN:43,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretProgram(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
+DA:42,1
+FN:44,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretProgram(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
 FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretProgram(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
-DA:44,1
 DA:45,1
 DA:46,1
 DA:47,1
-DA:48,0
+DA:48,1
 DA:49,0
 DA:50,0
 DA:51,0
 DA:52,0
-DA:54,0
-BRDA:45,14,0,1
-BRDA:45,14,1,0
-BRDA:49,41,0,0
-BRDA:49,41,1,0
-FN:57,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretImport(Interpreter.AST.Nodes.Programs.ImportNode)
+DA:53,0
+DA:55,0
+BRDA:46,14,0,1
+BRDA:46,14,1,0
+BRDA:50,41,0,0
+BRDA:50,41,1,0
+FN:58,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretImport(Interpreter.AST.Nodes.Programs.ImportNode)
 FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretImport(Interpreter.AST.Nodes.Programs.ImportNode)
-DA:58,1
 DA:59,1
-DA:60,0
+DA:60,1
 DA:61,0
 DA:62,0
-FN:64,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretDefinition(Interpreter.AST.Nodes.NonTerminals.DefinitionNode)
+DA:63,0
+FN:65,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretDefinition(Interpreter.AST.Nodes.NonTerminals.DefinitionNode)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretDefinition(Interpreter.AST.Nodes.NonTerminals.DefinitionNode)
-DA:65,0
 DA:66,0
 DA:67,0
 DA:68,0
@@ -7752,14 +7766,14 @@ DA:70,0
 DA:71,0
 DA:72,0
 DA:73,0
-DA:75,0
-BRDA:66,14,0,0
-BRDA:66,14,1,0
-BRDA:70,41,0,0
-BRDA:70,41,1,0
-FN:78,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretDefinitionComposition(Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode)
+DA:74,0
+DA:76,0
+BRDA:67,14,0,0
+BRDA:67,14,1,0
+BRDA:71,41,0,0
+BRDA:71,41,1,0
+FN:79,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretDefinitionComposition(Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretDefinitionComposition(Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode)
-DA:79,0
 DA:80,0
 DA:81,0
 DA:82,0
@@ -7772,61 +7786,61 @@ DA:88,0
 DA:89,0
 DA:90,0
 DA:91,0
-DA:93,0
+DA:92,0
 DA:94,0
 DA:95,0
 DA:96,0
 DA:97,0
-BRDA:80,14,0,0
-BRDA:80,14,1,0
-BRDA:84,41,0,0
-BRDA:84,41,1,0
-BRDA:88,72,0,0
-BRDA:88,72,1,0
-BRDA:93,106,0,0
-BRDA:93,106,1,0
-FN:99,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretFunctionDeclaration(Interpreter.AST.Nodes.Definitions.FunctionNode)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretFunctionDeclaration(Interpreter.AST.Nodes.Definitions.FunctionNode)
-DA:100,0
-DA:101,0
-DA:102,0
-DA:103,0
-FN:105,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretConstDeclaration(Interpreter.AST.Nodes.Definitions.ConstDeclarationNode)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretConstDeclaration(Interpreter.AST.Nodes.Definitions.ConstDeclarationNode)
-DA:106,0
-DA:107,0
-DA:108,0
-DA:109,0
-FN:112,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretStatement(Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretStatement(Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:113,0
-DA:114,0
-DA:115,0
-DA:116,0
-DA:117,0
-DA:118,0
+DA:98,0
+BRDA:81,14,0,0
+BRDA:81,14,1,0
+BRDA:85,41,0,0
+BRDA:85,41,1,0
+BRDA:89,72,0,0
+BRDA:89,72,1,0
+BRDA:94,106,0,0
+BRDA:94,106,1,0
+FN:100,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretFunctionDeclaration(Interpreter.AST.Nodes.Definitions.FunctionNode)
+FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretFunctionDeclaration(Interpreter.AST.Nodes.Definitions.FunctionNode)
+DA:101,1
+DA:102,1
+DA:103,1
+DA:104,1
+FN:106,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretConstDeclaration(Interpreter.AST.Nodes.Definitions.ConstDeclarationNode)
+FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretConstDeclaration(Interpreter.AST.Nodes.Definitions.ConstDeclarationNode)
+DA:107,1
+DA:108,1
+DA:109,1
+DA:110,1
+FN:113,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretStatement(Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:6,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretStatement(Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:114,6
+DA:115,6
+DA:116,6
+DA:117,3
+DA:118,3
 DA:119,0
 DA:120,0
-DA:121,0
-BRDA:114,13,0,0
-BRDA:114,23,0,0
-BRDA:114,13,1,0
-BRDA:114,23,1,0
-BRDA:114,31,1,0
-BRDA:114,31,0,0
-FN:123,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretCompositionStatement(Interpreter.AST.Nodes.Statements.StatementCompositionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretCompositionStatement(Interpreter.AST.Nodes.Statements.StatementCompositionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:124,0
-DA:126,0
-DA:127,0
-DA:128,0
+DA:121,6
+DA:122,6
+BRDA:115,13,0,3
+BRDA:115,23,0,0
+BRDA:115,13,1,3
+BRDA:115,23,1,3
+BRDA:115,31,1,0
+BRDA:115,31,0,0
+FN:124,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretCompositionStatement(Interpreter.AST.Nodes.Statements.StatementCompositionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:3,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretCompositionStatement(Interpreter.AST.Nodes.Statements.StatementCompositionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:125,3
+DA:127,3
+DA:128,3
 DA:129,0
 DA:130,0
 DA:131,0
-DA:132,0
-DA:133,0
-DA:134,0
-DA:135,0
+DA:132,3
+DA:133,3
+DA:134,3
+DA:135,3
 DA:136,0
 DA:137,0
 DA:138,0
@@ -7834,67 +7848,67 @@ DA:139,0
 DA:140,0
 DA:141,0
 DA:142,0
-DA:144,0
-DA:145,0
+DA:143,0
+DA:145,3
 DA:146,0
-DA:149,0
-DA:150,0
+DA:147,0
+DA:150,3
 DA:151,0
-DA:153,0
-DA:154,0
-BRDA:127,16,0,0
-BRDA:127,16,1,0
-BRDA:131,46,0,0
-BRDA:131,46,1,0
-BRDA:135,78,0,0
-BRDA:135,78,1,0
-BRDA:139,111,0,0
-BRDA:139,111,1,0
-BRDA:144,133,0,0
-BRDA:144,133,1,0
-BRDA:149,157,0,0
-BRDA:149,157,1,0
-FN:156,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretVariableDeclaration(Interpreter.AST.Nodes.Statements.VariableDeclarationNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretVariableDeclaration(Interpreter.AST.Nodes.Statements.VariableDeclarationNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:157,0
-DA:158,0
-DA:159,0
-DA:160,0
-FN:162,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretAssignment(Interpreter.AST.Nodes.Statements.AssignNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretAssignment(Interpreter.AST.Nodes.Statements.AssignNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:163,0
-DA:164,0
-DA:165,0
-DA:166,0
-FN:168,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretIfElseNode(Interpreter.AST.Nodes.Statements.IfElseNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretIfElseNode(Interpreter.AST.Nodes.Statements.IfElseNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:169,0
-DA:170,0
-DA:172,0
-DA:173,0
-DA:174,0
-DA:175,0
-BRDA:172,21,0,0
-BRDA:172,21,1,0
-FN:177,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretWhileNode(Interpreter.AST.Nodes.Statements.WhileNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretWhileNode(Interpreter.AST.Nodes.Statements.WhileNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:178,0
-DA:180,0
-DA:181,0
-DA:182,0
-DA:183,0
-DA:184,0
+DA:152,0
+DA:154,3
+DA:155,3
+BRDA:128,16,0,0
+BRDA:128,16,1,3
+BRDA:132,46,0,3
+BRDA:132,46,1,0
+BRDA:136,78,0,0
+BRDA:136,78,1,0
+BRDA:140,111,0,0
+BRDA:140,111,1,3
+BRDA:145,133,0,0
+BRDA:145,133,1,3
+BRDA:150,157,0,0
+BRDA:150,157,1,3
+FN:157,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretVariableDeclaration(Interpreter.AST.Nodes.Statements.VariableDeclarationNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretVariableDeclaration(Interpreter.AST.Nodes.Statements.VariableDeclarationNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:158,1
+DA:159,1
+DA:160,1
+DA:161,1
+FN:163,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretAssignment(Interpreter.AST.Nodes.Statements.AssignNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:4,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretAssignment(Interpreter.AST.Nodes.Statements.AssignNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:164,4
+DA:165,4
+DA:166,4
+DA:167,4
+FN:169,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretIfElseNode(Interpreter.AST.Nodes.Statements.IfElseNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:2,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretIfElseNode(Interpreter.AST.Nodes.Statements.IfElseNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:170,2
+DA:171,2
+DA:173,2
+DA:174,2
+DA:175,2
+DA:176,2
+BRDA:173,21,0,1
+BRDA:173,21,1,1
+FN:178,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretWhileNode(Interpreter.AST.Nodes.Statements.WhileNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretWhileNode(Interpreter.AST.Nodes.Statements.WhileNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:179,1
+DA:181,4
+DA:182,3
+DA:183,3
+DA:184,3
 DA:185,0
-DA:187,0
-DA:189,0
-DA:190,0
-BRDA:180,52,1,0
-BRDA:183,24,0,0
-BRDA:183,24,1,0
-BRDA:180,52,0,0
-FN:192,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetwork(Interpreter.AST.Nodes.NonTerminals.NetworkNode)
+DA:186,0
+DA:188,3
+DA:190,1
+DA:191,1
+BRDA:181,52,1,3
+BRDA:184,24,0,0
+BRDA:184,24,1,3
+BRDA:181,52,0,1
+FN:193,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetwork(Interpreter.AST.Nodes.NonTerminals.NetworkNode)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetwork(Interpreter.AST.Nodes.NonTerminals.NetworkNode)
-DA:193,0
 DA:194,0
 DA:195,0
 DA:196,0
@@ -7903,82 +7917,82 @@ DA:198,0
 DA:199,0
 DA:200,0
 DA:201,0
-DA:203,0
-BRDA:194,14,0,0
-BRDA:194,14,1,0
-BRDA:198,41,0,0
-BRDA:198,41,1,0
-FN:206,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretQueueDeclaration(Interpreter.AST.Nodes.Networks.QueueDeclarationNode)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretQueueDeclaration(Interpreter.AST.Nodes.Networks.QueueDeclarationNode)
-DA:207,0
-DA:208,0
-DA:209,0
-DA:211,0
-DA:213,0
-DA:214,0
-DA:215,0
-DA:216,0
-DA:217,0
-DA:218,0
-DA:219,0
-DA:221,0
-DA:223,0
-DA:224,0
-DA:225,0
-DA:226,0
-DA:227,0
-DA:228,0
-DA:229,0
-DA:230,0
-DA:231,0
-DA:232,0
-FN:234,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetworkDeclaration(Interpreter.AST.Nodes.Networks.NetworkDeclarationNode)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetworkDeclaration(Interpreter.AST.Nodes.Networks.NetworkDeclarationNode)
-DA:235,0
-DA:236,0
-DA:238,0
-DA:239,0
-DA:241,0
-DA:243,0
-DA:244,0
-DA:245,0
+DA:202,0
+DA:204,0
+BRDA:195,14,0,0
+BRDA:195,14,1,0
+BRDA:199,41,0,0
+BRDA:199,41,1,0
+FN:207,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretQueueDeclaration(Interpreter.AST.Nodes.Networks.QueueDeclarationNode)
+FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretQueueDeclaration(Interpreter.AST.Nodes.Networks.QueueDeclarationNode)
+DA:208,1
+DA:209,1
+DA:210,1
+DA:212,1
+DA:214,1
+DA:215,1
+DA:216,1
+DA:217,1
+DA:218,1
+DA:219,1
+DA:220,1
+DA:222,1
+DA:224,1
+DA:225,1
+DA:226,1
+DA:227,1
+DA:228,1
+DA:229,1
+DA:230,1
+DA:231,1
+DA:232,1
+DA:233,1
+FN:235,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetworkDeclaration(Interpreter.AST.Nodes.Networks.NetworkDeclarationNode)
+FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetworkDeclaration(Interpreter.AST.Nodes.Networks.NetworkDeclarationNode)
+DA:236,1
+DA:237,1
+DA:239,1
+DA:240,1
+DA:242,1
+DA:244,1
+DA:245,3
 DA:246,0
 DA:247,0
-DA:249,0
-DA:250,0
-DA:251,0
-DA:252,0
-DA:253,0
-DA:254,0
-DA:255,0
-DA:256,0
-DA:257,0
-DA:258,0
-BRDA:244,181,1,0
-BRDA:244,181,0,0
-FN:260,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretSimulate(Interpreter.AST.Nodes.Definitions.SimulateNode)
+DA:248,0
+DA:250,1
+DA:251,1
+DA:252,1
+DA:253,1
+DA:254,1
+DA:255,1
+DA:256,1
+DA:257,1
+DA:258,1
+DA:259,1
+BRDA:245,181,1,0
+BRDA:245,181,0,1
+FN:261,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretSimulate(Interpreter.AST.Nodes.Definitions.SimulateNode)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::InterpretSimulate(Interpreter.AST.Nodes.Definitions.SimulateNode)
-DA:261,0
 DA:262,0
 DA:263,0
-DA:265,0
+DA:264,0
 DA:266,0
-DA:268,0
-DA:270,0
+DA:267,0
+DA:269,0
 DA:271,0
-DA:273,0
+DA:272,0
 DA:274,0
 DA:275,0
 DA:276,0
-DA:278,0
-DA:280,0
+DA:277,0
+DA:279,0
 DA:281,0
 DA:282,0
-BRDA:273,115,0,0
-BRDA:273,115,1,0
-FN:284,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueableInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Queueable,System.String)
+DA:283,0
+BRDA:274,115,0,0
+BRDA:274,115,1,0
+FN:285,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueableInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Queueable,System.String)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueableInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Queueable,System.String)
-DA:285,0
 DA:286,0
 DA:287,0
 DA:288,0
@@ -7989,13 +8003,13 @@ DA:292,0
 DA:293,0
 DA:294,0
 DA:295,0
-BRDA:287,63,0,0
-BRDA:287,63,1,0
-BRDA:291,95,0,0
-BRDA:291,95,1,0
-FN:297,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Queue,System.String)
+DA:296,0
+BRDA:288,63,0,0
+BRDA:288,63,1,0
+BRDA:292,95,0,0
+BRDA:292,95,1,0
+FN:298,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Queue,System.String)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Queue,System.String)
-DA:298,0
 DA:299,0
 DA:300,0
 DA:301,0
@@ -8003,9 +8017,9 @@ DA:302,0
 DA:303,0
 DA:304,0
 DA:305,0
-FN:307,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateNetworkInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Network,System.String)
+DA:306,0
+FN:308,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateNetworkInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Network,System.String)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateNetworkInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Network,System.String)
-DA:308,0
 DA:309,0
 DA:310,0
 DA:311,0
@@ -8018,24 +8032,24 @@ DA:317,0
 DA:318,0
 DA:319,0
 DA:320,0
-DA:322,0
+DA:321,0
 DA:323,0
 DA:324,0
 DA:325,0
 DA:326,0
 DA:327,0
 DA:328,0
-BRDA:309,40,1,0
-BRDA:309,40,0,0
-BRDA:313,96,1,0
-BRDA:313,96,0,0
-BRDA:317,156,1,0
-BRDA:317,156,0,0
-BRDA:323,225,1,0
-BRDA:323,225,0,0
-FN:330,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Route,System.String,System.Int32)
+DA:329,0
+BRDA:310,40,1,0
+BRDA:310,40,0,0
+BRDA:314,96,1,0
+BRDA:314,96,0,0
+BRDA:318,156,1,0
+BRDA:318,156,0,0
+BRDA:324,225,1,0
+BRDA:324,225,0,0
+FN:331,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Route,System.String,System.Int32)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.Route,System.String,System.Int32)
-DA:331,0
 DA:332,0
 DA:333,0
 DA:334,0
@@ -8045,347 +8059,347 @@ DA:337,0
 DA:338,0
 DA:339,0
 DA:340,0
-BRDA:332,14,0,0
-BRDA:332,14,1,0
-BRDA:336,44,0,0
-BRDA:336,44,1,0
-FN:342,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateFunctionRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.FuncRoute,System.String,System.Int32)
+DA:341,0
+BRDA:333,14,0,0
+BRDA:333,14,1,0
+BRDA:337,44,0,0
+BRDA:337,44,1,0
+FN:343,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateFunctionRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.FuncRoute,System.String,System.Int32)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateFunctionRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.FuncRoute,System.String,System.Int32)
-DA:343,0
 DA:344,0
 DA:345,0
 DA:346,0
 DA:347,0
 DA:348,0
 DA:349,0
-DA:352,0
+DA:350,0
 DA:353,0
 DA:354,0
-FN:356,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.QueueRoute,System.String)
+DA:355,0
+FN:357,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.QueueRoute,System.String)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.InterpreterClass::CreateQueueRouteInEngine(SimEngine.Core.SimulationEngineAPI,Interpreter.SemanticAnalysis.QueueRoute,System.String)
-DA:357,0
-DA:359,0
+DA:358,0
 DA:360,0
-DA:362,0
+DA:361,0
 DA:363,0
-FN:365,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretExpression(Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretExpression(Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:366,0
-DA:367,0
-DA:368,0
-DA:369,0
-DA:370,0
+DA:364,0
+FN:366,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretExpression(Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:47,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretExpression(Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:367,47
+DA:368,47
+DA:369,47
+DA:370,8
 DA:371,0
 DA:372,0
 DA:373,0
-DA:374,0
-DA:375,0
+DA:374,3
+DA:375,4
 DA:376,0
 DA:377,0
 DA:378,0
-DA:379,0
-DA:380,0
+DA:379,5
+DA:380,27
 DA:381,0
 DA:382,0
 DA:383,0
 DA:384,0
 DA:385,0
 DA:386,0
-DA:387,0
-BRDA:367,13,0,0
-BRDA:367,26,0,0
-BRDA:367,39,0,0
-BRDA:367,52,0,0
-BRDA:367,67,0,0
-BRDA:367,82,0,0
-BRDA:367,97,0,0
-BRDA:367,112,0,0
-BRDA:367,127,0,0
-BRDA:367,142,0,0
-BRDA:367,157,0,0
-BRDA:367,172,0,0
-BRDA:367,187,0,0
-BRDA:367,202,0,0
-BRDA:367,217,0,0
-BRDA:367,13,1,0
-BRDA:367,26,1,0
-BRDA:367,39,1,0
-BRDA:367,52,1,0
-BRDA:367,67,1,0
-BRDA:367,82,1,0
-BRDA:367,97,1,0
-BRDA:367,112,1,0
-BRDA:367,127,1,0
-BRDA:367,142,1,0
-BRDA:367,157,1,0
-BRDA:367,172,1,0
-BRDA:367,187,1,0
-BRDA:367,202,1,0
-BRDA:367,217,1,0
-BRDA:367,232,1,0
-BRDA:367,232,0,0
-FN:389,System.Double Interpreter.SemanticAnalysis.InterpreterClass::InterpretNegativeNode(Interpreter.AST.Nodes.Expressions.NegativeNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Double Interpreter.SemanticAnalysis.InterpreterClass::InterpretNegativeNode(Interpreter.AST.Nodes.Expressions.NegativeNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:390,0
-DA:391,0
-DA:393,0
-DA:394,0
-DA:395,0
-DA:396,0
+DA:387,47
+DA:388,47
+BRDA:368,13,0,39
+BRDA:368,26,0,39
+BRDA:368,39,0,39
+BRDA:368,52,0,39
+BRDA:368,67,0,36
+BRDA:368,82,0,32
+BRDA:368,97,0,32
+BRDA:368,112,0,32
+BRDA:368,127,0,32
+BRDA:368,142,0,27
+BRDA:368,157,0,0
+BRDA:368,172,0,0
+BRDA:368,187,0,0
+BRDA:368,202,0,0
+BRDA:368,217,0,0
+BRDA:368,13,1,8
+BRDA:368,26,1,0
+BRDA:368,39,1,0
+BRDA:368,52,1,0
+BRDA:368,67,1,3
+BRDA:368,82,1,4
+BRDA:368,97,1,0
+BRDA:368,112,1,0
+BRDA:368,127,1,0
+BRDA:368,142,1,5
+BRDA:368,157,1,27
+BRDA:368,172,1,0
+BRDA:368,187,1,0
+BRDA:368,202,1,0
+BRDA:368,217,1,0
+BRDA:368,232,1,0
+BRDA:368,232,0,0
+FN:390,System.Double Interpreter.SemanticAnalysis.InterpreterClass::InterpretNegativeNode(Interpreter.AST.Nodes.Expressions.NegativeNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Double Interpreter.SemanticAnalysis.InterpreterClass::InterpretNegativeNode(Interpreter.AST.Nodes.Expressions.NegativeNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:391,1
+DA:392,1
+DA:394,1
+DA:395,1
+DA:396,1
 DA:397,0
 DA:398,0
-DA:399,0
-BRDA:393,25,0,0
-BRDA:393,25,1,0
-BRDA:393,42,0,0
-BRDA:393,42,1,0
-FN:401,System.Double Interpreter.SemanticAnalysis.InterpreterClass::InterpretMultiplyNode(Interpreter.AST.Nodes.Expressions.MultiplyNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Double Interpreter.SemanticAnalysis.InterpreterClass::InterpretMultiplyNode(Interpreter.AST.Nodes.Expressions.MultiplyNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:402,0
-DA:403,0
-DA:404,0
-DA:406,0
-DA:407,0
-DA:408,0
-DA:409,0
+DA:399,1
+DA:400,1
+BRDA:394,25,0,1
+BRDA:394,25,1,0
+BRDA:394,42,0,0
+BRDA:394,42,1,0
+FN:402,System.Double Interpreter.SemanticAnalysis.InterpreterClass::InterpretMultiplyNode(Interpreter.AST.Nodes.Expressions.MultiplyNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Double Interpreter.SemanticAnalysis.InterpreterClass::InterpretMultiplyNode(Interpreter.AST.Nodes.Expressions.MultiplyNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:403,1
+DA:404,1
+DA:405,1
+DA:407,1
+DA:408,1
+DA:409,1
 DA:410,0
 DA:411,0
 DA:412,0
 DA:413,0
-DA:414,0
-BRDA:406,39,0,0
-BRDA:406,54,0,0
-BRDA:406,54,1,0
-BRDA:406,71,0,0
-BRDA:406,39,1,0
-BRDA:406,89,0,0
-BRDA:406,105,0,0
-BRDA:406,105,1,0
-BRDA:406,122,0,0
-BRDA:406,71,1,0
-BRDA:406,89,1,0
-BRDA:406,122,1,0
-FN:416,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretDivisionNode(Interpreter.AST.Nodes.Expressions.DivisionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretDivisionNode(Interpreter.AST.Nodes.Expressions.DivisionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:417,0
-DA:418,0
-DA:419,0
-DA:421,0
-DA:422,0
-DA:423,0
-DA:424,0
+DA:414,1
+DA:415,1
+BRDA:407,39,0,1
+BRDA:407,54,0,1
+BRDA:407,54,1,0
+BRDA:407,71,0,0
+BRDA:407,39,1,0
+BRDA:407,89,0,0
+BRDA:407,105,0,0
+BRDA:407,105,1,0
+BRDA:407,122,0,0
+BRDA:407,71,1,0
+BRDA:407,89,1,0
+BRDA:407,122,1,0
+FN:417,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretDivisionNode(Interpreter.AST.Nodes.Expressions.DivisionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretDivisionNode(Interpreter.AST.Nodes.Expressions.DivisionNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:418,1
+DA:419,1
+DA:420,1
+DA:422,1
+DA:423,1
+DA:424,1
 DA:425,0
 DA:426,0
 DA:427,0
 DA:428,0
-DA:429,0
-BRDA:421,39,0,0
-BRDA:421,54,0,0
-BRDA:421,54,1,0
-BRDA:421,71,0,0
-BRDA:421,39,1,0
-BRDA:421,89,0,0
-BRDA:421,105,0,0
-BRDA:421,105,1,0
-BRDA:421,122,0,0
-BRDA:421,71,1,0
-BRDA:421,89,1,0
-BRDA:421,122,1,0
-FN:431,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretAddNode(Interpreter.AST.Nodes.Expressions.AddNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretAddNode(Interpreter.AST.Nodes.Expressions.AddNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:432,0
-DA:433,0
-DA:434,0
-DA:436,0
-DA:437,0
-DA:438,0
-DA:439,0
+DA:429,1
+DA:430,1
+BRDA:422,39,0,1
+BRDA:422,54,0,1
+BRDA:422,54,1,0
+BRDA:422,71,0,0
+BRDA:422,39,1,0
+BRDA:422,89,0,0
+BRDA:422,105,0,0
+BRDA:422,105,1,0
+BRDA:422,122,0,0
+BRDA:422,71,1,0
+BRDA:422,89,1,0
+BRDA:422,122,1,0
+FN:432,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretAddNode(Interpreter.AST.Nodes.Expressions.AddNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:4,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretAddNode(Interpreter.AST.Nodes.Expressions.AddNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:433,4
+DA:434,4
+DA:435,4
+DA:437,4
+DA:438,4
+DA:439,2
 DA:440,0
-DA:441,0
+DA:441,2
 DA:442,0
 DA:443,0
-DA:444,0
-BRDA:436,39,0,0
-BRDA:436,54,0,0
-BRDA:436,54,1,0
-BRDA:436,71,0,0
-BRDA:436,39,1,0
-BRDA:436,89,0,0
-BRDA:436,105,0,0
-BRDA:436,105,1,0
-BRDA:436,122,0,0
-BRDA:436,71,1,0
-BRDA:436,89,1,0
-BRDA:436,122,1,0
-FN:446,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretLessThanNode(Interpreter.AST.Nodes.Expressions.LessThanNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretLessThanNode(Interpreter.AST.Nodes.Expressions.LessThanNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:447,0
-DA:448,0
-DA:449,0
-DA:451,0
-DA:452,0
-DA:453,0
-DA:454,0
+DA:444,4
+DA:445,4
+BRDA:437,39,0,2
+BRDA:437,54,0,2
+BRDA:437,54,1,0
+BRDA:437,71,0,0
+BRDA:437,39,1,2
+BRDA:437,89,0,2
+BRDA:437,105,0,2
+BRDA:437,105,1,0
+BRDA:437,122,0,0
+BRDA:437,71,1,0
+BRDA:437,89,1,0
+BRDA:437,122,1,0
+FN:447,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretLessThanNode(Interpreter.AST.Nodes.Expressions.LessThanNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:4,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretLessThanNode(Interpreter.AST.Nodes.Expressions.LessThanNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:448,4
+DA:449,4
+DA:450,4
+DA:452,4
+DA:453,4
+DA:454,1
 DA:455,0
-DA:456,0
+DA:456,3
 DA:457,0
 DA:458,0
-DA:459,0
-BRDA:451,39,0,0
-BRDA:451,54,0,0
-BRDA:451,54,1,0
-BRDA:451,71,0,0
-BRDA:451,39,1,0
-BRDA:451,89,0,0
-BRDA:451,105,0,0
-BRDA:451,105,1,0
-BRDA:451,122,0,0
-BRDA:451,71,1,0
-BRDA:451,89,1,0
-BRDA:451,122,1,0
-FN:461,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretEqualNode(Interpreter.AST.Nodes.Expressions.EqualNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretEqualNode(Interpreter.AST.Nodes.Expressions.EqualNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:462,0
-DA:463,0
-DA:464,0
-DA:466,0
-DA:467,0
-DA:468,0
-DA:469,0
+DA:459,4
+DA:460,4
+BRDA:452,39,0,1
+BRDA:452,54,0,1
+BRDA:452,54,1,0
+BRDA:452,71,0,0
+BRDA:452,39,1,3
+BRDA:452,89,0,3
+BRDA:452,105,0,3
+BRDA:452,105,1,0
+BRDA:452,122,0,0
+BRDA:452,71,1,0
+BRDA:452,89,1,0
+BRDA:452,122,1,0
+FN:462,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretEqualNode(Interpreter.AST.Nodes.Expressions.EqualNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretEqualNode(Interpreter.AST.Nodes.Expressions.EqualNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:463,1
+DA:464,1
+DA:465,1
+DA:467,1
+DA:468,1
+DA:469,1
 DA:470,0
 DA:471,0
 DA:472,0
-DA:473,0
-BRDA:466,39,0,0
-BRDA:466,54,0,0
-BRDA:466,39,1,0
-BRDA:466,71,0,0
-BRDA:466,87,0,0
-BRDA:466,71,1,0
-BRDA:466,105,0,0
-BRDA:466,121,0,0
-BRDA:466,54,1,0
-BRDA:466,87,1,0
-BRDA:466,105,1,0
-BRDA:466,121,1,0
-FN:475,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretAndNode(Interpreter.AST.Nodes.Expressions.AndNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretAndNode(Interpreter.AST.Nodes.Expressions.AndNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:476,0
-DA:477,0
-DA:478,0
-DA:480,0
-DA:481,0
-DA:482,0
-DA:484,0
-DA:485,0
-DA:486,0
-DA:488,0
-DA:490,0
+DA:473,1
+DA:474,1
+BRDA:467,39,0,1
+BRDA:467,54,0,1
+BRDA:467,39,1,0
+BRDA:467,71,0,0
+BRDA:467,87,0,0
+BRDA:467,71,1,0
+BRDA:467,105,0,0
+BRDA:467,121,0,0
+BRDA:467,54,1,0
+BRDA:467,87,1,0
+BRDA:467,105,1,0
+BRDA:467,121,1,0
+FN:476,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretAndNode(Interpreter.AST.Nodes.Expressions.AndNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretAndNode(Interpreter.AST.Nodes.Expressions.AndNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:477,1
+DA:478,1
+DA:479,1
+DA:481,1
+DA:482,1
+DA:483,1
+DA:485,1
+DA:486,1
+DA:487,1
+DA:489,0
 DA:491,0
-BRDA:480,35,0,0
-BRDA:480,35,1,0
-BRDA:480,50,0,0
-BRDA:482,61,0,0
-BRDA:482,61,1,0
-BRDA:484,74,0,0
-BRDA:484,74,1,0
-BRDA:484,92,0,0
-BRDA:484,92,1,0
-BRDA:480,50,1,0
-FN:493,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretNotNode(Interpreter.AST.Nodes.Expressions.NotNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretNotNode(Interpreter.AST.Nodes.Expressions.NotNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:494,0
-DA:495,0
-DA:497,0
-DA:498,0
-DA:499,0
-DA:502,0
+DA:492,1
+BRDA:481,35,0,1
+BRDA:481,35,1,0
+BRDA:481,50,0,1
+BRDA:483,61,0,0
+BRDA:483,61,1,1
+BRDA:485,74,0,1
+BRDA:485,74,1,0
+BRDA:485,92,0,1
+BRDA:485,92,1,0
+BRDA:481,50,1,0
+FN:494,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretNotNode(Interpreter.AST.Nodes.Expressions.NotNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::InterpretNotNode(Interpreter.AST.Nodes.Expressions.NotNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:495,1
+DA:496,1
+DA:498,1
+DA:499,1
+DA:500,1
 DA:503,0
-BRDA:497,21,0,0
-BRDA:497,21,1,0
-BRDA:497,36,0,0
-BRDA:497,36,1,0
-FN:505,System.Object[] Interpreter.SemanticAnalysis.InterpreterClass::InterpretArrayNode(Interpreter.AST.Nodes.Expressions.ArrayLiteralNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object[] Interpreter.SemanticAnalysis.InterpreterClass::InterpretArrayNode(Interpreter.AST.Nodes.Expressions.ArrayLiteralNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:506,0
-DA:507,0
-DA:509,0
-DA:510,0
-DA:511,0
-DA:512,0
-DA:514,0
-DA:515,0
-DA:517,0
-DA:518,0
-BRDA:510,65,1,0
-BRDA:510,65,0,0
-FN:520,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretIndexingNode(Interpreter.AST.Nodes.Expressions.IndexingNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretIndexingNode(Interpreter.AST.Nodes.Expressions.IndexingNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:521,0
-DA:522,0
-DA:523,0
-DA:525,0
-DA:526,0
-DA:527,0
-DA:528,0
+DA:504,1
+BRDA:498,21,0,1
+BRDA:498,21,1,0
+BRDA:498,36,0,1
+BRDA:498,36,1,0
+FN:506,System.Object[] Interpreter.SemanticAnalysis.InterpreterClass::InterpretArrayNode(Interpreter.AST.Nodes.Expressions.ArrayLiteralNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Object[] Interpreter.SemanticAnalysis.InterpreterClass::InterpretArrayNode(Interpreter.AST.Nodes.Expressions.ArrayLiteralNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:507,1
+DA:508,1
+DA:510,1
+DA:511,7
+DA:512,2
+DA:513,2
+DA:515,2
+DA:516,2
+DA:518,1
+DA:519,1
+BRDA:511,65,1,2
+BRDA:511,65,0,1
+FN:521,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretIndexingNode(Interpreter.AST.Nodes.Expressions.IndexingNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretIndexingNode(Interpreter.AST.Nodes.Expressions.IndexingNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:522,1
+DA:523,1
+DA:524,1
+DA:526,1
+DA:527,1
+DA:528,1
 DA:529,0
-DA:530,0
-BRDA:525,41,0,0
-BRDA:525,49,0,0
-BRDA:525,41,1,0
-BRDA:525,49,1,0
-FN:532,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretFunctionCallNode(Interpreter.AST.Nodes.Expressions.FunctionCallNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretFunctionCallNode(Interpreter.AST.Nodes.Expressions.FunctionCallNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:533,0
-DA:534,0
-DA:535,0
-DA:536,0
-DA:537,0
-DA:538,0
-DA:539,0
-DA:540,0
-DA:541,0
-DA:542,0
-DA:544,0
-DA:546,0
-DA:547,0
-DA:548,0
-DA:550,0
-DA:551,0
-DA:552,0
-DA:553,0
-DA:554,0
-DA:555,0
-DA:557,0
-DA:558,0
-DA:559,0
-DA:560,0
-DA:562,0
-DA:564,0
+DA:530,1
+DA:531,1
+BRDA:526,41,0,1
+BRDA:526,49,0,1
+BRDA:526,41,1,0
+BRDA:526,49,1,0
+FN:533,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretFunctionCallNode(Interpreter.AST.Nodes.Expressions.FunctionCallNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:1,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretFunctionCallNode(Interpreter.AST.Nodes.Expressions.FunctionCallNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:534,1
+DA:535,1
+DA:536,5
+DA:537,1
+DA:538,1
+DA:539,1
+DA:540,1
+DA:541,1
+DA:542,1
+DA:543,1
+DA:545,1
+DA:547,1
+DA:548,1
+DA:549,1
+DA:551,1
+DA:552,5
+DA:553,1
+DA:554,1
+DA:555,1
+DA:556,1
+DA:558,1
+DA:559,1
+DA:560,1
+DA:561,1
+DA:563,0
 DA:565,0
-BRDA:535,71,1,0
-BRDA:538,51,0,0
-BRDA:538,51,1,0
-BRDA:535,71,0,0
-BRDA:546,106,0,0
-BRDA:546,106,1,0
-BRDA:546,123,0,0
-BRDA:551,219,1,0
-BRDA:551,219,0,0
-BRDA:558,267,0,0
-BRDA:558,267,1,0
-BRDA:546,123,1,0
-FN:567,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretAnyIdentifier(Interpreter.AST.Nodes.NonTerminals.IdentifierNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretAnyIdentifier(Interpreter.AST.Nodes.NonTerminals.IdentifierNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
-DA:568,0
-DA:569,0
-DA:570,0
-DA:571,0
-DA:572,0
-DA:573,0
-DA:576,0
-DA:577,0
-DA:580,0
+DA:566,1
+BRDA:536,71,1,1
+BRDA:539,51,0,1
+BRDA:539,51,1,1
+BRDA:536,71,0,1
+BRDA:547,106,0,1
+BRDA:547,106,1,0
+BRDA:547,123,0,1
+BRDA:552,219,1,1
+BRDA:552,219,0,1
+BRDA:559,267,0,1
+BRDA:559,267,1,0
+BRDA:547,123,1,0
+FN:568,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretAnyIdentifier(Interpreter.AST.Nodes.NonTerminals.IdentifierNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+FNDA:10,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretAnyIdentifier(Interpreter.AST.Nodes.NonTerminals.IdentifierNode,Interpreter.SemanticAnalysis.Table`1<System.Object>)
+DA:569,10
+DA:570,10
+DA:571,10
+DA:572,10
+DA:573,9
+DA:574,9
+DA:577,1
+DA:578,1
 DA:581,0
 DA:582,0
 DA:583,0
@@ -8393,122 +8407,123 @@ DA:584,0
 DA:585,0
 DA:586,0
 DA:587,0
-DA:589,0
+DA:588,0
 DA:590,0
 DA:591,0
-DA:594,0
+DA:592,0
 DA:595,0
-DA:599,0
+DA:596,0
 DA:600,0
-BRDA:569,14,0,0
-BRDA:571,18,0,0
-BRDA:571,18,1,0
-BRDA:571,40,0,0
-BRDA:571,40,1,0
-BRDA:569,14,1,0
-BRDA:580,88,0,0
-BRDA:585,134,0,0
-BRDA:585,134,1,0
-BRDA:585,153,0,0
-BRDA:585,153,1,0
-BRDA:589,190,0,0
-BRDA:589,190,1,0
-BRDA:580,88,1,0
-FN:602,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretEnvironmentIdentifier(Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.SemanticAnalysis.InterpretationEnvironment)
-FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretEnvironmentIdentifier(Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.SemanticAnalysis.InterpretationEnvironment)
-DA:603,0
-DA:604,0
-DA:605,0
-DA:606,0
-DA:608,0
+DA:601,10
+BRDA:570,14,0,10
+BRDA:572,18,0,9
+BRDA:572,18,1,1
+BRDA:572,40,0,9
+BRDA:572,40,1,1
+BRDA:570,14,1,0
+BRDA:581,88,0,0
+BRDA:586,134,0,0
+BRDA:586,134,1,0
+BRDA:586,153,0,0
+BRDA:586,153,1,0
+BRDA:590,190,0,0
+BRDA:590,190,1,0
+BRDA:581,88,1,0
+FN:603,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretEnvironmentIdentifier(Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.SemanticAnalysis.InterpretationEnvironment)
+FNDA:1,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretEnvironmentIdentifier(Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.SemanticAnalysis.InterpretationEnvironment)
+DA:604,1
+DA:605,1
+DA:606,1
+DA:607,1
 DA:609,0
 DA:610,0
-DA:612,0
+DA:611,0
 DA:613,0
 DA:614,0
-DA:616,0
+DA:615,0
 DA:617,0
 DA:618,0
-DA:621,0
+DA:619,0
 DA:622,0
-BRDA:604,23,0,0
-BRDA:604,23,1,0
-BRDA:608,62,0,0
-BRDA:608,62,1,0
-BRDA:612,96,0,0
-BRDA:612,96,1,0
-BRDA:616,128,0,0
-BRDA:616,128,1,0
-FN:624,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetworkIdentifier(Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.Networks.NetworkDeclarationNode)
+DA:623,1
+BRDA:605,23,0,1
+BRDA:605,23,1,0
+BRDA:609,62,0,0
+BRDA:609,62,1,0
+BRDA:613,96,0,0
+BRDA:613,96,1,0
+BRDA:617,128,0,0
+BRDA:617,128,1,0
+FN:625,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetworkIdentifier(Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.Networks.NetworkDeclarationNode)
 FNDA:0,System.Object Interpreter.SemanticAnalysis.InterpreterClass::InterpretNetworkIdentifier(Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.Networks.NetworkDeclarationNode)
-DA:625,0
 DA:626,0
-DA:628,0
+DA:627,0
 DA:629,0
 DA:630,0
-DA:632,0
+DA:631,0
 DA:633,0
 DA:634,0
-DA:637,0
+DA:635,0
 DA:638,0
-DA:642,0
-DA:644,0
-DA:646,0
-BRDA:626,38,0,0
-BRDA:626,38,1,0
-BRDA:628,56,0,0
-BRDA:632,78,0,0
-BRDA:632,78,1,0
-BRDA:628,56,1,0
-FN:647,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::IsNetworkOrQueueTuple(System.Object)
+DA:639,0
+DA:643,0
+DA:645,0
+DA:647,0
+BRDA:627,38,0,0
+BRDA:627,38,1,0
+BRDA:629,56,0,0
+BRDA:633,78,0,0
+BRDA:633,78,1,0
+BRDA:629,56,1,0
+FN:648,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::IsNetworkOrQueueTuple(System.Object)
 FNDA:0,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::IsNetworkOrQueueTuple(System.Object)
-DA:648,0
-BRDA:648,6,0,0
-BRDA:648,6,1,0
-FN:650,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::LookupVariableHelper(System.String,Interpreter.SemanticAnalysis.Table`1<System.Object>,System.Object&)
-FNDA:0,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::LookupVariableHelper(System.String,Interpreter.SemanticAnalysis.Table`1<System.Object>,System.Object&)
-DA:651,0
-DA:652,0
-DA:653,0
-DA:654,0
-DA:655,0
-DA:656,0
-DA:657,0
-DA:658,0
-DA:660,0
+DA:649,0
+BRDA:649,6,0,0
+BRDA:649,6,1,0
+FN:651,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::LookupVariableHelper(System.String,Interpreter.SemanticAnalysis.Table`1<System.Object>,System.Object&)
+FNDA:10,System.Boolean Interpreter.SemanticAnalysis.InterpreterClass::LookupVariableHelper(System.String,Interpreter.SemanticAnalysis.Table`1<System.Object>,System.Object&)
+DA:652,10
+DA:653,10
+DA:654,10
+DA:655,10
+DA:656,10
+DA:657,10
+DA:658,10
+DA:659,10
 DA:661,0
-DA:663,0
+DA:662,0
 DA:664,0
-BRDA:652,7,0,0
-BRDA:654,20,0,0
-BRDA:656,33,0,0
-BRDA:656,33,1,0
-BRDA:654,20,1,0
-BRDA:652,7,1,0
+DA:665,10
+BRDA:653,7,0,10
+BRDA:655,20,0,10
+BRDA:657,33,0,10
+BRDA:657,33,1,0
+BRDA:655,20,1,0
+BRDA:653,7,1,0
 FN:17,System.Void Interpreter.SemanticAnalysis.InterpreterClass::.ctor(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
-FNDA:1,System.Void Interpreter.SemanticAnalysis.InterpreterClass::.ctor(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
-DA:18,1
-DA:21,1
-FN:209,System.Double Interpreter.SemanticAnalysis.InterpreterClass/<>c__DisplayClass26_0::<InterpretQueueDeclaration>g__service|0()
-FNDA:0,System.Double Interpreter.SemanticAnalysis.InterpreterClass/<>c__DisplayClass26_0::<InterpretQueueDeclaration>g__service|0()
-DA:210,0
-LF:479
-LH:18
+FNDA:20,System.Void Interpreter.SemanticAnalysis.InterpreterClass::.ctor(Interpreter.AST.Nodes.NonTerminals.ProgramNode)
+DA:18,20
+DA:21,20
+FN:210,System.Double Interpreter.SemanticAnalysis.InterpreterClass/<>c__DisplayClass30_0::<InterpretQueueDeclaration>g__service|0()
+FNDA:0,System.Double Interpreter.SemanticAnalysis.InterpreterClass/<>c__DisplayClass30_0::<InterpretQueueDeclaration>g__service|0()
+DA:211,0
+LF:480
+LH:250
 BRF:228
-BRH:1
-FNF:47
-FNH:5
+BRH:76
+FNF:48
+FNH:34
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/QueueableManager.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/QueueableManager.cs
 FN:16,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.QueueableManager::FindQueueable(System.String)
-FNDA:0,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.QueueableManager::FindQueueable(System.String)
-DA:17,0
-DA:18,0
+FNDA:1,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.QueueableManager::FindQueueable(System.String)
+DA:17,1
+DA:18,1
 BRDA:17,8,0,0
-BRDA:17,8,1,0
+BRDA:17,8,1,1
 FN:20,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.QueueableManager::FindQueueableOrDefault(System.String)
-FNDA:0,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.QueueableManager::FindQueueableOrDefault(System.String)
-DA:21,0
+FNDA:3,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.QueueableManager::FindQueueableOrDefault(System.String)
+DA:21,3
 FN:23,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.QueueableManager::GetNewInstance(Interpreter.AST.Nodes.Networks.InstanceDeclaration)
 FNDA:0,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.QueueableManager::GetNewInstance(Interpreter.AST.Nodes.Networks.InstanceDeclaration)
 DA:24,0
@@ -8626,29 +8641,29 @@ BRDA:126,76,1,0
 BRDA:126,101,1,0
 BRDA:126,123,1,0
 FN:13,System.Void Interpreter.SemanticAnalysis.QueueableManager::.ctor()
-FNDA:1,System.Void Interpreter.SemanticAnalysis.QueueableManager::.ctor()
-DA:14,1
+FNDA:20,System.Void Interpreter.SemanticAnalysis.QueueableManager::.ctor()
+DA:14,20
 FN:82,System.Double Interpreter.SemanticAnalysis.QueueableManager/<>c__DisplayClass5_0::<GetRoute>g__GetRate|0()
 FNDA:0,System.Double Interpreter.SemanticAnalysis.QueueableManager/<>c__DisplayClass5_0::<GetRoute>g__GetRate|0()
 DA:83,0
 FN:134,System.String Interpreter.SemanticAnalysis.Queueable::get_Name()
-FNDA:0,System.String Interpreter.SemanticAnalysis.Queueable::get_Name()
-DA:135,0
+FNDA:5,System.String Interpreter.SemanticAnalysis.Queueable::get_Name()
+DA:135,5
 FN:132,System.Void Interpreter.SemanticAnalysis.Queueable::.ctor(System.String)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.Queueable::.ctor(System.String)
-DA:133,0
+FNDA:2,System.Void Interpreter.SemanticAnalysis.Queueable::.ctor(System.String)
+DA:133,2
 FN:141,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queue> Interpreter.SemanticAnalysis.Network::get_Inputs()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queue> Interpreter.SemanticAnalysis.Network::get_Inputs()
-DA:142,0
+FNDA:1,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queue> Interpreter.SemanticAnalysis.Network::get_Inputs()
+DA:142,1
 FN:142,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queue> Interpreter.SemanticAnalysis.Network::get_Outputs()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queue> Interpreter.SemanticAnalysis.Network::get_Outputs()
-DA:143,0
+FNDA:1,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queue> Interpreter.SemanticAnalysis.Network::get_Outputs()
+DA:143,1
 FN:143,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queueable> Interpreter.SemanticAnalysis.Network::get_NewInstances()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queueable> Interpreter.SemanticAnalysis.Network::get_NewInstances()
-DA:144,0
+FNDA:1,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Queueable> Interpreter.SemanticAnalysis.Network::get_NewInstances()
+DA:144,1
 FN:144,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Route> Interpreter.SemanticAnalysis.Network::get_Routes()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Route> Interpreter.SemanticAnalysis.Network::get_Routes()
-DA:145,0
+FNDA:1,System.Collections.Generic.IReadOnlyList`1<Interpreter.SemanticAnalysis.Route> Interpreter.SemanticAnalysis.Network::get_Routes()
+DA:145,1
 FN:147,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.Network::FindQueueable(System.String)
 FNDA:0,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.Network::FindQueueable(System.String)
 DA:148,0
@@ -8662,8 +8677,8 @@ BRDA:148,37,1,0
 BRDA:148,67,1,0
 BRDA:148,94,1,0
 FN:139,System.Void Interpreter.SemanticAnalysis.Network::.ctor(System.String,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queue>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queue>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queueable>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Route>)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.Network::.ctor(System.String,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queue>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queue>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queueable>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Route>)
-DA:140,0
+FNDA:1,System.Void Interpreter.SemanticAnalysis.Network::.ctor(System.String,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queue>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queue>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Queueable>,System.Collections.Generic.IEnumerable`1<Interpreter.SemanticAnalysis.Route>)
+DA:140,1
 FN:155,Interpreter.SemanticAnalysis.Queue Interpreter.SemanticAnalysis.NewQueuesInstance::get_ExistingQueue()
 FNDA:0,Interpreter.SemanticAnalysis.Queue Interpreter.SemanticAnalysis.NewQueuesInstance::get_ExistingQueue()
 DA:156,0
@@ -8674,23 +8689,23 @@ FN:153,System.Void Interpreter.SemanticAnalysis.NewQueuesInstance::.ctor(Interpr
 FNDA:0,System.Void Interpreter.SemanticAnalysis.NewQueuesInstance::.ctor(Interpreter.SemanticAnalysis.Queue,System.String)
 DA:154,0
 FN:161,System.Int32 Interpreter.SemanticAnalysis.Queue::get_Servers()
-FNDA:0,System.Int32 Interpreter.SemanticAnalysis.Queue::get_Servers()
-DA:162,0
+FNDA:1,System.Int32 Interpreter.SemanticAnalysis.Queue::get_Servers()
+DA:162,1
 FN:162,System.Int32 Interpreter.SemanticAnalysis.Queue::get_Capacity()
-FNDA:0,System.Int32 Interpreter.SemanticAnalysis.Queue::get_Capacity()
-DA:163,0
+FNDA:1,System.Int32 Interpreter.SemanticAnalysis.Queue::get_Capacity()
+DA:163,1
 FN:163,System.Func`1<System.Double> Interpreter.SemanticAnalysis.Queue::get_Service()
-FNDA:0,System.Func`1<System.Double> Interpreter.SemanticAnalysis.Queue::get_Service()
-DA:164,0
+FNDA:1,System.Func`1<System.Double> Interpreter.SemanticAnalysis.Queue::get_Service()
+DA:164,1
 FN:164,System.Collections.Generic.IReadOnlyList`1<System.String> Interpreter.SemanticAnalysis.Queue::get_Metrics()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<System.String> Interpreter.SemanticAnalysis.Queue::get_Metrics()
-DA:165,0
+FNDA:1,System.Collections.Generic.IReadOnlyList`1<System.String> Interpreter.SemanticAnalysis.Queue::get_Metrics()
+DA:165,1
 FN:167,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.Queue::FindQueueable(System.String)
 FNDA:0,Interpreter.SemanticAnalysis.Queueable Interpreter.SemanticAnalysis.Queue::FindQueueable(System.String)
 DA:168,0
 FN:159,System.Void Interpreter.SemanticAnalysis.Queue::.ctor(System.String,System.Int32,System.Int32,System.Func`1<System.Double>,System.Collections.Generic.IEnumerable`1<System.String>)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.Queue::.ctor(System.String,System.Int32,System.Int32,System.Func`1<System.Double>,System.Collections.Generic.IEnumerable`1<System.String>)
-DA:160,0
+FNDA:1,System.Void Interpreter.SemanticAnalysis.Queue::.ctor(System.String,System.Int32,System.Int32,System.Func`1<System.Double>,System.Collections.Generic.IEnumerable`1<System.String>)
+DA:160,1
 FN:172,Interpreter.SemanticAnalysis.RouteTo Interpreter.SemanticAnalysis.Route::get_To()
 FNDA:0,Interpreter.SemanticAnalysis.RouteTo Interpreter.SemanticAnalysis.Route::get_To()
 DA:173,0
@@ -8719,23 +8734,23 @@ FN:185,System.Void Interpreter.SemanticAnalysis.RouteTo::.ctor(System.Double,Int
 FNDA:0,System.Void Interpreter.SemanticAnalysis.RouteTo::.ctor(System.Double,Interpreter.SemanticAnalysis.Queue)
 DA:186,0
 LF:116
-LH:1
+LH:16
 BRF:34
-BRH:0
+BRH:1
 FNF:34
-FNH:1
+FNH:15
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/Table.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/Table.cs
 FN:17,System.Void Interpreter.SemanticAnalysis.Table`1::ForceBind(System.String,T)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.Table`1::ForceBind(System.String,T)
-DA:18,0
+FNDA:15,System.Void Interpreter.SemanticAnalysis.Table`1::ForceBind(System.String,T)
+DA:18,15
 FN:21,System.Boolean Interpreter.SemanticAnalysis.Table`1::Lookup(System.String,T&)
-FNDA:0,System.Boolean Interpreter.SemanticAnalysis.Table`1::Lookup(System.String,T&)
-DA:22,0
-DA:23,0
-DA:24,0
-DA:25,0
-DA:26,0
+FNDA:16,System.Boolean Interpreter.SemanticAnalysis.Table`1::Lookup(System.String,T&)
+DA:22,16
+DA:23,16
+DA:24,16
+DA:25,16
+DA:26,16
 FN:34,System.Boolean Interpreter.SemanticAnalysis.Table`1::TryBindIfNotExists(System.String,T)
 FNDA:0,System.Boolean Interpreter.SemanticAnalysis.Table`1::TryBindIfNotExists(System.String,T)
 DA:35,0
@@ -8746,23 +8761,23 @@ DA:43,0
 BRDA:37,12,0,0
 BRDA:37,12,1,0
 FN:7,System.Void Interpreter.SemanticAnalysis.Table`1::.ctor()
-FNDA:4,System.Void Interpreter.SemanticAnalysis.Table`1::.ctor()
-DA:8,4
-DA:11,4
+FNDA:89,System.Void Interpreter.SemanticAnalysis.Table`1::.ctor()
+DA:8,89
+DA:11,89
 FN:12,System.Void Interpreter.SemanticAnalysis.Table`1::.ctor(Interpreter.SemanticAnalysis.Table`1<T>)
-FNDA:0,System.Void Interpreter.SemanticAnalysis.Table`1::.ctor(Interpreter.SemanticAnalysis.Table`1<T>)
-DA:13,0
-DA:14,0
-DA:15,0
-DA:16,0
+FNDA:1,System.Void Interpreter.SemanticAnalysis.Table`1::.ctor(Interpreter.SemanticAnalysis.Table`1<T>)
+DA:13,1
+DA:14,1
+DA:15,1
+DA:16,1
 LF:17
-LH:2
+LH:12
 BRF:2
 BRH:0
 FNF:5
-FNH:1
+FNH:4
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/TypeChecker.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/TypeChecker.cs
 FN:20,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Node> Interpreter.SemanticAnalysis.TypeChecker::get_ConstEnvironment()
 FNDA:0,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Node> Interpreter.SemanticAnalysis.TypeChecker::get_ConstEnvironment()
 DA:21,0
@@ -9700,7 +9715,7 @@ BRH:0
 FNF:36
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/TypeCheckerEnvironment.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/TypeCheckerEnvironment.cs
 FN:7,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Node> Interpreter.SemanticAnalysis.TypeCheckerEnvironment::get_Environment()
 FNDA:0,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Node> Interpreter.SemanticAnalysis.TypeCheckerEnvironment::get_Environment()
 DA:8,0
@@ -9726,7 +9741,7 @@ BRH:0
 FNF:5
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/Semantic Analysis/TypeCheckerNetworkState.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/Semantic Analysis/TypeCheckerNetworkState.cs
 FN:8,System.Void Interpreter.SemanticAnalysis.TypeCheckerNetworkState::.ctor(Interpreter.AST.Nodes.Networks.NetworkDeclarationNode,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Node>)
 FNDA:0,System.Void Interpreter.SemanticAnalysis.TypeCheckerNetworkState::.ctor(Interpreter.AST.Nodes.Networks.NetworkDeclarationNode,Interpreter.SemanticAnalysis.Table`1<Interpreter.AST.Nodes.Node>)
 DA:9,0
@@ -9739,7 +9754,7 @@ BRH:0
 FNF:1
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/ASTGraph.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/ASTGraph.cs
 FN:11,System.Void Interpreter.AST.ASTGraph::GenerateDotFile(Interpreter.AST.Nodes.Node,System.String)
 FNDA:0,System.Void Interpreter.AST.ASTGraph::GenerateDotFile(Interpreter.AST.Nodes.Node,System.String)
 DA:12,0
@@ -9775,7 +9790,7 @@ BRH:0
 FNF:2
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Non-Nodes/ElseIfReturn.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Non-Nodes/ElseIfReturn.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.NonNodes.ElseIfReturn::get_Condition()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.NonNodes.ElseIfReturn::get_Condition()
 DA:9,0
@@ -9792,7 +9807,7 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/CollectionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/CollectionNode.cs
 FN:6,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.CollectionNode::get_Children()
 FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.CollectionNode::get_Children()
 DA:7,0
@@ -9811,16 +9826,16 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Node.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Node.cs
 FN:6,System.Int32 Interpreter.AST.Nodes.Node::get_LineNumber()
-FNDA:2,System.Int32 Interpreter.AST.Nodes.Node::get_LineNumber()
-DA:7,2
+FNDA:99,System.Int32 Interpreter.AST.Nodes.Node::get_LineNumber()
+DA:7,99
 FN:9,System.String Interpreter.AST.Nodes.Node::GetNodeLabel()
 FNDA:0,System.String Interpreter.AST.Nodes.Node::GetNodeLabel()
 DA:10,0
 FN:4,System.Void Interpreter.AST.Nodes.Node::.ctor(System.Int32)
-FNDA:2,System.Void Interpreter.AST.Nodes.Node::.ctor(System.Int32)
-DA:5,2
+FNDA:99,System.Void Interpreter.AST.Nodes.Node::.ctor(System.Int32)
+DA:5,99
 LF:3
 LH:2
 BRF:0
@@ -9828,7 +9843,7 @@ BRH:0
 FNF:3
 FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/ArrayTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/ArrayTypeNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Types.ArrayTypeNode::get_InnerType()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Types.ArrayTypeNode::get_InnerType()
 DA:9,0
@@ -9856,7 +9871,7 @@ BRH:0
 FNF:5
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/BoolTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/BoolTypeNode.cs
 FN:9,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.BoolTypeNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.BoolTypeNode::GetChildren()
 DA:10,0
@@ -9875,7 +9890,7 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/DoubleTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/DoubleTypeNode.cs
 FN:9,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.DoubleTypeNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.DoubleTypeNode::GetChildren()
 DA:10,0
@@ -9894,7 +9909,7 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/FunctionTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/FunctionTypeNode.cs
 FN:8,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.NonTerminals.TypeNode> Interpreter.AST.Nodes.Types.FunctionTypeNode::get_FormalParameterTypes()
 FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.NonTerminals.TypeNode> Interpreter.AST.Nodes.Types.FunctionTypeNode::get_FormalParameterTypes()
 DA:9,0
@@ -9926,7 +9941,7 @@ BRH:0
 FNF:6
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/InputTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/InputTypeNode.cs
 FN:6,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.InputTypeNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.InputTypeNode::GetChildren()
 DA:7,0
@@ -9945,7 +9960,7 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/IntTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/IntTypeNode.cs
 FN:9,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.IntTypeNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.IntTypeNode::GetChildren()
 DA:10,0
@@ -9964,10 +9979,10 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/NetworkTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/NetworkTypeNode.cs
 FN:10,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Types.NetworkTypeNode::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Types.NetworkTypeNode::get_Identifier()
-DA:11,0
+FNDA:2,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Types.NetworkTypeNode::get_Identifier()
+DA:11,2
 FN:12,System.String Interpreter.AST.Nodes.Types.NetworkTypeNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Types.NetworkTypeNode::ToString()
 DA:13,0
@@ -9983,16 +9998,16 @@ FN:22,System.String Interpreter.AST.Nodes.Types.NetworkTypeNode::GetTypeString()
 FNDA:0,System.String Interpreter.AST.Nodes.Types.NetworkTypeNode::GetTypeString()
 DA:23,0
 FN:8,System.Void Interpreter.AST.Nodes.Types.NetworkTypeNode::.ctor(System.Int32,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Types.NetworkTypeNode::.ctor(System.Int32,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode)
-DA:9,0
+FNDA:2,System.Void Interpreter.AST.Nodes.Types.NetworkTypeNode::.ctor(System.Int32,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode)
+DA:9,2
 LF:10
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/OutputTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/OutputTypeNode.cs
 FN:6,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.OutputTypeNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.OutputTypeNode::GetChildren()
 DA:7,0
@@ -10011,7 +10026,7 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Types/StringTypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Types/StringTypeNode.cs
 FN:9,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.StringTypeNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Types.StringTypeNode::GetChildren()
 DA:10,0
@@ -10030,13 +10045,13 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Statements/AssignNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Statements/AssignNode.cs
 FN:10,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.AssignNode::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.AssignNode::get_Identifier()
-DA:11,0
+FNDA:6,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.AssignNode::get_Identifier()
+DA:11,6
 FN:11,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.AssignNode::get_Expression()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.AssignNode::get_Expression()
-DA:12,0
+FNDA:6,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.AssignNode::get_Expression()
+DA:12,6
 FN:13,System.String Interpreter.AST.Nodes.Statements.AssignNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.AssignNode::ToString()
 DA:14,0
@@ -10053,25 +10068,25 @@ FN:24,System.String Interpreter.AST.Nodes.Statements.AssignNode::GetNodeLabel()
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.AssignNode::GetNodeLabel()
 DA:25,0
 FN:8,System.Void Interpreter.AST.Nodes.Statements.AssignNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Statements.AssignNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:9,0
+FNDA:2,System.Void Interpreter.AST.Nodes.Statements.AssignNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:9,2
 LF:12
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:6
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Statements/IfElseNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Statements/IfElseNode.cs
 FN:9,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.IfElseNode::get_Condition()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.IfElseNode::get_Condition()
-DA:10,0
+FNDA:4,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.IfElseNode::get_Condition()
+DA:10,4
 FN:10,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.IfElseNode::get_IfBody()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.IfElseNode::get_IfBody()
-DA:11,0
+FNDA:3,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.IfElseNode::get_IfBody()
+DA:11,3
 FN:11,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.IfElseNode::get_ElseBody()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.IfElseNode::get_ElseBody()
-DA:12,0
+FNDA:3,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.IfElseNode::get_ElseBody()
+DA:12,3
 FN:13,System.String Interpreter.AST.Nodes.Statements.IfElseNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.IfElseNode::ToString()
 DA:14,0
@@ -10086,24 +10101,24 @@ DA:22,0
 DA:23,0
 DA:24,0
 FN:7,System.Void Interpreter.AST.Nodes.Statements.IfElseNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.StatementNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Statements.IfElseNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.StatementNode)
-DA:8,0
+FNDA:2,System.Void Interpreter.AST.Nodes.Statements.IfElseNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.StatementNode)
+DA:8,2
 FN:25,System.Void Interpreter.AST.Nodes.Statements.IfElseNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.NonNodes.ElseIfReturn,Interpreter.AST.Nodes.NonTerminals.StatementNode)
 FNDA:0,System.Void Interpreter.AST.Nodes.Statements.IfElseNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.NonNodes.ElseIfReturn,Interpreter.AST.Nodes.NonTerminals.StatementNode)
 DA:26,0
 DA:27,0
 DA:29,0
 LF:16
-LH:0
+LH:4
 BRF:0
 BRH:0
 FNF:7
-FNH:0
+FNH:4
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Statements/ReturnNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Statements/ReturnNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.ReturnNode::get_Expression()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.ReturnNode::get_Expression()
-DA:9,0
+FNDA:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.ReturnNode::get_Expression()
+DA:9,8
 FN:10,System.String Interpreter.AST.Nodes.Statements.ReturnNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.ReturnNode::ToString()
 DA:11,0
@@ -10116,19 +10131,19 @@ DA:17,0
 DA:18,0
 DA:19,0
 FN:6,System.Void Interpreter.AST.Nodes.Statements.ReturnNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Statements.ReturnNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:5,System.Void Interpreter.AST.Nodes.Statements.ReturnNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,5
 LF:9
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:4
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Statements/StatementCompositionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Statements/StatementCompositionNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.StatementCompositionNode::get_NextStatement()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.StatementCompositionNode::get_NextStatement()
-DA:9,0
+FNDA:9,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.StatementCompositionNode::get_NextStatement()
+DA:9,9
 FN:11,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Statements.StatementCompositionNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Statements.StatementCompositionNode::GetChildren()
 DA:12,0
@@ -10144,22 +10159,22 @@ DA:21,0
 BRDA:13,7,0,0
 BRDA:13,7,1,0
 FN:6,System.Void Interpreter.AST.Nodes.Statements.StatementCompositionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Statements.StatementCompositionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode)
-DA:7,0
+FNDA:6,System.Void Interpreter.AST.Nodes.Statements.StatementCompositionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode)
+DA:7,6
 LF:12
-LH:0
+LH:2
 BRF:2
 BRH:0
 FNF:3
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Statements/TypeAndIdentifier.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Statements/TypeAndIdentifier.cs
 FN:10,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Statements.TypeAndIdentifier::get_Type()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Statements.TypeAndIdentifier::get_Type()
-DA:11,0
+FNDA:1,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Statements.TypeAndIdentifier::get_Type()
+DA:11,1
 FN:11,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.TypeAndIdentifier::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.TypeAndIdentifier::get_Identifier()
-DA:12,0
+FNDA:2,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.TypeAndIdentifier::get_Identifier()
+DA:12,2
 FN:13,System.String Interpreter.AST.Nodes.Statements.TypeAndIdentifier::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.TypeAndIdentifier::ToString()
 DA:14,0
@@ -10175,25 +10190,25 @@ FN:23,System.String Interpreter.AST.Nodes.Statements.TypeAndIdentifier::GetNodeL
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.TypeAndIdentifier::GetNodeLabel()
 DA:24,0
 FN:8,System.Void Interpreter.AST.Nodes.Statements.TypeAndIdentifier::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Statements.TypeAndIdentifier::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode)
-DA:9,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Statements.TypeAndIdentifier::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode)
+DA:9,1
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:6
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Statements/VariableDeclarationNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Statements/VariableDeclarationNode.cs
 FN:10,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Type()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Type()
-DA:11,0
+FNDA:1,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Type()
+DA:11,1
 FN:11,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Identifier()
-DA:12,0
+FNDA:2,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Identifier()
+DA:12,2
 FN:12,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Expression()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Expression()
-DA:13,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.VariableDeclarationNode::get_Expression()
+DA:13,2
 FN:14,System.String Interpreter.AST.Nodes.Statements.VariableDeclarationNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.VariableDeclarationNode::ToString()
 DA:15,0
@@ -10210,22 +10225,22 @@ FN:25,System.String Interpreter.AST.Nodes.Statements.VariableDeclarationNode::Ge
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.VariableDeclarationNode::GetNodeLabel()
 DA:26,0
 FN:8,System.Void Interpreter.AST.Nodes.Statements.VariableDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Statements.VariableDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:9,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Statements.VariableDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:9,1
 LF:13
-LH:0
+LH:4
 BRF:0
 BRH:0
 FNF:7
-FNH:0
+FNH:4
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Statements/WhileNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Statements/WhileNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.WhileNode::get_Condition()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.WhileNode::get_Condition()
-DA:9,0
+FNDA:5,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Statements.WhileNode::get_Condition()
+DA:9,5
 FN:9,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.WhileNode::get_Body()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.WhileNode::get_Body()
-DA:10,0
+FNDA:4,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Statements.WhileNode::get_Body()
+DA:10,4
 FN:11,System.String Interpreter.AST.Nodes.Statements.WhileNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Statements.WhileNode::ToString()
 DA:12,0
@@ -10239,16 +10254,16 @@ DA:19,0
 DA:20,0
 DA:21,0
 FN:6,System.Void Interpreter.AST.Nodes.Statements.WhileNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.StatementNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Statements.WhileNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.StatementNode)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Statements.WhileNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.StatementNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.StatementNode)
+DA:7,1
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Routes/RouteDefinitionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Routes/RouteDefinitionNode.cs
 FN:10,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Routes.RouteDefinitionNode::get_From()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Routes.RouteDefinitionNode::get_From()
 DA:11,0
@@ -10280,7 +10295,7 @@ BRH:0
 FNF:6
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Routes/RouteValuePairNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Routes/RouteValuePairNode.cs
 FN:6,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Routes.RouteValuePairNode::get_Probability()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Routes.RouteValuePairNode::get_Probability()
 DA:7,0
@@ -10304,7 +10319,7 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Programs/DefinitionProgramNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Programs/DefinitionProgramNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.DefinitionNode Interpreter.AST.Nodes.Programs.DefinitionProgramNode::get_Definition()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.DefinitionNode Interpreter.AST.Nodes.Programs.DefinitionProgramNode::get_Definition()
 DA:9,0
@@ -10329,7 +10344,7 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Programs/ImportNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Programs/ImportNode.cs
 FN:11,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Programs.ImportNode::get_Namespace()
 FNDA:2,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Programs.ImportNode::get_Namespace()
 DA:12,2
@@ -10367,7 +10382,7 @@ BRH:0
 FNF:6
 FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Statements/SkipNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Statements/SkipNode.cs
 FN:8,System.String Interpreter.AST.Nodes.Programs.SkipNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Programs.SkipNode::ToString()
 DA:9,0
@@ -10377,16 +10392,16 @@ DA:12,0
 DA:13,0
 DA:14,0
 FN:6,System.Void Interpreter.AST.Nodes.Programs.SkipNode::.ctor(System.Int32)
-FNDA:0,System.Void Interpreter.AST.Nodes.Programs.SkipNode::.ctor(System.Int32)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Programs.SkipNode::.ctor(System.Int32)
+DA:7,1
 LF:5
-LH:0
+LH:1
 BRF:0
 BRH:0
 FNF:3
-FNH:0
+FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/DefinitionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/DefinitionNode.cs
 FN:7,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.DefinitionNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.DefinitionNode::GetChildren()
 DA:8,0
@@ -10395,16 +10410,16 @@ DA:10,0
 DA:11,0
 DA:12,0
 FN:4,System.Void Interpreter.AST.Nodes.NonTerminals.DefinitionNode::.ctor(System.Int32)
-FNDA:0,System.Void Interpreter.AST.Nodes.NonTerminals.DefinitionNode::.ctor(System.Int32)
-DA:5,0
+FNDA:3,System.Void Interpreter.AST.Nodes.NonTerminals.DefinitionNode::.ctor(System.Int32)
+DA:5,3
 LF:6
-LH:0
+LH:1
 BRF:0
 BRH:0
 FNF:2
-FNH:0
+FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/ExpressionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/ExpressionNode.cs
 FN:8,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.ExpressionNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.ExpressionNode::GetChildren()
 DA:9,0
@@ -10413,16 +10428,16 @@ DA:11,0
 DA:12,0
 DA:13,0
 FN:5,System.Void Interpreter.AST.Nodes.NonTerminals.ExpressionNode::.ctor(System.Int32)
-FNDA:0,System.Void Interpreter.AST.Nodes.NonTerminals.ExpressionNode::.ctor(System.Int32)
-DA:6,0
+FNDA:45,System.Void Interpreter.AST.Nodes.NonTerminals.ExpressionNode::.ctor(System.Int32)
+DA:6,45
 LF:6
-LH:0
+LH:1
 BRF:0
 BRH:0
 FNF:2
-FNH:0
+FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/IdentifierNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/IdentifierNode.cs
 FN:12,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.IdentifierNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.IdentifierNode::GetChildren()
 DA:13,0
@@ -10431,8 +10446,8 @@ DA:15,0
 DA:16,0
 DA:17,0
 FN:6,System.Void Interpreter.AST.Nodes.NonTerminals.IdentifierNode::.ctor(System.Int32)
-FNDA:1,System.Void Interpreter.AST.Nodes.NonTerminals.IdentifierNode::.ctor(System.Int32)
-DA:7,1
+FNDA:13,System.Void Interpreter.AST.Nodes.NonTerminals.IdentifierNode::.ctor(System.Int32)
+DA:7,13
 LF:6
 LH:1
 BRF:0
@@ -10440,7 +10455,7 @@ BRH:0
 FNF:2
 FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/MetricNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/MetricNode.cs
 FN:9,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.MetricNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.MetricNode::GetChildren()
 DA:10,0
@@ -10458,16 +10473,16 @@ BRH:0
 FNF:2
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/NetworkNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/NetworkNode.cs
 FN:13,Interpreter.AST.Nodes.Types.NetworkTypeNode Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_CustomType()
-FNDA:0,Interpreter.AST.Nodes.Types.NetworkTypeNode Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_CustomType()
-DA:14,0
+FNDA:2,Interpreter.AST.Nodes.Types.NetworkTypeNode Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_CustomType()
+DA:14,2
 FN:14,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_Identifier()
-DA:15,0
+FNDA:6,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_Identifier()
+DA:15,6
 FN:15,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode> Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_Metrics()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode> Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_Metrics()
-DA:16,0
+FNDA:3,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode> Interpreter.AST.Nodes.NonTerminals.NetworkNode::get_Metrics()
+DA:16,3
 FN:17,System.String Interpreter.AST.Nodes.NonTerminals.NetworkNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.NonTerminals.NetworkNode::ToString()
 DA:18,0
@@ -10485,16 +10500,16 @@ FN:27,System.String Interpreter.AST.Nodes.NonTerminals.NetworkNode::GetNodeLabel
 FNDA:0,System.String Interpreter.AST.Nodes.NonTerminals.NetworkNode::GetNodeLabel()
 DA:28,0
 FN:11,System.Void Interpreter.AST.Nodes.NonTerminals.NetworkNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
-FNDA:0,System.Void Interpreter.AST.Nodes.NonTerminals.NetworkNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
-DA:12,0
+FNDA:2,System.Void Interpreter.AST.Nodes.NonTerminals.NetworkNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
+DA:12,2
 LF:12
-LH:0
+LH:4
 BRF:2
 BRH:0
 FNF:7
-FNH:0
+FNH:4
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/ProgramNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/ProgramNode.cs
 FN:10,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.ProgramNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.ProgramNode::GetChildren()
 DA:11,0
@@ -10503,8 +10518,8 @@ DA:13,0
 DA:14,0
 DA:15,0
 FN:7,System.Void Interpreter.AST.Nodes.NonTerminals.ProgramNode::.ctor(System.Int32)
-FNDA:1,System.Void Interpreter.AST.Nodes.NonTerminals.ProgramNode::.ctor(System.Int32)
-DA:8,1
+FNDA:20,System.Void Interpreter.AST.Nodes.NonTerminals.ProgramNode::.ctor(System.Int32)
+DA:8,20
 LF:6
 LH:1
 BRF:0
@@ -10512,7 +10527,7 @@ BRH:0
 FNF:2
 FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/RouteNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/RouteNode.cs
 FN:5,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.RouteNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.RouteNode::GetChildren()
 DA:6,0
@@ -10528,7 +10543,7 @@ BRH:0
 FNF:2
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/StatementNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/StatementNode.cs
 FN:8,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.StatementNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.StatementNode::GetChildren()
 DA:9,0
@@ -10537,16 +10552,16 @@ DA:11,0
 DA:12,0
 DA:13,0
 FN:5,System.Void Interpreter.AST.Nodes.NonTerminals.StatementNode::.ctor(System.Int32)
-FNDA:0,System.Void Interpreter.AST.Nodes.NonTerminals.StatementNode::.ctor(System.Int32)
-DA:6,0
+FNDA:12,System.Void Interpreter.AST.Nodes.NonTerminals.StatementNode::.ctor(System.Int32)
+DA:6,12
 LF:6
-LH:0
+LH:1
 BRF:0
 BRH:0
 FNF:2
-FNH:0
+FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Non Terminals/TypeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Non Terminals/TypeNode.cs
 FN:8,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.TypeNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.NonTerminals.TypeNode::GetChildren()
 DA:9,0
@@ -10558,16 +10573,16 @@ FN:14,System.String Interpreter.AST.Nodes.NonTerminals.TypeNode::GetNodeLabel()
 FNDA:0,System.String Interpreter.AST.Nodes.NonTerminals.TypeNode::GetNodeLabel()
 DA:15,0
 FN:5,System.Void Interpreter.AST.Nodes.NonTerminals.TypeNode::.ctor(System.Int32)
-FNDA:0,System.Void Interpreter.AST.Nodes.NonTerminals.TypeNode::.ctor(System.Int32)
-DA:6,0
+FNDA:3,System.Void Interpreter.AST.Nodes.NonTerminals.TypeNode::.ctor(System.Int32)
+DA:6,3
 LF:7
-LH:0
+LH:1
 BRF:0
 BRH:0
 FNF:3
-FNH:0
+FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Networks/InstanceDeclaration.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Networks/InstanceDeclaration.cs
 FN:10,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Networks.InstanceDeclaration::get_ExistingInstance()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Networks.InstanceDeclaration::get_ExistingInstance()
 DA:11,0
@@ -10600,19 +10615,19 @@ BRH:0
 FNF:6
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Networks/NetworkDeclarationNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Networks/NetworkDeclarationNode.cs
 FN:14,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Inputs()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Inputs()
-DA:15,0
+FNDA:2,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Inputs()
+DA:15,2
 FN:15,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Outputs()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Outputs()
-DA:16,0
+FNDA:2,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Outputs()
+DA:16,2
 FN:16,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Networks.InstanceDeclaration> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Instances()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Networks.InstanceDeclaration> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Instances()
-DA:17,0
+FNDA:2,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Networks.InstanceDeclaration> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Instances()
+DA:17,2
 FN:17,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Routes.RouteDefinitionNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Routes()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Routes.RouteDefinitionNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Routes()
-DA:18,0
+FNDA:2,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Routes.RouteDefinitionNode> Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::get_Routes()
+DA:18,2
 FN:19,System.String Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::ToString()
 DA:20,0
@@ -10628,16 +10643,16 @@ DA:29,0
 DA:30,0
 DA:31,0
 FN:12,System.Void Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Networks.InstanceDeclaration>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Routes.RouteDefinitionNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
-FNDA:0,System.Void Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Networks.InstanceDeclaration>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Routes.RouteDefinitionNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
-DA:13,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Networks.NetworkDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Networks.InstanceDeclaration>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Routes.RouteDefinitionNode>,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
+DA:13,1
 LF:15
-LH:0
+LH:5
 BRF:0
 BRH:0
 FNF:7
-FNH:0
+FNH:5
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Networks/NetworkInputOutputNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Networks/NetworkInputOutputNode.cs
 FN:10,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode> Interpreter.AST.Nodes.Networks.NetworkInputOutputNode::get_Inputs()
 FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode> Interpreter.AST.Nodes.Networks.NetworkInputOutputNode::get_Inputs()
 DA:11,0
@@ -10654,16 +10669,16 @@ BRH:0
 FNF:3
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Networks/QueueDeclarationNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Networks/QueueDeclarationNode.cs
 FN:13,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Service()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Service()
-DA:14,0
+FNDA:1,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Service()
+DA:14,1
 FN:14,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Capacity()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Capacity()
-DA:15,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Capacity()
+DA:15,2
 FN:15,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Servers()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Servers()
-DA:16,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Networks.QueueDeclarationNode::get_Servers()
+DA:16,2
 FN:17,System.String Interpreter.AST.Nodes.Networks.QueueDeclarationNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Networks.QueueDeclarationNode::ToString()
 DA:18,0
@@ -10678,16 +10693,16 @@ DA:26,0
 DA:27,0
 DA:28,0
 FN:11,System.Void Interpreter.AST.Nodes.Networks.QueueDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
-FNDA:0,System.Void Interpreter.AST.Nodes.Networks.QueueDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
-DA:12,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Networks.QueueDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.Types.NetworkTypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Metrics.NamedMetricNode>)
+DA:12,1
 LF:13
-LH:0
+LH:4
 BRF:0
 BRH:0
 FNF:6
-FNH:0
+FNH:4
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Metrics/FunctionMetricNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Metrics/FunctionMetricNode.cs
 FN:9,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Metrics.FunctionMetricNode::get_Function()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Metrics.FunctionMetricNode::get_Function()
 DA:10,0
@@ -10712,7 +10727,7 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Metrics/NamedMetricNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Metrics/NamedMetricNode.cs
 FN:8,System.String Interpreter.AST.Nodes.Metrics.NamedMetricNode::get_Name()
 FNDA:0,System.String Interpreter.AST.Nodes.Metrics.NamedMetricNode::get_Name()
 DA:9,0
@@ -10737,7 +10752,7 @@ BRH:0
 FNF:5
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Identifiers/QualifiedIdentifierNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Identifiers/QualifiedIdentifierNode.cs
 FN:9,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Identifiers.QualifiedIdentifierNode::get_LeftIdentifier()
 FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Identifiers.QualifiedIdentifierNode::get_LeftIdentifier()
 DA:10,0
@@ -10775,10 +10790,10 @@ BRH:0
 FNF:8
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Identifiers/SingleIdentifierNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Identifiers/SingleIdentifierNode.cs
 FN:9,System.String Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::get_Identifier()
-FNDA:2,System.String Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::get_Identifier()
-DA:10,2
+FNDA:36,System.String Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::get_Identifier()
+DA:10,36
 FN:12,System.String Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::ToString()
 DA:13,0
@@ -10799,8 +10814,8 @@ FN:25,System.String Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::GetN
 FNDA:0,System.String Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::GetNodeLabel()
 DA:26,0
 FN:7,System.Void Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::.ctor(System.Int32,System.String)
-FNDA:1,System.Void Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::.ctor(System.Int32,System.String)
-DA:8,1
+FNDA:13,System.Void Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode::.ctor(System.Int32,System.String)
+DA:8,13
 LF:11
 LH:2
 BRF:0
@@ -10808,13 +10823,13 @@ BRH:0
 FNF:7
 FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/AddNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/AddNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AddNode::get_Left()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AddNode::get_Left()
-DA:9,0
+FNDA:6,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AddNode::get_Left()
+DA:9,6
 FN:9,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AddNode::get_Right()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AddNode::get_Right()
-DA:10,0
+FNDA:6,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AddNode::get_Right()
+DA:10,6
 FN:11,System.String Interpreter.AST.Nodes.Expressions.AddNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.AddNode::ToString()
 DA:12,0
@@ -10828,22 +10843,22 @@ DA:19,0
 DA:20,0
 DA:21,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.AddNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.AddNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:2,System.Void Interpreter.AST.Nodes.Expressions.AddNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,2
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/AndNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/AndNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AndNode::get_Left()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AndNode::get_Left()
-DA:9,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AndNode::get_Left()
+DA:9,2
 FN:9,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AndNode::get_Right()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AndNode::get_Right()
-DA:10,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.AndNode::get_Right()
+DA:10,2
 FN:11,System.String Interpreter.AST.Nodes.Expressions.AndNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.AndNode::ToString()
 DA:12,0
@@ -10857,19 +10872,19 @@ DA:19,0
 DA:20,0
 DA:21,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.AndNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.AndNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.AndNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,1
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/ArrayLiteralNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/ArrayLiteralNode.cs
 FN:8,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode> Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::get_Elements()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode> Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::get_Elements()
-DA:9,0
+FNDA:3,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode> Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::get_Elements()
+DA:9,3
 FN:10,System.String Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::ToString()
 DA:11,0
@@ -10885,19 +10900,19 @@ FN:20,System.String Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::GetNodeL
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::GetNodeLabel()
 DA:21,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::.ctor(System.Int32,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode>)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::.ctor(System.Int32,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode>)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.ArrayLiteralNode::.ctor(System.Int32,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode>)
+DA:7,1
 LF:10
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/BoolLiteralNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/BoolLiteralNode.cs
 FN:8,System.Boolean Interpreter.AST.Nodes.Expressions.BoolLiteralNode::get_Value()
-FNDA:0,System.Boolean Interpreter.AST.Nodes.Expressions.BoolLiteralNode::get_Value()
-DA:9,0
+FNDA:10,System.Boolean Interpreter.AST.Nodes.Expressions.BoolLiteralNode::get_Value()
+DA:9,10
 FN:11,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Expressions.BoolLiteralNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Expressions.BoolLiteralNode::GetChildren()
 DA:12,0
@@ -10907,22 +10922,22 @@ FN:15,System.String Interpreter.AST.Nodes.Expressions.BoolLiteralNode::GetNodeLa
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.BoolLiteralNode::GetNodeLabel()
 DA:16,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.BoolLiteralNode::.ctor(System.Int32,System.Boolean)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.BoolLiteralNode::.ctor(System.Int32,System.Boolean)
-DA:7,0
+FNDA:5,System.Void Interpreter.AST.Nodes.Expressions.BoolLiteralNode::.ctor(System.Int32,System.Boolean)
+DA:7,5
 LF:6
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:4
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/DivisionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/DivisionNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.DivisionNode::get_Left()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.DivisionNode::get_Left()
-DA:9,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.DivisionNode::get_Left()
+DA:9,2
 FN:9,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.DivisionNode::get_Right()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.DivisionNode::get_Right()
-DA:10,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.DivisionNode::get_Right()
+DA:10,2
 FN:11,System.String Interpreter.AST.Nodes.Expressions.DivisionNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.DivisionNode::ToString()
 DA:12,0
@@ -10936,16 +10951,16 @@ DA:19,0
 DA:20,0
 DA:21,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.DivisionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.DivisionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.DivisionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,1
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/DoubleLiteralNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/DoubleLiteralNode.cs
 FN:8,System.Double Interpreter.AST.Nodes.Expressions.DoubleLiteralNode::get_Value()
 FNDA:0,System.Double Interpreter.AST.Nodes.Expressions.DoubleLiteralNode::get_Value()
 DA:9,0
@@ -10967,13 +10982,13 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/EqualNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/EqualNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.EqualNode::get_Left()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.EqualNode::get_Left()
-DA:9,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.EqualNode::get_Left()
+DA:9,2
 FN:9,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.EqualNode::get_Right()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.EqualNode::get_Right()
-DA:10,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.EqualNode::get_Right()
+DA:10,2
 FN:11,System.String Interpreter.AST.Nodes.Expressions.EqualNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.EqualNode::ToString()
 DA:12,0
@@ -10987,22 +11002,22 @@ DA:19,0
 DA:20,0
 DA:21,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.EqualNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.EqualNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.EqualNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,1
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/FunctionCallNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/FunctionCallNode.cs
 FN:10,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Expressions.FunctionCallNode::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Expressions.FunctionCallNode::get_Identifier()
-DA:11,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Expressions.FunctionCallNode::get_Identifier()
+DA:11,2
 FN:11,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode> Interpreter.AST.Nodes.Expressions.FunctionCallNode::get_ActualParameters()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode> Interpreter.AST.Nodes.Expressions.FunctionCallNode::get_ActualParameters()
-DA:12,0
+FNDA:2,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode> Interpreter.AST.Nodes.Expressions.FunctionCallNode::get_ActualParameters()
+DA:12,2
 FN:12,System.String Interpreter.AST.Nodes.Expressions.FunctionCallNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.FunctionCallNode::ToString()
 DA:13,0
@@ -11019,19 +11034,19 @@ FN:23,System.String Interpreter.AST.Nodes.Expressions.FunctionCallNode::GetNodeL
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.FunctionCallNode::GetNodeLabel()
 DA:24,0
 FN:8,System.Void Interpreter.AST.Nodes.Expressions.FunctionCallNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.IdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode>)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.FunctionCallNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.IdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode>)
-DA:9,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.FunctionCallNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.IdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.NonTerminals.ExpressionNode>)
+DA:9,1
 LF:12
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:6
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/IdentifierExpressionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/IdentifierExpressionNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Expressions.IdentifierExpressionNode::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Expressions.IdentifierExpressionNode::get_Identifier()
-DA:9,0
+FNDA:11,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Expressions.IdentifierExpressionNode::get_Identifier()
+DA:9,11
 FN:11,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Expressions.IdentifierExpressionNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Expressions.IdentifierExpressionNode::GetChildren()
 DA:12,0
@@ -11041,22 +11056,22 @@ DA:15,0
 DA:16,0
 DA:17,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.IdentifierExpressionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.IdentifierNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.IdentifierExpressionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.IdentifierNode)
-DA:7,0
+FNDA:3,System.Void Interpreter.AST.Nodes.Expressions.IdentifierExpressionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.IdentifierNode)
+DA:7,3
 LF:8
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:3
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/IndexingNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/IndexingNode.cs
 FN:9,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Expressions.IndexingNode::get_Target()
-FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Expressions.IndexingNode::get_Target()
-DA:10,0
+FNDA:2,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Expressions.IndexingNode::get_Target()
+DA:10,2
 FN:10,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.IndexingNode::get_Index()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.IndexingNode::get_Index()
-DA:11,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.IndexingNode::get_Index()
+DA:11,2
 FN:12,System.String Interpreter.AST.Nodes.Expressions.IndexingNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.IndexingNode::ToString()
 DA:13,0
@@ -11070,19 +11085,19 @@ DA:20,0
 DA:21,0
 DA:22,0
 FN:7,System.Void Interpreter.AST.Nodes.Expressions.IndexingNode::.ctor(System.Int32,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.IndexingNode::.ctor(System.Int32,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:8,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.IndexingNode::.ctor(System.Int32,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:8,1
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/IntLiteralNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/IntLiteralNode.cs
 FN:8,System.Int32 Interpreter.AST.Nodes.Expressions.IntLiteralNode::get_Value()
-FNDA:0,System.Int32 Interpreter.AST.Nodes.Expressions.IntLiteralNode::get_Value()
-DA:9,0
+FNDA:52,System.Int32 Interpreter.AST.Nodes.Expressions.IntLiteralNode::get_Value()
+DA:9,52
 FN:11,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Expressions.IntLiteralNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Expressions.IntLiteralNode::GetChildren()
 DA:12,0
@@ -11092,22 +11107,22 @@ FN:15,System.String Interpreter.AST.Nodes.Expressions.IntLiteralNode::GetNodeLab
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.IntLiteralNode::GetNodeLabel()
 DA:16,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.IntLiteralNode::.ctor(System.Int32,System.Int32)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.IntLiteralNode::.ctor(System.Int32,System.Int32)
-DA:7,0
+FNDA:25,System.Void Interpreter.AST.Nodes.Expressions.IntLiteralNode::.ctor(System.Int32,System.Int32)
+DA:7,25
 LF:6
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:4
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/LessThanNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/LessThanNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.LessThanNode::get_Left()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.LessThanNode::get_Left()
-DA:9,0
+FNDA:5,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.LessThanNode::get_Left()
+DA:9,5
 FN:9,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.LessThanNode::get_Right()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.LessThanNode::get_Right()
-DA:10,0
+FNDA:5,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.LessThanNode::get_Right()
+DA:10,5
 FN:11,System.String Interpreter.AST.Nodes.Expressions.LessThanNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.LessThanNode::ToString()
 DA:12,0
@@ -11121,33 +11136,33 @@ DA:19,0
 DA:20,0
 DA:21,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.LessThanNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.LessThanNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.LessThanNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,1
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/LiteralNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/LiteralNode.cs
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.LiteralNode::.ctor(System.Int32)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.LiteralNode::.ctor(System.Int32)
-DA:7,0
+FNDA:31,System.Void Interpreter.AST.Nodes.Expressions.LiteralNode::.ctor(System.Int32)
+DA:7,31
 LF:1
-LH:0
+LH:1
 BRF:0
 BRH:0
 FNF:1
-FNH:0
+FNH:1
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/MultiplyNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/MultiplyNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.MultiplyNode::get_Left()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.MultiplyNode::get_Left()
-DA:9,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.MultiplyNode::get_Left()
+DA:9,2
 FN:9,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.MultiplyNode::get_Right()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.MultiplyNode::get_Right()
-DA:10,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.MultiplyNode::get_Right()
+DA:10,2
 FN:11,System.String Interpreter.AST.Nodes.Expressions.MultiplyNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.MultiplyNode::ToString()
 DA:12,0
@@ -11161,19 +11176,19 @@ DA:19,0
 DA:20,0
 DA:21,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.MultiplyNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.MultiplyNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.MultiplyNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,1
 LF:11
-LH:0
+LH:3
 BRF:0
 BRH:0
 FNF:5
-FNH:0
+FNH:3
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/NegativeNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/NegativeNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.NegativeNode::get_Inner()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.NegativeNode::get_Inner()
-DA:9,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.NegativeNode::get_Inner()
+DA:9,2
 FN:10,System.String Interpreter.AST.Nodes.Expressions.NegativeNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.NegativeNode::ToString()
 DA:11,0
@@ -11186,19 +11201,19 @@ DA:17,0
 DA:18,0
 DA:19,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.NegativeNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.NegativeNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.NegativeNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,1
 LF:9
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:4
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/NotNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/NotNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.NotNode::get_Inner()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.NotNode::get_Inner()
-DA:9,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.NotNode::get_Inner()
+DA:9,2
 FN:10,System.String Interpreter.AST.Nodes.Expressions.NotNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.NotNode::ToString()
 DA:11,0
@@ -11211,16 +11226,16 @@ DA:17,0
 DA:18,0
 DA:19,0
 FN:6,System.Void Interpreter.AST.Nodes.Expressions.NotNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Expressions.NotNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:7,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Expressions.NotNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:7,1
 LF:9
-LH:0
+LH:2
 BRF:0
 BRH:0
 FNF:4
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/ParenthesesNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/ParenthesesNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.ParenthesesNode::get_Inner()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Expressions.ParenthesesNode::get_Inner()
 DA:9,0
@@ -11245,7 +11260,7 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Expressions/StringLiteralNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Expressions/StringLiteralNode.cs
 FN:8,System.String Interpreter.AST.Nodes.Expressions.StringLiteralNode::get_Value()
 FNDA:0,System.String Interpreter.AST.Nodes.Expressions.StringLiteralNode::get_Value()
 DA:9,0
@@ -11267,16 +11282,16 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Definitions/ConstDeclarationNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Definitions/ConstDeclarationNode.cs
 FN:10,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Type()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Type()
-DA:11,0
+FNDA:1,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Type()
+DA:11,1
 FN:11,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Identifier()
-DA:12,0
+FNDA:2,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Identifier()
+DA:12,2
 FN:12,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Expression()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Expression()
-DA:13,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.ExpressionNode Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::get_Expression()
+DA:13,2
 FN:13,System.String Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::ToString()
 DA:14,0
@@ -11295,19 +11310,19 @@ FN:26,System.String Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::GetN
 FNDA:0,System.String Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::GetNodeLabel()
 DA:27,0
 FN:8,System.Void Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
-DA:9,0
+FNDA:1,System.Void Interpreter.AST.Nodes.Definitions.ConstDeclarationNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,Interpreter.AST.Nodes.NonTerminals.ExpressionNode)
+DA:9,1
 LF:15
-LH:0
+LH:4
 BRF:0
 BRH:0
 FNF:7
-FNH:0
+FNH:4
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Definitions/DefinitionCompositionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Definitions/DefinitionCompositionNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.DefinitionNode Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode::get_NextDefinition()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.DefinitionNode Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode::get_NextDefinition()
-DA:9,0
+FNDA:3,Interpreter.AST.Nodes.NonTerminals.DefinitionNode Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode::get_NextDefinition()
+DA:9,3
 FN:11,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode::GetChildren()
 FNDA:0,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Node> Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode::GetChildren()
 DA:12,0
@@ -11323,28 +11338,28 @@ DA:21,0
 BRDA:13,7,0,0
 BRDA:13,7,1,0
 FN:6,System.Void Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode)
-DA:7,0
+FNDA:3,System.Void Interpreter.AST.Nodes.Definitions.DefinitionCompositionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode)
+DA:7,3
 LF:12
-LH:0
+LH:2
 BRF:2
 BRH:0
 FNF:3
-FNH:0
+FNH:2
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Definitions/FunctionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Definitions/FunctionNode.cs
 FN:11,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_ReturnType()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_ReturnType()
-DA:12,0
+FNDA:2,Interpreter.AST.Nodes.NonTerminals.TypeNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_ReturnType()
+DA:12,2
 FN:12,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_Identifier()
-FNDA:0,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_Identifier()
-DA:13,0
+FNDA:3,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_Identifier()
+DA:13,3
 FN:13,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Statements.TypeAndIdentifier> Interpreter.AST.Nodes.Definitions.FunctionNode::get_Parameters()
-FNDA:0,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Statements.TypeAndIdentifier> Interpreter.AST.Nodes.Definitions.FunctionNode::get_Parameters()
-DA:14,0
+FNDA:3,System.Collections.Generic.IReadOnlyList`1<Interpreter.AST.Nodes.Statements.TypeAndIdentifier> Interpreter.AST.Nodes.Definitions.FunctionNode::get_Parameters()
+DA:14,3
 FN:14,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_Body()
-FNDA:0,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_Body()
-DA:15,0
+FNDA:3,Interpreter.AST.Nodes.NonTerminals.StatementNode Interpreter.AST.Nodes.Definitions.FunctionNode::get_Body()
+DA:15,3
 FN:16,System.String Interpreter.AST.Nodes.Definitions.FunctionNode::ToString()
 FNDA:0,System.String Interpreter.AST.Nodes.Definitions.FunctionNode::ToString()
 DA:17,0
@@ -11363,16 +11378,16 @@ FN:29,System.String Interpreter.AST.Nodes.Definitions.FunctionNode::GetNodeLabel
 FNDA:0,System.String Interpreter.AST.Nodes.Definitions.FunctionNode::GetNodeLabel()
 DA:30,0
 FN:9,System.Void Interpreter.AST.Nodes.Definitions.FunctionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Statements.TypeAndIdentifier>,Interpreter.AST.Nodes.NonTerminals.StatementNode)
-FNDA:0,System.Void Interpreter.AST.Nodes.Definitions.FunctionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Statements.TypeAndIdentifier>,Interpreter.AST.Nodes.NonTerminals.StatementNode)
-DA:10,0
+FNDA:2,System.Void Interpreter.AST.Nodes.Definitions.FunctionNode::.ctor(System.Int32,Interpreter.AST.Nodes.NonTerminals.DefinitionNode,Interpreter.AST.Nodes.NonTerminals.TypeNode,Interpreter.AST.Nodes.Identifiers.SingleIdentifierNode,System.Collections.Generic.IEnumerable`1<Interpreter.AST.Nodes.Statements.TypeAndIdentifier>,Interpreter.AST.Nodes.NonTerminals.StatementNode)
+DA:10,2
 LF:16
-LH:0
+LH:5
 BRF:0
 BRH:0
 FNF:8
-FNH:0
+FNH:5
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Definitions/NetworkDefinitionNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Definitions/NetworkDefinitionNode.cs
 FN:9,Interpreter.AST.Nodes.NonTerminals.NetworkNode Interpreter.AST.Nodes.Definitions.NetworkDefinitionNode::get_Network()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.NetworkNode Interpreter.AST.Nodes.Definitions.NetworkDefinitionNode::get_Network()
 DA:10,0
@@ -11397,7 +11412,7 @@ BRH:0
 FNF:4
 FNH:0
 end_of_record
-SF:/home/vorherre/Documents/code/AQL/Interpreter/AST/Nodes/Definitions/SimulateNode.cs
+SF:/home/vorherre/Documents/AQL/Interpreter/AST/Nodes/Definitions/SimulateNode.cs
 FN:8,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Definitions.SimulateNode::get_NetworkIdentifier()
 FNDA:0,Interpreter.AST.Nodes.NonTerminals.IdentifierNode Interpreter.AST.Nodes.Definitions.SimulateNode::get_NetworkIdentifier()
 DA:9,0
