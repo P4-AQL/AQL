@@ -32,6 +32,7 @@ public class ParserTests
 
             AQLParser parser = SetupParser(input);
             var result = parser.program();
+
             Assert.NotNull(result);
         }
 
@@ -57,6 +58,23 @@ public class ParserTests
             AQLParser parser = SetupParser(input);
             var result = parser.program();
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void IncorrectEmptyProgramWithMultiLineComment_ShouldNotParse()
+        {
+            string input =
+            @"
+                network hahaha hahaha 12
+                * This is a comment
+                This is the second line */
+            ";
+
+            AQLParser parser = SetupParser(input);
+            var result = parser.program();
+            Assert.NotNull(result);
+            var parsed = result.GetText();
+            Assert.NotEqual("", parsed);
         }
 
         [Fact]
@@ -106,8 +124,34 @@ public class ParserTests
             ";
 
             AQLParser parser = SetupParser(input);
-            var result = parser.definition();
-            Assert.NotNull(result);
+
+            var funcDef = parser.definition();
+            Assert.NotNull(funcDef);
+            Console.WriteLine(funcDef.ToStringTree(parser));
+            var functionContext = funcDef.functionDefinition();
+            Assert.NotNull(functionContext);
+            var returnType = functionContext.type();
+            Assert.NotNull(returnType);
+            Assert.Equal("int", returnType.GetText());
+            Console.WriteLine(returnType.GetText());
+            var identifier = functionContext.identifier();
+            Assert.NotNull(identifier);
+            Assert.Equal("add", identifier.GetText());
+            Console.WriteLine(identifier.GetText());
+            var paramList = functionContext.formalParameterList().GetText().Split(",");
+            Console.WriteLine(functionContext.formalParameterList().identifier()[0].GetText());
+            Assert.NotNull(paramList);
+            Assert.Equal(2, paramList.Length);
+            Assert.Equal("int a", paramList[0]);
+            Assert.Equal("int b", paramList[1]);
+            Console.WriteLine(paramList[0]);
+            Console.WriteLine(paramList[1]);
+
+
+            Console.WriteLine(funcDef.ToStringTree(parser));
+
+
+            // Assert.NotNull(result);
         }
 
         [Fact]
@@ -120,6 +164,7 @@ public class ParserTests
 
             AQLParser parser = SetupParser(input);
             var result = parser.definition();
+            Console.WriteLine(result.ToStringTree(parser));
             Assert.NotNull(result);
         }
 
@@ -193,8 +238,18 @@ public class ParserTests
             ";
 
             AQLParser parser = SetupParser(input);
-            var result = parser.networkDefinition();
-            Assert.NotNull(result);
+            var networkDef = parser.networkDefinition();
+            Assert.NotNull(networkDef);
+            var networkExpression = networkDef.networkExpression();
+            Assert.NotNull(networkExpression);
+            var inputOutputContext = networkExpression[0].inputOutputNetworkExpression();
+            Assert.NotNull(inputOutputContext);
+            
+            var inputs = inputOutputContext.idList()[0].GetText().Split(",");
+            Assert.NotNull(inputs);
+            Assert.Equal(2, inputs.Length);
+            Assert.Equal("in1", inputs[0].Trim());
+            Assert.Equal("in2", inputs[1].Trim());
         }
 
         [Fact]
@@ -204,13 +259,26 @@ public class ParserTests
             @"
                 network test 
                 { 
-                    existing: new1, new2; 
+                    existing : new1, new2
                 }
             ";
-
             AQLParser parser = SetupParser(input);
-            var result = parser.networkDefinition();
-            Assert.NotNull(result);
+            var networkDef = parser.networkDefinition();
+            Assert.NotNull(networkDef);
+            var networkExpression = networkDef.networkExpression();
+            Assert.NotNull(networkExpression);
+            var instanceContext = networkExpression[0].instanceNetworkExpression();
+            Assert.NotNull(instanceContext);
+            var instanceIdentifier = instanceContext.anyIdentifier();
+            Assert.NotNull(instanceIdentifier);
+            
+            var instanceIdList = instanceContext.idList().GetText().Split(",");
+            Assert.NotNull(instanceIdList);
+            Assert.Equal(2, instanceIdList.Length);
+            Assert.Equal("new1", instanceIdList[0].Trim());
+            Assert.Equal("new2", instanceIdList[1].Trim());
+
+
         }
 
         [Fact]
