@@ -1,12 +1,10 @@
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.SemanticAnalysis;
 
-
 public class DummyProgramNode : ProgramNode
 {
     public DummyProgramNode() : base(0) { }
 }
-
 
 public class DummyTypeNode : TypeNode
 {
