@@ -16,8 +16,8 @@ public class TypeCheckerTests
             List<string> errors = [];
             TypeChecker typeChecker = new();
 
-            Node correctRoot = new DefinitionProgramNode(0, new DefinitionNode(0));
-            typeChecker.TypeCheckNode(correctRoot, errors);
+            Node root = new DefinitionProgramNode(0, new DefinitionNode(0));
+            typeChecker.TypeCheckNode(root, errors);
 
             // Verify 0 errors when typechecker gets a program node
             Assert.Empty(errors);
@@ -29,8 +29,8 @@ public class TypeCheckerTests
             List<string> errors = [];
             TypeChecker typeChecker = new();
 
-            Node correctRoot = new StatementNode(0);
-            typeChecker.TypeCheckNode(correctRoot, errors);
+            Node root = new StatementNode(0);
+            typeChecker.TypeCheckNode(root, errors);
 
             // Verify errors when typechecker gets something that is not a program node
             Assert.NotEmpty(errors);
@@ -39,7 +39,35 @@ public class TypeCheckerTests
 
     public class TypeCheckProgramNodeTest : TypeCheckerTests
     {
+        [Fact]
+        public void TestCorrectProgramNodes()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
 
+            DefinitionProgramNode definitionNode = new DefinitionProgramNode(0, new DefinitionNode(0));
+            SingleIdentifierNode id = new SingleIdentifierNode(0, "stdlib");
+            ImportNode importNode = new ImportNode(0, id, definitionNode);
+            typeChecker.TypeCheckNode(importNode, errors);
+
+            Console.WriteLine("ØØØØØØ: " + id.Identifier);
+            
+            // Verify zero errors
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void TestIncorrectProgramNodes()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+
+            Node root = new StatementNode(0);
+            typeChecker.TypeCheckNode(root, errors);
+
+            // Verify zero errors
+            Assert.NotEmpty(errors);
+        }
     }
 
     public class TypeCheckImportNodeTest : TypeCheckerTests
