@@ -8,7 +8,7 @@ namespace Interpreter.SemanticAnalysis;
 public class Table<T>()
 {
     // Identifier -> type
-    private readonly Dictionary<string, T> Dictionary = [];
+    public readonly Dictionary<string, T> Dictionary = [];
 
     public Table(Table<T> copy) : this()
     {

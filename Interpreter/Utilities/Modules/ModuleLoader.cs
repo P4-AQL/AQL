@@ -15,7 +15,7 @@ public static class ModuleLoader
     /// </summary>
     /// <param name="modulePath">The path to the module.</param>
     /// <returns> The loaded module context.</returns>
-    public static InterpretationEnvironment LoadModuleByPath(string modulePath)
+    public static ProgramNode LoadModuleByPath(string modulePath)
     {
         if (string.IsNullOrEmpty(modulePath))
         {
@@ -39,18 +39,8 @@ public static class ModuleLoader
         ASTAQLVisitor visitor = new();
         ProgramNode result = visitor.VisitProgramEOF(progContext);
 
-        TypeChecker typeChecker = new();
-        List<string> errors = [];
-        typeChecker.TypeCheckNode(result, errors);
-        foreach (string error in errors)
-        {
-            Console.WriteLine(error);
-        }
 
-        InterpreterClass interpreter = new(result);
-        InterpretationEnvironment environment = interpreter.StartInterpretation();
-
-        return environment;
+        return result;
     }
 
     /// <summary>
@@ -58,7 +48,7 @@ public static class ModuleLoader
     /// </summary>
     /// <param name="moduleName">The name of the module.</param>
     /// <returns>The loaded module context.</returns>
-    public static InterpretationEnvironment LoadModuleByName(string moduleName)
+    public static ProgramNode LoadModuleByName(string moduleName)
     {
         if (string.IsNullOrEmpty(moduleName))
         {
