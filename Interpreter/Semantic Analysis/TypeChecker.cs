@@ -767,17 +767,8 @@ public class TypeChecker
             // Check destination
             TypeCheckRouteDestination(to, typeCheckerNetworkState.localScope, errors);
 
-
             object? type = FindExpressionType(routeDefinitionNode.From, errors, typeCheckerNetworkState.localScope);
-            if (type is IntTypeNode or DoubleTypeNode)
-            {
-
-            }
-            else if (type is OutputTypeNode or QueueDeclarationNode or InputTypeNode)
-            {
-
-            }
-            else
+            if (type is not (IntTypeNode or DoubleTypeNode or OutputTypeNode or QueueDeclarationNode or InputTypeNode))
             {
                 errors.Add($"From routing is neither int, double or instance! (Line {routeDefinitionNode.LineNumber})");
             }
@@ -801,19 +792,15 @@ public class TypeChecker
 
             object? @object = GetTypeFromIdentifier(destination.RouteTo, globalEnvironment, localNetwork, errors);
 
-            if (destination.RouteTo is SingleIdentifierNode singleIdentifierNode)
+            if (@object is null)
             {
-                if (@object is not (QueueDeclarationNode or OutputTypeNode))
-                    errors.Add($"Route destination must be a queue or output (Line {destination.LineNumber})");
+                errors.Add($"Route destination identifier '{destination.RouteTo}' not found (Line {destination.RouteTo.LineNumber})");
+                continue;
             }
-            else if (destination.RouteTo is QualifiedIdentifierNode qualifiedIdentifierNode)
+
+            if (@object is QueueDeclarationNode or InputTypeNode or OutputTypeNode == false)
             {
-                if (@object is not InputTypeNode)
-                    errors.Add($"Route destination must be an input (Line {destination.LineNumber})");
-            }
-            else
-            {
-                errors.Add($"Route destination must be an identifier (Line {destination.LineNumber})");
+                errors.Add($"Route destination must be a queue or output (Line {destination.LineNumber})");
             }
         }
     }

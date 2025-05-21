@@ -35,6 +35,7 @@ public class InterpreterClass(ProgramNode node)
         catch (Exception ex)
         {
             globalEnvironment.SetError(ex.Message);
+            Console.WriteLine(ex.Message);
         }
 
         return globalEnvironment;
@@ -51,7 +52,10 @@ public class InterpreterClass(ProgramNode node)
             InterpretDefinition(definitionNode.Definition);
         }
 
-        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        else
+        {
+            throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        }
     }
 
     public void InterpretImport(ImportNode node)
@@ -72,7 +76,10 @@ public class InterpreterClass(ProgramNode node)
             InterpretSimulate(simulateNode);
         }
 
-        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        else
+        {
+            throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        }
     }
 
     public void InterpretDefinitionComposition(DefinitionCompositionNode node)
@@ -200,7 +207,10 @@ public class InterpreterClass(ProgramNode node)
             InterpretNetworkDeclaration(network);
         }
 
-        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        else
+        {
+            throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        }
     }
 
     public void InterpretQueueDeclaration(QueueDeclarationNode node)
@@ -278,7 +288,7 @@ public class InterpreterClass(ProgramNode node)
         CreateQueueableInEngine(engineAPI, queueable, networkIdentifier.FirstIdentifier);
 
         engineAPI.RunSimulation();
-        var stats = engineAPI.GetSimulationStats();
+        engineAPI.PrintMetric(engineAPI.GetSimulationStats());
     }
 
     public void CreateQueueableInEngine(SimulationEngineAPI engineAPI, Queueable queueable, string thisNetworkName)
@@ -485,9 +495,16 @@ public class InterpreterClass(ProgramNode node)
             {
                 return rightBool;
             }
+            else
+            {
+                throw new InterpretationException($"{nameof(andNode)} unhandled (Line {andNode.LineNumber})");
+            }
         }
 
-        throw new InterpretationException($"{nameof(andNode)} unhandled (Line {andNode.LineNumber})");
+        else
+        {
+            throw new InterpretationException($"{nameof(andNode)} unhandled (Line {andNode.LineNumber})");
+        }
     }
 
     public bool InterpretNotNode(NotNode notNode, Table<object>? shadowVariableState)
@@ -499,7 +516,10 @@ public class InterpreterClass(ProgramNode node)
             return !boolValue;
         }
 
-        throw new InterpretationException($"{nameof(notNode)} unhandled (Line {notNode.LineNumber})");
+        else
+        {
+            throw new InterpretationException($"{nameof(notNode)} unhandled (Line {notNode.LineNumber})");
+        }
     }
 
     public object[] InterpretArrayNode(ArrayLiteralNode arrayNode, Table<object>? shadowVariableState)
@@ -559,9 +579,16 @@ public class InterpreterClass(ProgramNode node)
             {
                 return @return;
             }
+            else
+            {
+                throw new InterpretationException($"Function '{functionCallNode.Identifier.FullIdentifier}' did not return a value (Line: {functionCallNode.Identifier.LineNumber})");
+            }
         }
 
-        throw new InterpretationException($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
+        else
+        {
+            throw new InterpretationException($"{nameof(functionCallNode)} unhandled (Line {functionCallNode.LineNumber})");
+        }
     }
 
     public object InterpretAnyIdentifier(IdentifierNode node, Table<object>? shadowVariableState)
@@ -596,7 +623,10 @@ public class InterpreterClass(ProgramNode node)
             }
         }
 
-        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        else
+        {
+            throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        }
     }
 
     public static object InterpretEnvironmentIdentifier(SingleIdentifierNode node, InterpretationEnvironment environment)
@@ -618,7 +648,10 @@ public class InterpreterClass(ProgramNode node)
             return moduleDependency;
         }
 
-        throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        else
+        {
+            throw new InterpretationException($"{nameof(node)} unhandled (Line {node.LineNumber})");
+        }
     }
 
     public object InterpretNetworkIdentifier(SingleIdentifierNode identifier, NetworkDeclarationNode network)
@@ -638,9 +671,9 @@ public class InterpreterClass(ProgramNode node)
                 throw new InterpretationException($"Identifier error occured for '{networkInstance.FullIdentifier}' (Line: {networkInstance.LineNumber})");
             }
         }
+
         else
         {
-
             throw new InterpretationException($"Identifier error occured for '{identifier.Identifier}' (Line: {identifier.LineNumber})");
         }
     }
