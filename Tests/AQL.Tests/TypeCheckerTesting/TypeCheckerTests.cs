@@ -7,6 +7,8 @@ using Interpreter.AST.Nodes.Programs;
 using Interpreter.AST.Nodes.Types;
 using Interpreter.SemanticAnalysis;
 using Interpreter.AST.Nodes.Definitions;
+using Interpreter.AST.Nodes.Networks;
+using Interpreter.AST.Nodes.Statements;
 
 namespace AQL.Tests;
 
@@ -53,7 +55,7 @@ public class TypeCheckerTests
             DefinitionProgramNode definitionNode = new DefinitionProgramNode(0, new DefinitionNode(0));
             // Test library is a file which can be found at bin/Debug/net9.0
             ImportNode importNode = new ImportNode(0, new SingleIdentifierNode(0, "testLibrary"), definitionNode);
-            typeChecker.TypeCheckNode(importNode, errors);
+            typeChecker.TypeCheckProgramNode(importNode, errors);
 
             // Verify zero errors
             Assert.Empty(errors);
@@ -65,10 +67,10 @@ public class TypeCheckerTests
             List<string> errors = [];
             TypeChecker typeChecker = new();
 
-            Node root = new StatementNode(0);
-            typeChecker.TypeCheckNode(root, errors);
+            ImportNode importNode = new ImportNode(0, new SingleIdentifierNode(0, "nonExisting"), null);
+            typeChecker.TypeCheckProgramNode(importNode, errors);
 
-            // Verify zero errors
+            // Verify errors
             Assert.NotEmpty(errors);
         }
     }
@@ -81,23 +83,97 @@ public class TypeCheckerTests
             List<string> errors = [];
             TypeChecker typeChecker = new();
 
-            IntTypeNode node = new IntTypeNode(0);
-            typeChecker.TypeCheckNode(node, errors);
+            ImportNode node = new ImportNode(0, new SingleIdentifierNode(0, "testLibrary"), null);
+            typeChecker.TypeCheckImportNode(errors, node);
 
             // Verify zero errors
-            Assert.NotEmpty(errors);
+            Assert.Empty(errors);
         }
 
+        [Fact]
+        public void TestIncorrectImportName()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+
+            ImportNode node = new ImportNode(0, new SingleIdentifierNode(0, "nonExisting"), null);
+            typeChecker.TypeCheckImportNode(errors, node);
+
+            // Verify errors
+            Assert.NotEmpty(errors);
+        }
     }
 
     public class TypeCheckDefinitionNodeTest : TypeCheckerTests
     {
+        [Fact]
+        public void TestCorrectDefinitions()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
 
+            //All of the valid nodes chained together:
+            SingleIdentifierNode networkID = new SingleIdentifierNode(0, "net");
+            SingleIdentifierNode funcID = new SingleIdentifierNode(0, "func");
+
+            SimulateNode simulateNode = new(0, new SingleIdentifierNode(0, networkID.Identifier), new IntLiteralNode(0, 10), new IntLiteralNode(0, 100));
+            NetworkDefinitionNode networkDefinitionNode = new(0, simulateNode, new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [], [], [], [], [new NamedMetricNode(0, "throughput")]));
+            FunctionNode functionNode = new(0, networkDefinitionNode, new IntTypeNode(0), funcID, [new TypeAndIdentifier(0, new IntTypeNode(0), new SingleIdentifierNode(0, "param"))], new StatementNode(0));
+            ConstDeclarationNode constDeclarationNode = new ConstDeclarationNode(0, functionNode, new IntTypeNode(0), new SingleIdentifierNode(0, "constant"), new IntLiteralNode(0, 2));
+
+            typeChecker.TypeCheckDefinitionNode(constDeclarationNode, errors);
+
+            // Verify zero errors
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void TestIncorrectDefinitions()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+
+            //Some invalid node
+            ConstDeclarationNode constDeclarationNode = new ConstDeclarationNode(0, null, new IntTypeNode(0), new SingleIdentifierNode(0, "constant"), new StringLiteralNode(0, "whoops"));
+            
+            typeChecker.TypeCheckDefinitionNode(constDeclarationNode, errors);
+
+            // Verify errors
+            Assert.NotEmpty(errors);
+        }
     }
 
     public class TypeCheckNetworkTest : TypeCheckerTests
     {
+        [Fact]
+        public void TestCorrectNetwork()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
 
+            // Some valid node
+            SingleIdentifierNode networkID = new SingleIdentifierNode(0, "net");
+            NetworkDefinitionNode networkDefinitionNode = new(0, null, new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [], [], [], [], [new NamedMetricNode(0, "throughput")]));
+            typeChecker.TypeCheckNetwork(networkDefinitionNode, errors);
+
+            // Verify zero errors
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void TestIncorrectNetwork()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+
+            //Some invalid node            
+            SingleIdentifierNode networkID = new SingleIdentifierNode(0, "net");
+            NetworkDefinitionNode networkDefinitionNode = new(0, null, new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [], [], [], [], [new NamedMetricNode(0, "not working")]));
+            typeChecker.TypeCheckNetwork(networkDefinitionNode, errors);
+
+            // Verify errors
+            Assert.NotEmpty(errors);
+        }
     }
 
     public class NetworkIsValidTest : TypeCheckerTests
