@@ -295,7 +295,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckStatementNode(StatementNode statementNode, List<string> errors, TypeNode returnType, Table<Node> localEnvironment)
+    public void TypeCheckStatementNode(StatementNode statementNode, List<string> errors, TypeNode returnType, Table<Node> localEnvironment)
     {
         if (statementNode is AssignNode assignNode)
         {
@@ -311,7 +311,7 @@ public class TypeChecker
                 else
                     errors.Add($"Variable not found (Line {assignNode.LineNumber})");
             }
-            else if (FindExpressionType(assignNode.Expression, errors, localEnvironment) != nodeType)
+            else if (FindExpressionType(assignNode.Expression, errors, localEnvironment).GetType() != nodeType.GetType())
             {
                 errors.Add($"The expression type does not match the idetifier (Line {assignNode.LineNumber})");
             }

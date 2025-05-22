@@ -7,6 +7,7 @@ using Interpreter.AST.Nodes.Programs;
 using Interpreter.AST.Nodes.Types;
 using Interpreter.SemanticAnalysis;
 using Interpreter.AST.Nodes.Definitions;
+using Interpreter.AST.Nodes.Statements;
 
 namespace AQL.Tests;
 
@@ -107,6 +108,28 @@ public class TypeCheckerTests
 
     public class TypeCheckStatementNodeTest : TypeCheckerTests
     {
+        [Fact]
+        public void Assignment_CorrectlyTyped_NoErrors()
+        {
+            // Arrange
+            var errors = new List<string>();
+            var localEnv = new Table<Node>();
+            localEnv.TryBindIfNotExists("x", new IntTypeNode(1));
+
+            var identifier = new SingleIdentifierNode(1, "x");
+            var expression = new IntLiteralNode(1, 2); // line 1, value 2
+
+            var assign = new AssignNode(1, null, identifier, expression);
+            var typeChecker = new TypeChecker();
+
+            // Act
+            typeChecker.TypeCheckStatementNode(assign, errors, new IntTypeNode(1), localEnv);
+
+            // Assert
+            Assert.Empty(errors);
+        }
+
+
 
     }
 
