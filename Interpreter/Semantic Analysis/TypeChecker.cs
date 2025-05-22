@@ -22,7 +22,6 @@ public class TypeChecker
     Table<Node> Environment => globalEnvironment.Environment;
     Table<TypeCheckerNetworkState> LocalNetworkScopesEnvironment => globalEnvironment.LocalNetworkScopesEnvironment;
 
-
     // env for definitions and localEnv for statements? Return localEnv as new so it is not referenced
     public TypeCheckerEnvironment TypeCheckNode(Node node, List<string> errors)
     {
@@ -396,7 +395,7 @@ public class TypeChecker
 
     }
 
-    private object? FindExpressionType(ExpressionNode topExpression, List<string> errors, Table<Node>? localEnvironment)
+    public object? FindExpressionType(ExpressionNode topExpression, List<string> errors, Table<Node>? localEnvironment)
     {
         try
         {
@@ -599,7 +598,7 @@ public class TypeChecker
         }
     }
 
-    static bool IsTypeIntOrDouble(object? typeNode) => typeNode is IntTypeNode || typeNode is DoubleTypeNode;
+    public static bool IsTypeIntOrDouble(object? typeNode) => typeNode is IntTypeNode || typeNode is DoubleTypeNode;
 
     private object? GetTypeFromIdentifier(IdentifierNode idNode, TypeCheckerEnvironment environmentToCheck, Table<Node>? localScope, List<string> errors)
     {
@@ -702,7 +701,7 @@ public class TypeChecker
         "throughput"
     ];
 
-    private static void TypeCheckQueueMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
+    public static void TypeCheckQueueMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
     {
         foreach (NamedMetricNode metric in metricList)
         {
@@ -767,19 +766,17 @@ public class TypeChecker
             // Check destination
             TypeCheckRouteDestination(to, typeCheckerNetworkState.localScope, errors);
 
-
             object? type = FindExpressionType(routeDefinitionNode.From, errors, typeCheckerNetworkState.localScope);
-            if (type is IntTypeNode or DoubleTypeNode)
-            {
-
-            }
-            else if (type is OutputTypeNode or QueueDeclarationNode or InputTypeNode)
-            {
-
-            }
-            else
+            if (type is not (IntTypeNode or DoubleTypeNode or OutputTypeNode or QueueDeclarationNode or InputTypeNode))
             {
                 errors.Add($"From routing is neither int, double or instance! (Line {routeDefinitionNode.LineNumber})");
+            }
+            // Only allow if instance input
+            // Qualified identifier means it is from instance
+            if (from is IdentifierExpressionNode identifierExpressionNode && type is InputTypeNode)
+            {
+                if (identifierExpressionNode.Identifier is QualifiedIdentifierNode)
+                    errors.Add($"Routing to inputs are only allowed to instance inputs! (Line {routeDefinitionNode.LineNumber})");
             }
         }
     }
@@ -798,22 +795,27 @@ public class TypeChecker
                 errors.Add($"Route destination must be an identifier (Line {destination.LineNumber})");
                 continue;
             }
-
+            
+            // Get the type that is pointed to
             object? @object = GetTypeFromIdentifier(destination.RouteTo, globalEnvironment, localNetwork, errors);
 
-            if (destination.RouteTo is SingleIdentifierNode singleIdentifierNode)
+            if (@object is null)
             {
-                if (@object is not (QueueDeclarationNode or OutputTypeNode))
-                    errors.Add($"Route destination must be a queue or output (Line {destination.LineNumber})");
+                errors.Add($"Route destination identifier '{destination.RouteTo}' not found (Line {destination.RouteTo.LineNumber})");
+                continue;
             }
-            else if (destination.RouteTo is QualifiedIdentifierNode qualifiedIdentifierNode)
+
+            if (@object is OutputTypeNode)
             {
-                if (@object is not InputTypeNode)
-                    errors.Add($"Route destination must be an input (Line {destination.LineNumber})");
+                // Only allow if not instance output
+                if (destination.RouteTo is QualifiedIdentifierNode)
+                {
+                    errors.Add($"Routing to outputs are only allowed to current network outputs! (Line {destination.RouteTo.LineNumber})");
+                }
             }
-            else
+            else if (@object is not (QueueDeclarationNode or InputTypeNode))
             {
-                errors.Add($"Route destination must be an identifier (Line {destination.LineNumber})");
+                errors.Add($"Route destination must be a queue, output or instance input (Line {destination.LineNumber})");
             }
         }
     }
