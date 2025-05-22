@@ -25,7 +25,7 @@ try
     if (errors.Count == 0)
     {
         InterpreterClass interpreter = new(astRoot);
-        interpreter.StartInterpretation();
+        InterpretationEnvironment interpretationEnvironment = interpreter.StartInterpretation();
     }
 
     string? path = Environment.CurrentDirectory.EndsWith("net9.0")
