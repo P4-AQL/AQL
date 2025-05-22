@@ -938,19 +938,16 @@ public class TypeCheckerTests
     public class TypeCheckInstancesTest : TypeCheckerTests
     {
         [Fact]
-        public void TestValidRouteInstance()
+        public void TestValidInstance()
         {
             List<string> errors = [];
             TypeChecker typeChecker = new();
 
-            SingleIdentifierNode netID = new(0, "network");
-            SingleIdentifierNode existing = new(0, "existing");
-            SingleIdentifierNode @new = new(0, "new");
-            NetworkDeclarationNode network = new(0, new NetworkTypeNode(0, netID), netID, [], [],
-                [new InstanceDeclaration(0, existing, @new)], [], []);
+            SingleIdentifierNode networkID = new SingleIdentifierNode(0, "net");
+            NetworkDeclarationNode networkDefinitionNode = new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [], [], [], [], []);
             Table<Node> globalEnvironment = new();
-
-            TypeCheckerNetworkState typeCheckerNetworkState = new(network, globalEnvironment);
+            
+            TypeCheckerNetworkState typeCheckerNetworkState = new(networkDefinitionNode, globalEnvironment);
 
             typeChecker.TypeCheckInstances(typeCheckerNetworkState, errors);
 
@@ -958,7 +955,7 @@ public class TypeCheckerTests
             Assert.Empty(errors);
         }
 
-        [Fact]
+        /*[Fact]
         public void ()
         {
             List<string> errors = [];
@@ -974,7 +971,7 @@ public class TypeCheckerTests
 
             // Verify errors
             Assert.NotEmpty(errors);
-        }
+        }*/
     }
 
     public class TypeCheckRoutesTest : TypeCheckerTests

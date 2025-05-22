@@ -237,7 +237,7 @@ public class TypeChecker
 
     }
 
-    private void NetworkIsValid(List<string> errors, NetworkDeclarationNode networkDeclarationNode, Table<Node> localNetwork)
+    public void NetworkIsValid(List<string> errors, NetworkDeclarationNode networkDeclarationNode, Table<Node> localNetwork)
     {
         // routing from all inputs
         foreach (SingleIdentifierNode input in networkDeclarationNode.Inputs)
@@ -725,7 +725,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckInstances(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
+    public void TypeCheckInstances(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
     {
         object? Get(IdentifierNode identifierNode) => GetTypeFromIdentifier(identifierNode, globalEnvironment, typeCheckerNetworkState.localScope, errors);
 
@@ -757,7 +757,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckRoutes(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
+    public void TypeCheckRoutes(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
     {
         foreach (RouteDefinitionNode routeDefinitionNode in typeCheckerNetworkState.NetworkNode.Routes)
         {
@@ -781,7 +781,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckRouteDestination(IReadOnlyList<RouteValuePairNode> destinations, Table<Node> localNetwork, List<string> errors)
+    public void TypeCheckRouteDestination(IReadOnlyList<RouteValuePairNode> destinations, Table<Node> localNetwork, List<string> errors)
     {
         foreach (RouteValuePairNode destination in destinations)
         {
