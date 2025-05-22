@@ -9,7 +9,7 @@ using Interpreter.SemanticAnalysis;
 using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Statements;
 using Interpreter.AST.Nodes.Networks;
-using Interpreter.AST.Nodes.Statements;
+using Interpreter.AST.Nodes.Routes;
 
 namespace AQL.Tests;
 
@@ -179,7 +179,39 @@ public class TypeCheckerTests
 
     public class NetworkIsValidTest : TypeCheckerTests
     {
+        [Fact]
+        public void TestValidNetwork()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
 
+            // Valid network althought a pretty empty one
+            // TODO: make more complex network
+            SingleIdentifierNode networkID = new(0, "someNetwork");
+            NetworkDeclarationNode networkDeclarationNode = new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [], [], [], [], [new NamedMetricNode(0, "throughput")]);
+            Table<Node> localEnv = new();
+
+            typeChecker.NetworkIsValid(errors, networkDeclarationNode, localEnv);
+            
+            // Verify zero errors
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void TestInvalidNetwork()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+            // invalid network that have an unused input and output
+            SingleIdentifierNode networkID = new(0, "someNetwork");
+            NetworkDeclarationNode networkDeclarationNode = new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [new SingleIdentifierNode(0, "unusedInput")], [new SingleIdentifierNode(0, "unusedOutput")], [], [], [new NamedMetricNode(0, "throughput")]);
+            Table<Node> localEnv = new();
+
+            typeChecker.NetworkIsValid(errors, networkDeclarationNode, localEnv);
+            
+            // Verify errors
+            Assert.NotEmpty(errors);
+        }
     }
 
     public class TypeCheckStatementNodeTest : TypeCheckerTests
@@ -204,9 +236,6 @@ public class TypeCheckerTests
             // Assert
             Assert.Empty(errors);
         }
-
-
-
     }
 
     public class FindExpressionTypeTest : TypeCheckerTests
@@ -843,45 +872,11 @@ public class TypeCheckerTests
                 }
 
         */
-
-
-
-
-
-
     }
+
     public class IsTypeIntOrDoubleTest : TypeCheckerTests
-    {/*the four test are causing an error for some reason
-        [Fact]
-        public void TestIsTypeIntOrDouble_WithIntType_ReturnsTrue()
-        {
-            IntTypeNode intTypeNode = new IntTypeNode(3);
-            Assert.True(TypeChecker.IsTypeIntOrDouble(intTypeNode));
-        }
-
-        [Fact]
-        public void TestIsTypeIntOrDouble_WithDoubleType_ReturnsTrue()
-        {
-            var doubleType = new DoubleTypeNode(1);
-            var result = TypeChecker.IsTypeIntOrDouble(doubleType);
-            Assert.True(result);
-        }
-
-        [Fact]
-        public void TestIsTypeIntOrDouble_WithOtherType_ReturnsFalse()
-        {
-            var stringType = new StringTypeNode(1); // Or any other type node you have
-            var result = TypeChecker.IsTypeIntOrDouble(stringType);
-            Assert.False(result);
-        }
-
-        [Fact]
-        public void TestIsTypeIntOrDouble_WithNull_ReturnsFalse()
-        {
-            var result = TypeChecker.IsTypeIntOrDouble(null);
-            Assert.False(result);
-        }
-    */
+    {
+        
     }
 
     public class GetTypeFromIdentifierTest : TypeCheckerTests
@@ -896,7 +891,7 @@ public class TypeCheckerTests
 
     public class TypeCheckOutputsTest : TypeCheckerTests
     {
-
+        // TODO: these
     }
 
     public class TypeCheckQueueMetricListTest : TypeCheckerTests
@@ -905,7 +900,6 @@ public class TypeCheckerTests
         public void TestValidQueueMetric()
         {
             List<string> errors = [];
-
 
             var mrt = new NamedMetricNode(1, "mrt");
             var vrt = new NamedMetricNode(1, "vrt");
@@ -938,39 +932,140 @@ public class TypeCheckerTests
 
     public class TypeCheckNetworkMetricListTest : TypeCheckerTests
     {
-        /*cannot get it to work
-                [Fact]
-                public void TestValidNetworkMetricName()
-                {
-                    List<string> errors = [];
-
-                    var avg = new NamedMetricNode(1, "avg");
-                    var throughput = new NamedMetricNode(1, "throughput");
-                    var expected_num_entities = new NamedMetricNode(1, "expected_num_entities");
-
-                    var metricList = new List<NamedMetricNode> { avg, throughput, expected_num_entities };
-
-                    TypeChecker.TypeCheckNetworkMetricList(metricList, errors);
-
-                    Assert.Empty(errors);
-
-                }
-
-        */
+        
     }
 
     public class TypeCheckInstancesTest : TypeCheckerTests
     {
+        [Fact]
+        public void TestValidRouteInstance()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
 
+            SingleIdentifierNode netID = new(0, "network");
+            SingleIdentifierNode existing = new(0, "existing");
+            SingleIdentifierNode @new = new(0, "new");
+            NetworkDeclarationNode network = new(0, new NetworkTypeNode(0, netID), netID, [], [],
+                [new InstanceDeclaration(0, existing, @new)], [], []);
+            Table<Node> globalEnvironment = new();
+
+            TypeCheckerNetworkState typeCheckerNetworkState = new(network, globalEnvironment);
+
+            typeChecker.TypeCheckInstances(typeCheckerNetworkState, errors);
+
+            // Verify zero errors
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void ()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+
+            // Routing to a non existing input
+            Table<Node> localNetwork = new();
+            SingleIdentifierNode input = new(0, "input");
+
+            IReadOnlyList<RouteValuePairNode> destinations = [new RouteValuePairNode(0, new IntLiteralNode(0, 1), input)];
+
+            typeChecker.TypeCheckRouteDestination(destinations, localNetwork, errors);
+
+            // Verify errors
+            Assert.NotEmpty(errors);
+        }
     }
 
     public class TypeCheckRoutesTest : TypeCheckerTests
     {
+        [Fact]
+        public void TestValidRoutes()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
 
+            Table<Node> globalEnvironment = new();
+            SingleIdentifierNode output = new(0, "Q");
+            globalEnvironment.TryBindIfNotExists("Q", new OutputTypeNode(0));
+            globalEnvironment.TryBindIfNotExists("from", new IntTypeNode(0));
+            SingleIdentifierNode networkID = new(0, "networkName");
+
+            IReadOnlyList<RouteValuePairNode> destination = [new RouteValuePairNode(0, new IntLiteralNode(0, 1), output)];
+            RouteDefinitionNode route = new(0, new IdentifierExpressionNode(0, new SingleIdentifierNode(0, "from")), destination);
+
+            NetworkDeclarationNode networkDeclarationNode = new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [], [], [], [route], []);
+            TypeCheckerNetworkState typeCheckerNetworkState = new(networkDeclarationNode, globalEnvironment);
+
+            typeChecker.TypeCheckRoutes(typeCheckerNetworkState, errors);
+
+            // Verify zero errors
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void TestInvalidRoutes()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+
+            // Routing where there is no from routing
+            Table<Node> globalEnvironment = new();
+            SingleIdentifierNode output = new(0, "Q");
+            globalEnvironment.TryBindIfNotExists("Q", new OutputTypeNode(0));
+            //globalEnvironment.TryBindIfNotExists("from", new IntTypeNode(0));
+            SingleIdentifierNode networkID = new(0, "networkName");
+
+            IReadOnlyList<RouteValuePairNode> destination = [new RouteValuePairNode(0, new IntLiteralNode(0, 1), output)];
+            RouteDefinitionNode route = new(0, new IdentifierExpressionNode(0, new SingleIdentifierNode(0, "from")), destination);
+
+            NetworkDeclarationNode networkDeclarationNode = new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [], [], [], [route], []);
+            TypeCheckerNetworkState typeCheckerNetworkState = new(networkDeclarationNode, globalEnvironment);
+
+            typeChecker.TypeCheckRoutes(typeCheckerNetworkState, errors);
+
+            // Verify errors
+            Assert.NotEmpty(errors);
+        }
     }
 
     public class TypeCheckRouteDestinationTest : TypeCheckerTests
     {
+        [Fact]
+        public void TestValidRouteDestination()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
 
+            // Routing to a output
+            Table<Node> localNetwork = new();
+            SingleIdentifierNode output = new(0, "output");
+
+            localNetwork.TryBindIfNotExists("output", new OutputTypeNode(0));
+            IReadOnlyList<RouteValuePairNode> destinations = [new RouteValuePairNode(0, new IntLiteralNode(0, 1), output)];
+
+            typeChecker.TypeCheckRouteDestination(destinations, localNetwork, errors);
+
+            // Verify zero errors
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void TestInvalidRouteDestination()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+
+            // Routing to a non existing input
+            Table<Node> localNetwork = new();
+            SingleIdentifierNode input = new(0, "input");
+
+            IReadOnlyList<RouteValuePairNode> destinations = [new RouteValuePairNode(0, new IntLiteralNode(0, 1), input)];
+
+            typeChecker.TypeCheckRouteDestination(destinations, localNetwork, errors);
+
+            // Verify errors
+            Assert.NotEmpty(errors);
+        }
     }
 }
