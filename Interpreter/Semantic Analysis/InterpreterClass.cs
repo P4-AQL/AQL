@@ -251,15 +251,18 @@ public class InterpreterClass(ProgramNode node)
     {
         NetworkState.ForceBind(node.Identifier.Identifier, node);
 
+        List<QueueableManager> queueableManagers = [QueueableManager, .. globalEnvironment.ModuleDependencies.Dictionary.Select(kvp => kvp.Value.QueueableManager)];
+        List<Queueable> outsideQueueables = [.. queueableManagers.SelectMany(qm => qm.Queueables)];
+
         IEnumerable<Queue> inputs = node.Inputs.Select(QueueableManager.IdentifierToInstantQueue);
         IEnumerable<Queue> outputs = node.Outputs.Select(QueueableManager.IdentifierToInstantQueue);
 
-        IEnumerable<Queueable> newInstances = node.Instances.Select(QueueableManager.GetNewInstance);
+        IEnumerable<Queueable> newInstances = node.Instances.Select(instance => QueueableManager.GetNewInstance(instance, outsideQueueables));
 
         List<Route> routes = [];
         foreach (RouteDefinitionNode routeDefinitionNode in node.Routes)
         {
-            routes.AddRange(QueueableManager.GetRoute(routeDefinitionNode, inputs, outputs, [.. newInstances], this));
+            routes.AddRange(QueueableManager.GetRoute(routeDefinitionNode, inputs, outputs, [.. newInstances], this, outsideQueueables));
         }
 
         QueueableManager.Queueables.Add(
@@ -283,8 +286,11 @@ public class InterpreterClass(ProgramNode node)
 
         engineAPI.SetSimulationParameters(untilTime: untilTime, runCount: runCount);
 
+        List<QueueableManager> queueableManagers = [QueueableManager, .. globalEnvironment.ModuleDependencies.Dictionary.Select(kvp => kvp.Value.QueueableManager)];
+        List<Queueable> outsideQueueables = [.. queueableManagers.SelectMany(qm => qm.Queueables)];
+
         IdentifierNode networkIdentifier = simulateNode.NetworkIdentifier;
-        Queueable queueable = QueueableManager.FindQueueable(networkIdentifier.FirstIdentifier);
+        Queueable queueable = QueueableManager.FindQueueable(networkIdentifier.FirstIdentifier, outsideQueueables);
 
         if (networkIdentifier is QualifiedIdentifierNode qualifiedIdentifierNode)
         {

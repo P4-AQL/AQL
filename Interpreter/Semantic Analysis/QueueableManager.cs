@@ -13,16 +13,17 @@ public class QueueableManager
 {
     public List<Queueable> Queueables = [];
 
-    public Queueable FindQueueable(string name) =>
-        FindQueueableOrDefault(name)
+    public Queueable FindQueueable(string name, IEnumerable<Queueable> outsideQueueables) =>
+        FindQueueableOrDefault(name, outsideQueueables)
         ?? throw new($"Queueable '{name}' not found");
 
-    public Queueable? FindQueueableOrDefault(string name) =>
-        Queueables.FirstOrDefault(q => q.Name == name);
+    public Queueable? FindQueueableOrDefault(string name, IEnumerable<Queueable> outsideQueueables) =>
+        Queueables.FirstOrDefault(q => q.Name == name)
+        ?? outsideQueueables.FirstOrDefault(q => q.Name == name);
 
-    public Queueable GetNewInstance(InstanceDeclaration instanceDeclaration)
+    public Queueable GetNewInstance(InstanceDeclaration instanceDeclaration, IEnumerable<Queueable> outsideQueueables)
     {
-        Queueable instance = FindQueueable(instanceDeclaration.ExistingInstance.FirstIdentifier);
+        Queueable instance = FindQueueable(instanceDeclaration.ExistingInstance.FirstIdentifier, outsideQueueables);
         string newName = instanceDeclaration.NewInstance.Identifier;
 
         if (instance is Queue queue)
@@ -58,7 +59,7 @@ public class QueueableManager
             metrics: []
         );
 
-    public List<Route> GetRoute(RouteDefinitionNode routeDefinition, IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, InterpreterClass interpreter)
+    public List<Route> GetRoute(RouteDefinitionNode routeDefinition, IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, InterpreterClass interpreter, List<Queueable> outsideQueueables)
     {
         List<Route> routes = [];
         foreach (RouteValuePairNode routeValuePairNode in routeDefinition.To)
@@ -66,7 +67,7 @@ public class QueueableManager
             double weight = (double)interpreter.InterpretExpression(routeValuePairNode.Probability, shadowVariableState: null);
             IdentifierNode routeToIdentifierNode = routeValuePairNode.RouteTo;
 
-            Queueable routeToQueueable = FindQueueableFromFirstIdentifier(inputs, outputs, newInstances, routeToIdentifierNode);
+            Queueable routeToQueueable = FindQueueableFromFirstIdentifier(inputs, outputs, newInstances, routeToIdentifierNode, outsideQueueables);
 
             if (routeValuePairNode.RouteTo is QualifiedIdentifierNode qualifiedIdentifierNode)
             {
@@ -91,7 +92,7 @@ public class QueueableManager
             }
             else if (routeDefinition.From is IdentifierExpressionNode identifierExpressionNode)
             {
-                Queueable fromQueueable = FindQueueableFromFirstIdentifier(inputs, outputs, newInstances, identifierExpressionNode.Identifier);
+                Queueable fromQueueable = FindQueueableFromFirstIdentifier(inputs, outputs, newInstances, identifierExpressionNode.Identifier, outsideQueueables);
                 if (fromQueueable is not Queue fromQueue)
                 {
                     throw new($"Route '{routeDefinition.From}' is not a queue (Line: {routeDefinition.LineNumber})");
@@ -112,10 +113,10 @@ public class QueueableManager
         return routes;
     }
 
-    private Queueable FindQueueableFromFirstIdentifier(IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, IdentifierNode routeToIdentifierNode)
+    private Queueable FindQueueableFromFirstIdentifier(IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, IdentifierNode routeToIdentifierNode, List<Queueable> outsideQueueables)
     {
         // Look for the queueable referencing creation of a new instance
-        Queueable? newInstanceToCreate = FindQueueableOrDefault(routeToIdentifierNode.FirstIdentifier);
+        Queueable? newInstanceToCreate = FindQueueableOrDefault(routeToIdentifierNode.FirstIdentifier, outsideQueueables);
         if (newInstanceToCreate is not null)
         {
             newInstances.Add(newInstanceToCreate);
