@@ -35,7 +35,7 @@ public class TypeChecker
         return globalEnvironment;
     }
 
-    private void TypeCheckProgramNode(ProgramNode programNode, List<string> errors)
+    public void TypeCheckProgramNode(ProgramNode programNode, List<string> errors)
     {
         if (programNode is ImportNode importNode)
         {
@@ -51,7 +51,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckImportNode(List<string> errors, ImportNode importNode)
+    public void TypeCheckImportNode(List<string> errors, ImportNode importNode)
     {
         try
         {
@@ -75,7 +75,7 @@ public class TypeChecker
             TypeCheckProgramNode(importNode.NextProgram, errors);
     }
 
-    private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
+    public void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
     {
         if (defNode is ConstDeclarationNode cdNode)
         {
@@ -152,7 +152,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckNetwork(NetworkDefinitionNode networkDefinitionNode, List<string> errors)
+    public void TypeCheckNetwork(NetworkDefinitionNode networkDefinitionNode, List<string> errors)
     {
         if (networkDefinitionNode.Network is NetworkDeclarationNode networkDeclarationNode)
         {

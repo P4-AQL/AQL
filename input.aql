@@ -26,13 +26,6 @@ queue someQ {
   * vrt *
 }
 
-queue sometestyQ {
-  servers: 5;
-  service: stdlib.exponential(10);
-  capacity: 95;
-  * vrt *
-}
-
 queue someOtherQ {
   servers: 7;
   service: 20;
