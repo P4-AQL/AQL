@@ -2,6 +2,7 @@ using Interpreter.AST.Nodes;
 using Interpreter.AST.Nodes.Identifiers;
 using Interpreter.AST.Nodes.NonTerminals;
 using Interpreter.AST.Nodes.Programs;
+using Interpreter.AST.Nodes.Types;
 using Interpreter.SemanticAnalysis;
 
 namespace AQL.Tests;
@@ -45,13 +46,12 @@ public class TypeCheckerTests
             List<string> errors = [];
             TypeChecker typeChecker = new();
 
+            // Test import node which have a definition node chained to it
             DefinitionProgramNode definitionNode = new DefinitionProgramNode(0, new DefinitionNode(0));
-            SingleIdentifierNode id = new SingleIdentifierNode(0, "stdlib");
-            ImportNode importNode = new ImportNode(0, id, definitionNode);
+            // Test library is a file which can be found at bin/Debug/net9.0
+            ImportNode importNode = new ImportNode(0, new SingleIdentifierNode(0, "testLibrary"), definitionNode);
             typeChecker.TypeCheckNode(importNode, errors);
 
-            Console.WriteLine("ØØØØØØ: " + id.Identifier);
-            
             // Verify zero errors
             Assert.Empty(errors);
         }
@@ -72,6 +72,18 @@ public class TypeCheckerTests
 
     public class TypeCheckImportNodeTest : TypeCheckerTests
     {
+        [Fact]
+        public void TestCorrectImportName()
+        {
+            List<string> errors = [];
+            TypeChecker typeChecker = new();
+
+            IntTypeNode node = new IntTypeNode(0);
+            typeChecker.TypeCheckNode(node, errors);
+
+            // Verify zero errors
+            Assert.NotEmpty(errors);
+        }
 
     }
 
