@@ -21,7 +21,6 @@ public class DispatcherNode : Node
         Simulation.Schedule(_arrivalDist(), () =>
         {
             var entity = new Entity(Simulation.Now);
-
             _engine.RegisterEntity(entity);
             _engine.RecordNetworkEntry(entity, _network, Simulation.Now);
 
@@ -30,6 +29,7 @@ public class DispatcherNode : Node
             {
                 double r = _engine.RandomGenerator.NextDouble();
                 double cumulative = 0;
+                Console.WriteLine($"DispatcherNode {Name} - Random number: {r}");
                 foreach (var (node, prob) in NextNodeChoices)
                 {
                     cumulative += prob;

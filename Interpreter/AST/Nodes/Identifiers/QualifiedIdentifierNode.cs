@@ -22,8 +22,8 @@ public class QualifiedIdentifierNode(int lineNumber, SingleIdentifierNode leftId
     }
 
     public override string FirstIdentifier => LeftIdentifier.Identifier;
-
-    public override string FullIdentifier => LeftIdentifier.Identifier + RightIdentifier.Identifier;
+    public override string LastIdentifier => RightIdentifier.Identifier;
+    public override string FullIdentifier => string.Join('.', LeftIdentifier.Identifier, RightIdentifier.Identifier);
 
     public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{LeftIdentifier.Identifier}";
 }

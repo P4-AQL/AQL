@@ -3,7 +3,6 @@ namespace SimEngine.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NetworkDefinition = SimEngine.Networks.NetworkDefinition;
 using SimEngine.Nodes;
 using SimEngine.Networks;
 using SimEngine.Metrics;
@@ -14,15 +13,15 @@ public class SimulationEngineAPI
 {
     public Simulation _simulation = new();
     public Random RandomGenerator { get; private set; } = new();
-    private Dictionary<string, QueueNode> _queues = new();
-    private Dictionary<string, DispatcherNode> _dispatchers = new();
-    public Dictionary<string, NetworkStats> _networks = new();
-    public List<Entity> _entities = new();
-    private List<QueueNode> _allNodes = new();
-    private Dictionary<string, Node> _nodes = new();
+    private Dictionary<string, QueueNode> _queues = [];
+    private Dictionary<string, DispatcherNode> _dispatchers = [];
+    public Dictionary<string, NetworkStats> _networks = [];
+    public List<Entity> _entities = [];
+    private List<QueueNode> _allNodes = [];
+    private Dictionary<string, Node> _nodes = [];
     private double _untilTime = 1000;
     private int _runCount = 1;
-    private readonly HashSet<string> _validNetworkNames = new();
+    private readonly HashSet<string> _validNetworkNames = [];
     public SimulationStats Stats { get; private set; } = new();
 
     public QueueNode GetQueueNode(string name) => _queues[name];
@@ -42,20 +41,18 @@ public class SimulationEngineAPI
 
     public void CreateNetwork(NetworkDefinition network, string prefix = "")
     {
-        string fullName = string.IsNullOrEmpty(prefix) ? network.Name : $"{prefix}.{network.Name}";
-
-        _validNetworkNames.Add(fullName);
+        _validNetworkNames.Add(network.FullName);
 
         // Register queues
         foreach (var (name, servers, capacity, serviceTime) in network.Queues)
         {
-            CreateQueueNode($"{fullName}.{name}", servers, capacity, serviceTime);
+            CreateQueueNode($"{network.FullName}.{name}", servers, capacity, serviceTime);
         }
 
         // Register router entry/exit points
         foreach (var entry in network.RouterEntries)
         {
-            var nodeName = $"{fullName}.{entry}";
+            var nodeName = $"{network.FullName}.{entry}";
             var node = new RouterNode(this, nodeName);
             _nodes[nodeName] = node;
         }
@@ -63,8 +60,8 @@ public class SimulationEngineAPI
 
         foreach (var exit in network.RouterExits)
         {
-            var node = new RouterNode(this, $"{fullName}.{exit}");
-            _nodes[$"{fullName}.{exit}"] = node;
+            var node = new RouterNode(this, $"{network.FullName}.{exit}");
+            _nodes[$"{network.FullName}.{exit}"] = node;
         }
 
         // Recursively register sub-networks
@@ -76,9 +73,10 @@ public class SimulationEngineAPI
         // Register internal routes
         foreach (var (from, to, prob) in network.Routes)
         {
-            var qualifiedFrom = Qualify(fullName, from);
-            var qualifiedTo = Qualify(fullName, to);
+            var qualifiedFrom = Qualify(network.FullName, from);
+            var qualifiedTo = Qualify(network.FullName, to);
             ConnectNode(qualifiedFrom, qualifiedTo, prob);
+            Console.WriteLine($"Connecting {qualifiedFrom} to {qualifiedTo} with probability {prob}");
         }
 
     }
@@ -116,14 +114,16 @@ public class SimulationEngineAPI
 
         if (!_nodes.TryGetValue(to, out var toNode))
             throw new ArgumentException($"Target node '{to}' not found.");
+        Console.WriteLine("fromNode.nextnoidechoices: " + fromNode.NextNodeChoices + " probability: " + probability);
 
-        if (fromNode.NextNodeChoices == null && probability < 1.0)
+        if (fromNode.NextNodeChoices == null && probability > 1.0)
         {
-            fromNode.NextNodeChoices = new List<(Node, double)> { (toNode, probability) };
+            fromNode.NextNodeChoices = new List<(Node, double)> { (toNode, probability / 100) };
+            Console.WriteLine("fromNode.nextnoidechoices UPDATED UPDATED: " + fromNode.NextNodeChoices);
         }
         else if (fromNode.NextNodeChoices != null)
         {
-            fromNode.NextNodeChoices.Add((toNode, probability));
+            fromNode.NextNodeChoices.Add((toNode, probability / 100));
         }
         else
         {
@@ -226,7 +226,11 @@ public class SimulationEngineAPI
 
         for (int i = 0; i < _runCount; i++)
         {
-            _simulation = new Simulation();
+            _simulation = new()
+            {
+                simulationEngineAPI = this,
+                runNumber = i + 1
+            };
 
             foreach (var dispatcher in _dispatchers)
                 dispatcher.Value.ScheduleInitialArrival();
