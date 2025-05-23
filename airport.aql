@@ -1,6 +1,82 @@
-queue securityQueue {
-  servers: 8;
-  service: 5;
+queue ParkingLot {
+  servers: 100;
+  service: 300;
   capacity: 100;
-  * *
+  * mrt *
+}
+
+queue BeforeCheckIn {
+  servers: 2;
+  service: 90;
+  * mrt *
+}
+
+queue CheckIn {
+  servers: 1;
+  service: 20;
+  * mrt *
+} 
+
+queue AfterCheckIn {
+  servers: 4;
+  service: 90;
+  * mrt *
+}
+
+queue SecurityA {
+  servers: 1;
+  service: 120;
+  * mrt *
+}
+
+queue SecurityB {
+  servers: 1;
+  service: 240;
+  * mrt *
+}
+
+queue GateA {
+  servers: 1;
+  service: 10;
+  * mrt *
+}
+
+queue GateB {
+  servers: 1;
+  service: 30;
+  * mrt *
+}
+
+network ArrivalArea {
+  main_parking_entrance | path_to_sec_b, path_to_after_check_in, path_to_sec_a1, path_to_sec_a2;
+  CheckIn : CheckInA, CheckInB;
+  main_parking_entrance -> ParkingLot -> [0.49 CheckInA, 0.49 CheckInB, 0.02 BeforeCheckIn];
+  BeforeCheckIn -> [0.005 BeforeCheckIn, 0.4975 CheckInA, 0.4975 CheckInB];
+  CheckInA -> [0.20 path_to_sec_b, 0.10 path_to_after_check_in, 0.35 path_to_sec_a1, 0.35 path_to_sec_a2];
+  CheckInB -> [0.20 path_to_sec_b, 0.10 path_to_after_check_in, 0.35 path_to_sec_a1, 0.35 path_to_sec_a2];
+}
+
+network ProcessingArea {
+  arrival_sec_b, arrival_after_check_in, arrival_sec_a1, arrival_sec_a2 | flight;
+  SecurityA : SecurityA1, SecurityA2;
+  GateA : GateA1, GateA2, GateA3, GateA4;
+  arrival_sec_b -> SecurityB -> [0.99 GateB, 0.01 AfterCheckIn];
+  arrival_after_check_in -> AfterCheckIn -> [0.22 SecurityB, 0.38 SecurityA1, 0.38 SecurityA2, 0.02 AfterCheckIn];
+  arrival_sec_a1 -> SecurityA1 -> [0.25 GateA1, 0.25 GateA2, 0.25 GateA3, 0.25 GateA4];
+  arrival_sec_a2 -> SecurityA2 -> [0.25 GateA1, 0.25 GateA2, 0.25 GateA3, 0.25 GateA4];
+  GateB -> flight
+  GateA1 -> flight
+  GateA2 -> flight
+  GateA3 -> flight
+  GateA4 -> flight
+}
+
+network Airport {
+  arrival | plane_go_zumzum;
+  10 -> arrival -> ArrivalArea.main_parking_entrance;
+  ArrivalArea.path_to_sec_b -> ProcessingArea.arrival_sec_b;
+  ArrivalArea.path_to_after_check_in -> ProcessingArea.arrival_after_check_in;
+  ArrivalArea.path_to_sec_a1 -> ProcessingArea.arrival_sec_a1;
+  ArrivalArea.path_to_sec_a2 -> ProcessingArea.arrival_sec_a2;
+  ProcessingArea.flight -> plane_go_zumzum;
 }
