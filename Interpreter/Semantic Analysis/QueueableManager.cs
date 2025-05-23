@@ -9,23 +9,78 @@ using Interpreter.AST.Nodes.Routes;
 
 namespace Interpreter.SemanticAnalysis;
 
-public class QueueableManager
+public class NetworkDefinitionManager(InterpretationEnvironment interpretationEnvironment)
 {
     public List<Queueable> Queueables = [];
 
-    public Queueable FindQueueable(string name) =>
-        FindQueueableOrDefault(name)
-        ?? throw new($"Queueable '{name}' not found");
+    InterpretationEnvironment InterpretationEnvironment { get; } = interpretationEnvironment;
+
+    public NetworkEntity FindNetworkEntityOrThrow(IdentifierNode identifierNode) =>
+        TryFindNetworkEntity(identifierNode)
+        ?? throw new InterpretationException($"Queueable '{identifierNode.FirstIdentifier}' not found (Line: {identifierNode.LineNumber})");
+
+    public NetworkEntity? TryFindNetworkEntity(IdentifierNode identifierNode)
+    {
+        NetworkEntity? returnValue = null;
+        
+        string firstIdentifier = identifierNode.FirstIdentifier;
+        // Is the identifier referencing a local Queueable?
+        
+        Queueable? queueable = FindQueueableOrDefault(firstIdentifier);
+        
+        if (identifierNode is QualifiedIdentifierNode qualifiedIdentifierNode)
+        {
+            
+            if (queueable is null)
+            {
+                
+                // Is the identifier referencing a Queueable in an imported dependency?
+                if (InterpretationEnvironment.ModuleDependencies.Lookup(firstIdentifier, out InterpretationEnvironment dependency))
+                {
+                    queueable = dependency.QueueableManager.FindQueueableOrDefault(qualifiedIdentifierNode.RightIdentifier.Identifier);
+                }
+            }
+            else
+            {
+                // Is the identifier referencing a network entity in the Queueable?
+                if (queueable is Network network)
+                {
+                    
+                    returnValue = network.FindNetworkEntity(qualifiedIdentifierNode.RightIdentifier, this);
+                }
+            }
+        }
+
+        // If the identifier did not reference a network entity in the Queueable, assign what we found
+        returnValue ??= queueable;
+
+        return returnValue;
+    }
 
     public Queueable? FindQueueableOrDefault(string name) =>
         Queueables.FirstOrDefault(q => q.Name == name);
 
+    public static NetworkInputOrOutput GetInputOrOutput(SingleIdentifierNode identifierNode)
+    {
+        return new(identifierNode.Identifier);
+    }
+
     public Queueable GetNewInstance(InstanceDeclaration instanceDeclaration)
     {
-        Queueable instance = FindQueueable(instanceDeclaration.ExistingInstance.FirstIdentifier);
-        string newName = instanceDeclaration.NewInstance.Identifier;
+        NetworkEntity instance = FindNetworkEntityOrThrow(instanceDeclaration.ExistingInstance);
 
-        if (instance is Queue queue)
+        if (instance is not Queueable queueable)
+        {
+            throw new InterpretationException($"Invalid type '{instance.GetType()}' (Line: {instanceDeclaration.LineNumber})");
+        }
+
+        string newName = instanceDeclaration.NewInstance.Identifier;
+        return GetNewInstance(queueable, newName);
+    }
+
+    public Queueable GetNewInstance(Queueable existingQueue, string newName)
+    {
+        if (existingQueue is Queue queue)
         {
             return new Queue(
                 name: newName,
@@ -35,7 +90,7 @@ public class QueueableManager
                 metrics: queue.Metrics
             );
         }
-        else if (instance is Network network)
+        else if (existingQueue is Network network)
         {
             return new Network(
                 name: newName,
@@ -45,110 +100,130 @@ public class QueueableManager
                 routes: network.Routes
             );
         }
-
-        throw new($"Invalid instance type '{instance.GetType()}' (Line: {instance})");
+        else
+        {
+            throw new InterpretationException($"Invalid type '{existingQueue.GetType()}'");
+        }
     }
 
-    public Queue IdentifierToInstantQueue(SingleIdentifierNode identifierNode) =>
-        new(
-            identifierNode.Identifier,
-            servers: 1,
-            int.MaxValue,
-            service: () => 0,
-            metrics: []
-        );
-
-    public List<Route> GetRoute(RouteDefinitionNode routeDefinition, IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, InterpreterClass interpreter)
+    public List<Route> GetRoutes(RouteDefinitionNode routeDefinition, Network thisNetwork, Func<ExpressionNode, double> interpretExpression)
     {
-        List<Route> routes = [];
-        foreach (RouteValuePairNode routeValuePairNode in routeDefinition.To)
+        if (routeDefinition.From is FunctionCallNode or LiteralNode)
         {
-            double weight = (double)interpreter.InterpretExpression(routeValuePairNode.Probability, shadowVariableState: null);
-            IdentifierNode routeToIdentifierNode = routeValuePairNode.RouteTo;
+            double GetRate() => interpretExpression.Invoke(routeDefinition.From);
 
-            Queueable routeToQueueable = FindQueueableFromFirstIdentifier(inputs, outputs, newInstances, routeToIdentifierNode);
+            FuncRoute CreateFuncRoute(double weight, NetworkEntity routeTo, string toName) =>
+                new(
+                    toProbabilityPair: new(weight, routeTo, toName),
+                    rate: GetRate
+                );
 
-            if (routeValuePairNode.RouteTo is QualifiedIdentifierNode qualifiedIdentifierNode)
+            return GetRoutes(CreateFuncRoute);
+        }
+        else if (routeDefinition.From is IdentifierExpressionNode identifierExpressionNode)
+        {
+            NetworkEntity from = thisNetwork.FindNetworkEntity(identifierExpressionNode.Identifier, this);
+            if (from is not (Queue or NetworkInputOrOutput))
             {
-                routeToQueueable = routeToQueueable.FindQueueable(qualifiedIdentifierNode.RightIdentifier.Identifier);
+                throw new InterpretationException($"Route '{routeDefinition.From}' is not a queue (Line: {routeDefinition.LineNumber})");
             }
 
-            if (routeToQueueable is not Queue routeToQueue)
-            {
-                throw new($"Route '{routeToIdentifierNode.FirstIdentifier}' is not a queue (Line: {routeToIdentifierNode.LineNumber})");
-            }
+            NetworkEntityRoute CreateNetworkEntityRoute(double weight, NetworkEntity routeTo, string toName) =>
+                new(
+                    to: new(weight, routeTo, toName),
+                    from: from,
+                    fromName: identifierExpressionNode.Identifier.FullIdentifier
+                );
 
-            if (routeDefinition.From is FunctionCallNode || routeDefinition.From is LiteralNode)
+            return GetRoutes(CreateNetworkEntityRoute);
+        }
+        else
+        {
+            throw new InterpretationException($"Route '{routeDefinition.From}' is not a valid route (Line: {routeDefinition.LineNumber}");
+        }
+
+        List<Route> GetRoutes<T>(Func<double, NetworkEntity, string, T> createRoute) where T : Route
+        {
+            List<Route> routes = [];
+            foreach (RouteValuePairNode routeValuePairNode in routeDefinition.To)
             {
-                double GetRate() => (double)interpreter.InterpretExpression(routeDefinition.From, shadowVariableState: null);
+                double weight = interpretExpression.Invoke(routeValuePairNode.Probability);
+                IdentifierNode routeToIdentifierNode = routeValuePairNode.RouteTo;
+                string routeToName = routeToIdentifierNode.FullIdentifier;
+
+                NetworkEntity routeTo = thisNetwork.FindNetworkEntity(routeToIdentifierNode, this);
 
                 routes.Add(
-                    new FuncRoute(
-                        to: new(weight, routeToQueue),
-                        rate: GetRate
+                    createRoute(
+                        weight,
+                        routeTo,
+                        routeToName
                     )
                 );
             }
-            else if (routeDefinition.From is IdentifierExpressionNode identifierExpressionNode)
-            {
-                Queueable fromQueueable = FindQueueableFromFirstIdentifier(inputs, outputs, newInstances, identifierExpressionNode.Identifier);
-                if (fromQueueable is not Queue fromQueue)
-                {
-                    throw new($"Route '{routeDefinition.From}' is not a queue (Line: {routeDefinition.LineNumber})");
-                }
-
-                routes.Add(
-                    new QueueRoute(
-                        to: new(weight, routeToQueue),
-                        queue: fromQueue
-                    )
-                );
-            }
-            else
-            {
-                throw new($"Route '{routeDefinition.From}' is not a valid route (Line: {routeDefinition.LineNumber})");
-            }
+            return routes;
         }
-        return routes;
-    }
-
-    private Queueable FindQueueableFromFirstIdentifier(IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, List<Queueable> newInstances, IdentifierNode routeToIdentifierNode)
-    {
-        // Look for the queueable referencing creation of a new instance
-        Queueable? newInstanceToCreate = FindQueueableOrDefault(routeToIdentifierNode.FirstIdentifier);
-        if (newInstanceToCreate is not null)
-        {
-            newInstances.Add(newInstanceToCreate);
-            return newInstanceToCreate;
-        }
-
-        // Look for the queueable in the network
-        return inputs.FirstOrDefault(q => q.Name == routeToIdentifierNode.FirstIdentifier) // Referencing input
-            ?? outputs.FirstOrDefault(q => q.Name == routeToIdentifierNode.FirstIdentifier) // Referencing output
-            ?? newInstances.FirstOrDefault(q => q.Name == routeToIdentifierNode.FirstIdentifier) // Referencing new instance already in network
-            ?? throw new($"Queueable '{routeToIdentifierNode.FirstIdentifier}' not found (Line: {routeToIdentifierNode.LineNumber})");
     }
 }
 
-public abstract class Queueable(string name)
+
+public abstract class NetworkEntity(string name)
 {
+    public NetworkEntity? parent;
     public string Name { get; } = name;
-
-    public abstract Queueable FindQueueable(string name);
 }
 
-public class Network(string name, IEnumerable<Queue> inputs, IEnumerable<Queue> outputs, IEnumerable<Queueable> newInstances, IEnumerable<Route> routes) : Queueable(name)
+public abstract class Queueable(string name) : NetworkEntity(name)
 {
-    public IReadOnlyList<Queue> Inputs { get; } = [.. inputs];
-    public IReadOnlyList<Queue> Outputs { get; } = [.. outputs];
-    public IReadOnlyList<Queueable> NewInstances { get; } = [.. newInstances];
-    public IReadOnlyList<Route> Routes { get; } = [.. routes];
 
-    public override Queueable FindQueueable(string name) =>
-        Inputs.FirstOrDefault(q => q.Name == name) ??
-        Outputs.FirstOrDefault(q => q.Name == name) ??
-        NewInstances.FirstOrDefault(q => q.Name == name) ??
-        throw new($"Queueable '{name}' not found in network '{Name}'");
+}
+
+public class Network(string name, IEnumerable<NetworkInputOrOutput> inputs, IEnumerable<NetworkInputOrOutput> outputs, IEnumerable<Queueable> newInstances) : Queueable(name)
+{
+    public IReadOnlyList<NetworkInputOrOutput> Inputs = [.. inputs];
+    public IReadOnlyList<NetworkInputOrOutput> Outputs = [.. outputs];
+    public List<Queueable> NewInstances = [.. newInstances];
+    public IReadOnlyList<Route>? Routes;
+
+    public Network(string name, IEnumerable<NetworkInputOrOutput> inputs, IEnumerable<NetworkInputOrOutput> outputs, IEnumerable<Queueable> newInstances, IEnumerable<Route>? routes) : this(name, inputs, outputs, newInstances)
+    {
+        if (routes is not null)
+        {
+            Routes = [.. routes];
+        }
+    }
+
+    public NetworkEntity FindNetworkEntity(IdentifierNode identifierNode, NetworkDefinitionManager networkDefinitionManager)
+    {
+        // Is the identifier referencing a local input or output?
+        NetworkEntity? entity = Inputs.FirstOrDefault(q => q.Name == identifierNode.FirstIdentifier)
+            ?? Outputs.FirstOrDefault(q => q.Name == identifierNode.FirstIdentifier);
+
+        // Is the identifier referencing a local new instance?
+        entity ??= NewInstances.FirstOrDefault(q => q.Name == identifierNode.FirstIdentifier);
+
+        // Is the identifier locally defined but qualified?
+        if (entity is not null && identifierNode is QualifiedIdentifierNode qualifiedIdentifierNode)
+        {
+            if (entity is not Network network)
+            {
+                throw new InterpretationException($"Invalid identifier: '{qualifiedIdentifierNode.LeftIdentifier.Identifier}' was not a network, could not get '{qualifiedIdentifierNode.RightIdentifier.Identifier}' (Line: {identifierNode.LineNumber})");
+            }
+            entity = network.FindNetworkEntity(qualifiedIdentifierNode.RightIdentifier, networkDefinitionManager);
+        }
+
+        // Is the identifier referencing a global definition?
+        if (entity is null)
+        {
+            entity = networkDefinitionManager.FindNetworkEntityOrThrow(identifierNode);
+            if (entity is Queueable queueable)
+            {
+                NewInstances.Add(networkDefinitionManager.GetNewInstance(queueable, queueable.Name));
+            }
+        }
+
+        return entity;
+    }
 }
 
 public class NewQueuesInstance(Queue existingQueue, string instanceName)
@@ -163,28 +238,32 @@ public class Queue(string name, int servers, int capacity, Func<double> service,
     public int Capacity { get; } = capacity;
     public Func<double> Service { get; } = service;
     public IReadOnlyList<string> Metrics { get; } = [.. metrics];
-
-    public override Queueable FindQueueable(string name) =>
-        throw new($"Queue '{Name}' has no sub-queueables");
 }
 
-public class Route(RouteTo to)
+public class NetworkInputOrOutput(string name) : NetworkEntity(name)
 {
-    public RouteTo To { get; } = to;
+
 }
 
-public class FuncRoute(RouteTo to, Func<double> rate) : Route(to)
+public class Route(RouteToProbabilityPair toProbabilityPair)
+{
+    public RouteToProbabilityPair ToProbabilityPair { get; } = toProbabilityPair;
+}
+
+public class FuncRoute(RouteToProbabilityPair toProbabilityPair, Func<double> rate) : Route(toProbabilityPair)
 {
     public Func<double> FromRate { get; } = rate;
 }
 
-public class QueueRoute(RouteTo to, Queue queue) : Route(to)
+public class NetworkEntityRoute(RouteToProbabilityPair to, NetworkEntity from, string fromName) : Route(to)
 {
-    public Queue FromQueue { get; } = queue;
+    public NetworkEntity From { get; } = from;
+    public string FromName { get; } = fromName;
 }
 
-public class RouteTo(double weight, Queue to)
+public class RouteToProbabilityPair(double weight, NetworkEntity to, string toName)
 {
     public double Weight { get; } = weight;
-    public Queue ToQueue { get; } = to;
+    public NetworkEntity To { get; } = to;
+    public string ToName { get; } = toName;
 }

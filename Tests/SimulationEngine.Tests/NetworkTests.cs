@@ -10,7 +10,7 @@ public class NetworkDefinitionTests
     [Fact]
     public void NetworkDefinition_CanAddQueuesRoutesAndSubnets()
     {
-        var def = new NetworkDefinition { Name = "TestNet" };
+        var def = new NetworkDefinition(null) { Name = "TestNet" };
 
         def.AddQueue("Prep", 1, 10, () => 1.0);
         def.AddEntryPoint("Start");
@@ -18,7 +18,7 @@ public class NetworkDefinitionTests
         def.Connect("Start", "Prep");
         def.Connect("Prep", "End", 0.5);
 
-        var sub = new NetworkDefinition { Name = "SubNet" };
+        var sub = new NetworkDefinition(def) { Name = "SubNet" };
         def.AddSubNetwork(sub);
 
         Assert.Single(def.Queues);
@@ -35,7 +35,7 @@ public class NetworkStatsTests
     public void NetworkStats_RecordsEntriesAndExits()
     {
         var stats = new NetworkStats("Mall");
-        var entity = new SimEngine.Core.Entity(0.0);
+        var entity = new Core.Entity(0.0);
 
         stats.RecordEntry(entity, 1.0);
         stats.RecordExit(entity, 3.0); // Should not throw

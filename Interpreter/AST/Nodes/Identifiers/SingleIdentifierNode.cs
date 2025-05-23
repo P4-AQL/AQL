@@ -21,6 +21,8 @@ public class SingleIdentifierNode(int lineNumber, string identifier) : Identifie
 
     public override string FirstIdentifier => Identifier;
 
+    public override string LastIdentifier => Identifier;
+
     public override string FullIdentifier => Identifier;
 
     public override string GetNodeLabel() => $"{base.GetNodeLabel()}\n{Identifier}";

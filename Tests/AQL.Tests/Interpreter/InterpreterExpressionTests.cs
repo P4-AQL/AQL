@@ -49,8 +49,10 @@ public class InterpreterExpressionTests
     [Fact]
     public void InterpretEqualNode_ComparesEquality()
     {
+        Console.WriteLine("Testing EqualNode");
         var node = new EqualNode(0, new IntLiteralNode(0, 5), new IntLiteralNode(0, 5));
         var result = new InterpreterClass(new DummyProgramNode()).InterpretEqualNode(node, null);
+        Console.WriteLine($"Result: {result}");
         Assert.True(result);
     }
 

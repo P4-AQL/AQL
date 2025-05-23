@@ -18,25 +18,30 @@ public struct InterpretationEnvironment
     Table<object> _variableState;
     public readonly Table<NetworkDeclarationNode> NetworkState => _networkState;
     Table<NetworkDeclarationNode> _networkState;
-    public readonly QueueableManager QueueableManager => _queueableManager;
-    QueueableManager _queueableManager;
+    public readonly NetworkDefinitionManager QueueableManager => _queueableManager;
+    NetworkDefinitionManager _queueableManager;
 
     public readonly Table<InterpretationEnvironment> ModuleDependencies => _moduleDependencies;
     Table<InterpretationEnvironment> _moduleDependencies;
 
     public ProgramNode Root;
 
-    public static InterpretationEnvironment Empty(ProgramNode root) => new()
+    public static InterpretationEnvironment Empty(ProgramNode root)
     {
-        _functionState = new(),
-        _variableState = new(),
-        _networkState = new(),
-        _queueableManager = new(),
+        InterpretationEnvironment emptyEnv = new()
+        {
+            _functionState = new(),
+            _variableState = new(),
+            _networkState = new(),
 
-        _moduleDependencies = new(),
+            _moduleDependencies = new(),
 
-        Root = root,
-    };
+            Root = root,
+        };
+        emptyEnv._queueableManager = new NetworkDefinitionManager(emptyEnv);
+
+        return emptyEnv;
+    }
 
     public void SetError(string message)
     {

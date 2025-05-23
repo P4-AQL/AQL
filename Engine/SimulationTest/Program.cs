@@ -5,6 +5,8 @@ class Program
 {
     static void Main()
     {
+        /*
+
         var engine = new SimulationEngineAPI();
         engine.SetSeed(42);
 
@@ -65,6 +67,6 @@ class Program
 
         // --- Print results ---
         var stats = engine.GetSimulationStats();
-        engine.PrintMetric(stats);
+        engine.PrintMetric(stats);*/
     }
 }

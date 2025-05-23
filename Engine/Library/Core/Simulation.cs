@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class Simulation
 {
+    public SimulationEngineAPI? simulationEngineAPI;
+    public int runNumber = 0;
     private double _currentTime = 0;
     private readonly PriorityQueue<Event, double> _eventQueue = new();
     public double Now => _currentTime;
@@ -17,6 +19,7 @@ public class Simulation
 
     public void Run(double untilTime)
     {
+        DateTime then = DateTime.Now;
         while (_eventQueue.Count > 0)
         {
             var ev = _eventQueue.Peek();
@@ -24,6 +27,13 @@ public class Simulation
             _eventQueue.Dequeue();
             _currentTime = ev.Time;
             ev.Action();
+
+            DateTime now = DateTime.Now;
+            if (then.AddSeconds(1) < now)
+            {
+                then = now;
+                Console.WriteLine($"Running simulation {runNumber}... Time for this run: {Now}\n\tEntities in system: {simulationEngineAPI?._entities.Count ?? 0}");
+            }
         }
         _currentTime = untilTime;
     }
