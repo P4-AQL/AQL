@@ -35,7 +35,7 @@ public class TypeChecker
         return globalEnvironment;
     }
 
-    private void TypeCheckProgramNode(ProgramNode programNode, List<string> errors)
+    public void TypeCheckProgramNode(ProgramNode programNode, List<string> errors)
     {
         if (programNode is ImportNode importNode)
         {
@@ -51,7 +51,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckImportNode(List<string> errors, ImportNode importNode)
+    public void TypeCheckImportNode(List<string> errors, ImportNode importNode)
     {
         try
         {
@@ -75,7 +75,7 @@ public class TypeChecker
             TypeCheckProgramNode(importNode.NextProgram, errors);
     }
 
-    private void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
+    public void TypeCheckDefinitionNode(DefinitionNode defNode, List<string> errors)
     {
         if (defNode is ConstDeclarationNode cdNode)
         {
@@ -152,7 +152,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckNetwork(NetworkDefinitionNode networkDefinitionNode, List<string> errors)
+    public void TypeCheckNetwork(NetworkDefinitionNode networkDefinitionNode, List<string> errors)
     {
         if (networkDefinitionNode.Network is NetworkDeclarationNode networkDeclarationNode)
         {
@@ -237,7 +237,7 @@ public class TypeChecker
 
     }
 
-    private void NetworkIsValid(List<string> errors, NetworkDeclarationNode networkDeclarationNode, Table<Node> localNetwork)
+    public void NetworkIsValid(List<string> errors, NetworkDeclarationNode networkDeclarationNode, Table<Node> localNetwork)
     {
         // routing from all inputs
         foreach (SingleIdentifierNode input in networkDeclarationNode.Inputs)
@@ -295,7 +295,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckStatementNode(StatementNode statementNode, List<string> errors, TypeNode returnType, Table<Node> localEnvironment)
+    public void TypeCheckStatementNode(StatementNode statementNode, List<string> errors, TypeNode returnType, Table<Node> localEnvironment)
     {
         if (statementNode is AssignNode assignNode)
         {
@@ -311,7 +311,7 @@ public class TypeChecker
                 else
                     errors.Add($"Variable not found (Line {assignNode.LineNumber})");
             }
-            else if (FindExpressionType(assignNode.Expression, errors, localEnvironment) != nodeType)
+            else if (FindExpressionType(assignNode.Expression, errors, localEnvironment)!.GetType() != nodeType.GetType())
             {
                 errors.Add($"The expression type does not match the idetifier (Line {assignNode.LineNumber})");
             }
@@ -395,7 +395,7 @@ public class TypeChecker
 
     }
 
-    private object? FindExpressionType(ExpressionNode topExpression, List<string> errors, Table<Node>? localEnvironment)
+    public object? FindExpressionType(ExpressionNode topExpression, List<string> errors, Table<Node>? localEnvironment)
     {
         try
         {
@@ -576,19 +576,17 @@ public class TypeChecker
 
                 foreach (ExpressionNode element in node.Elements.Skip(1))
                 {
-
                     object? elementType = FindRecursive(element);
-                    if (@object is not TypeNode typeNode)
+                    if (elementType is not TypeNode typeNode)
                     {
                         throw new($"Expression must evaluate to a type! (Line {element.LineNumber})");
                     }
                     if (oldTypeNode.GetType() != typeNode.GetType())
                     {
-                        throw new($"Types must match! (Line {typeNode.LineNumber})");
+                        throw new($"Types must match! (Line {element.LineNumber})");
                     }
                     oldTypeNode = typeNode;
                 }
-
                 return new ArrayTypeNode(node.LineNumber, oldTypeNode);
             }
 
@@ -598,7 +596,7 @@ public class TypeChecker
         }
     }
 
-    static bool IsTypeIntOrDouble(object? typeNode) => typeNode is IntTypeNode || typeNode is DoubleTypeNode;
+    public static bool IsTypeIntOrDouble(object? typeNode) => typeNode is IntTypeNode || typeNode is DoubleTypeNode;
 
     private object? GetTypeFromIdentifier(IdentifierNode idNode, TypeCheckerEnvironment environmentToCheck, Table<Node>? localScope, List<string> errors)
     {
@@ -701,7 +699,7 @@ public class TypeChecker
         "throughput"
     ];
 
-    private static void TypeCheckQueueMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
+    public static void TypeCheckQueueMetricList(IReadOnlyList<NamedMetricNode> metricList, List<string> errors)
     {
         foreach (NamedMetricNode metric in metricList)
         {
@@ -725,7 +723,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckInstances(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
+    public void TypeCheckInstances(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
     {
         object? Get(IdentifierNode identifierNode) => GetTypeFromIdentifier(identifierNode, globalEnvironment, typeCheckerNetworkState.localScope, errors);
 
@@ -757,7 +755,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckRoutes(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
+    public void TypeCheckRoutes(TypeCheckerNetworkState typeCheckerNetworkState, List<string> errors)
     {
         foreach (RouteDefinitionNode routeDefinitionNode in typeCheckerNetworkState.NetworkNode.Routes)
         {
@@ -781,7 +779,7 @@ public class TypeChecker
         }
     }
 
-    private void TypeCheckRouteDestination(IReadOnlyList<RouteValuePairNode> destinations, Table<Node> localNetwork, List<string> errors)
+    public void TypeCheckRouteDestination(IReadOnlyList<RouteValuePairNode> destinations, Table<Node> localNetwork, List<string> errors)
     {
         foreach (RouteValuePairNode destination in destinations)
         {
@@ -795,7 +793,7 @@ public class TypeChecker
                 errors.Add($"Route destination must be an identifier (Line {destination.LineNumber})");
                 continue;
             }
-            
+
             // Get the type that is pointed to
             object? @object = GetTypeFromIdentifier(destination.RouteTo, globalEnvironment, localNetwork, errors);
 

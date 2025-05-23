@@ -22,6 +22,7 @@ queue AfterCheckIn {
   capacity: 10222220;
   *mrt, vrt, throughput*
 }
+
 queue SecurityA {
   servers: 1;
   service: 120;
