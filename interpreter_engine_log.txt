@@ -1,0 +1,159 @@
+[04:32:41] CreateNetwork: someAdvancedNetwork (Parent: null)
+[04:32:41] AddEntryPoint: firstInput to Network: someAdvancedNetwork
+[04:32:41] AddEntryPoint: secondInput to Network: someAdvancedNetwork
+[04:32:41] AddExitPoint: firstOutput to Network: someAdvancedNetwork
+[04:32:41] AddExitPoint: secondOutput to Network: someAdvancedNetwork
+[04:32:41] CreateNetwork: someAdvancedNetwork.basicNetwork1 (Parent: someAdvancedNetwork)
+[04:32:41] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] CreateQueue: secQueue1 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] CreateQueue: secQueue2 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] CreateQueue: secQueue3 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] ConnectNode: secQueue2 -> secQueue3 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] ConnectNode: secQueue3 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:32:41] CreateNetwork: someAdvancedNetwork.basicNetwork2 (Parent: someAdvancedNetwork)
+[04:32:41] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] CreateQueue: secQueue1 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] CreateQueue: secQueue2 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] CreateQueue: secQueue3 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] ConnectNode: secQueue2 -> secQueue3 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] ConnectNode: secQueue3 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:32:41] RegisterTopLevelNetwork: someAdvancedNetwork
+[04:32:41] CreateDispatcherNode: someAdvancedNetwork.@ dispatcher @.0 with rate function
+[04:32:41] ConnectDispatcher: someAdvancedNetwork.@ dispatcher @.0 -> someAdvancedNetwork.firstInput (Weight: 1)
+[04:32:41] ConnectNode: firstInput -> someOtherQ (Weight: 0.4) in Network: someAdvancedNetwork
+[04:32:41] ConnectNode: firstInput -> firstInput (Weight: 0.3) in Network: someAdvancedNetwork
+[04:32:41] ConnectNode: someQ -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:32:41] ConnectNode: someOtherQ -> someQ (Weight: 1) in Network: someAdvancedNetwork
+[04:32:41] ConnectNode: secondInput -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:32:41] ConnectNode: singleOutput -> firstOutput (Weight: 1) in Network: someAdvancedNetwork
+[04:32:41] ConnectNode: singleOutput -> secondOutput (Weight: 1) in Network: someAdvancedNetwork
+[04:33:26] CreateNetwork: someAdvancedNetwork (Parent: null)
+[04:33:26] AddEntryPoint: firstInput to Network: someAdvancedNetwork
+[04:33:26] AddEntryPoint: secondInput to Network: someAdvancedNetwork
+[04:33:26] AddExitPoint: firstOutput to Network: someAdvancedNetwork
+[04:33:26] AddExitPoint: secondOutput to Network: someAdvancedNetwork
+[04:33:26] CreateNetwork: someAdvancedNetwork.basicNetwork1 (Parent: someAdvancedNetwork)
+[04:33:26] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] CreateQueue: secQueue1 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] CreateQueue: secQueue2 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] CreateQueue: secQueue3 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] ConnectNode: secQueue2 -> secQueue3 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] ConnectNode: secQueue3 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:33:26] CreateNetwork: someAdvancedNetwork.basicNetwork2 (Parent: someAdvancedNetwork)
+[04:33:26] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] CreateQueue: secQueue1 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] CreateQueue: secQueue2 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] CreateQueue: secQueue3 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] ConnectNode: secQueue2 -> secQueue3 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] ConnectNode: secQueue3 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:33:26] RegisterTopLevelNetwork: someAdvancedNetwork
+[04:33:26] CreateDispatcherNode: someAdvancedNetwork.@ dispatcher @.0 with rate function
+[04:33:26] ConnectDispatcher: someAdvancedNetwork.@ dispatcher @.0 -> someAdvancedNetwork.firstInput (Weight: 1)
+[04:33:26] ConnectNode: firstInput -> someOtherQ (Weight: 0.4) in Network: someAdvancedNetwork
+[04:33:26] ConnectNode: firstInput -> firstInput (Weight: 0.3) in Network: someAdvancedNetwork
+[04:33:26] ConnectNode: someQ -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:33:26] ConnectNode: someOtherQ -> someQ (Weight: 1) in Network: someAdvancedNetwork
+[04:33:26] ConnectNode: secondInput -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:33:26] ConnectNode: singleOutput -> firstOutput (Weight: 1) in Network: someAdvancedNetwork
+[04:33:26] ConnectNode: singleOutput -> secondOutput (Weight: 1) in Network: someAdvancedNetwork
+[04:35:10] CreateNetwork: someAdvancedNetwork (Parent: null)
+[04:35:10] AddEntryPoint: firstInput to Network: someAdvancedNetwork
+[04:35:10] AddEntryPoint: secondInput to Network: someAdvancedNetwork
+[04:35:10] AddExitPoint: firstOutput to Network: someAdvancedNetwork
+[04:35:10] AddExitPoint: secondOutput to Network: someAdvancedNetwork
+[04:35:10] CreateNetwork: someAdvancedNetwork.basicNetwork1 (Parent: someAdvancedNetwork)
+[04:35:10] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] CreateQueue: secQueue1 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] CreateQueue: secQueue2 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] CreateQueue: secQueue3 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] ConnectNode: secQueue2 -> secQueue3 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] ConnectNode: secQueue3 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork1
+[04:35:10] CreateNetwork: someAdvancedNetwork.basicNetwork2 (Parent: someAdvancedNetwork)
+[04:35:10] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] CreateQueue: secQueue1 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] CreateQueue: secQueue2 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] CreateQueue: secQueue3 (Servers: 8, Capacity: 100) in Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] ConnectNode: secQueue2 -> secQueue3 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] ConnectNode: secQueue3 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork2
+[04:35:10] RegisterTopLevelNetwork: someAdvancedNetwork
+[04:35:10] CreateDispatcherNode: someAdvancedNetwork.@ dispatcher @.0 with rate function
+[04:35:10] ConnectDispatcher: someAdvancedNetwork.@ dispatcher @.0 -> someAdvancedNetwork.firstInput (Weight: 1)
+[04:35:10] ConnectNode: firstInput -> someOtherQ (Weight: 0.4) in Network: someAdvancedNetwork
+[04:35:10] ConnectNode: firstInput -> firstInput (Weight: 0.3) in Network: someAdvancedNetwork
+[04:35:10] ConnectNode: someQ -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:35:10] ConnectNode: someOtherQ -> someQ (Weight: 1) in Network: someAdvancedNetwork
+[04:35:10] ConnectNode: secondInput -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:35:10] ConnectNode: singleOutput -> firstOutput (Weight: 1) in Network: someAdvancedNetwork
+[04:35:10] ConnectNode: singleOutput -> secondOutput (Weight: 1) in Network: someAdvancedNetwork
+[04:43:19] CreateNetwork: someAdvancedNetwork (Parent: null)
+[04:43:19] AddEntryPoint: firstInput to Network: someAdvancedNetwork
+[04:43:19] AddExitPoint: firstOutput to Network: someAdvancedNetwork
+[04:43:19] CreateNetwork: someAdvancedNetwork.basicNetwork (Parent: someAdvancedNetwork)
+[04:43:19] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork
+[04:43:19] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork
+[04:43:19] CreateQueue: secQueue1 (Servers: 5, Capacity: 95) in Network: someAdvancedNetwork.basicNetwork
+[04:43:19] CreateQueue: secQueue2 (Servers: 5, Capacity: 95) in Network: someAdvancedNetwork.basicNetwork
+[04:43:19] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:19] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:19] ConnectNode: secQueue2 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:19] CreateQueue: testQueue1 (Servers: 7, Capacity: 10) in Network: someAdvancedNetwork
+[04:43:19] RegisterTopLevelNetwork: someAdvancedNetwork
+[04:43:19] CreateDispatcherNode: someAdvancedNetwork.@ dispatcher @.0 with rate function
+[04:43:19] ConnectDispatcher: someAdvancedNetwork.@ dispatcher @.0 -> someAdvancedNetwork.firstInput (Weight: 1)
+[04:43:19] ConnectNode: firstInput -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:43:19] ConnectNode: singleOutput -> testQueue1 (Weight: 1) in Network: someAdvancedNetwork
+[04:43:19] ConnectNode: testQueue1 -> firstOutput (Weight: 1) in Network: someAdvancedNetwork
+[04:43:33] CreateNetwork: someAdvancedNetwork (Parent: null)
+[04:43:33] AddEntryPoint: firstInput to Network: someAdvancedNetwork
+[04:43:33] AddExitPoint: firstOutput to Network: someAdvancedNetwork
+[04:43:33] CreateNetwork: someAdvancedNetwork.basicNetwork (Parent: someAdvancedNetwork)
+[04:43:33] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork
+[04:43:33] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork
+[04:43:33] CreateQueue: secQueue1 (Servers: 5, Capacity: 95) in Network: someAdvancedNetwork.basicNetwork
+[04:43:33] CreateQueue: secQueue2 (Servers: 5, Capacity: 95) in Network: someAdvancedNetwork.basicNetwork
+[04:43:33] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:33] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:33] ConnectNode: secQueue2 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:33] CreateQueue: testQueue1 (Servers: 7, Capacity: 10) in Network: someAdvancedNetwork
+[04:43:33] RegisterTopLevelNetwork: someAdvancedNetwork
+[04:43:33] CreateDispatcherNode: someAdvancedNetwork.@ dispatcher @.0 with rate function
+[04:43:33] ConnectDispatcher: someAdvancedNetwork.@ dispatcher @.0 -> someAdvancedNetwork.firstInput (Weight: 1)
+[04:43:33] ConnectNode: firstInput -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:43:33] ConnectNode: singleOutput -> testQueue1 (Weight: 1) in Network: someAdvancedNetwork
+[04:43:33] ConnectNode: testQueue1 -> firstOutput (Weight: 1) in Network: someAdvancedNetwork
+[04:43:46] CreateNetwork: someAdvancedNetwork (Parent: null)
+[04:43:46] AddEntryPoint: firstInput to Network: someAdvancedNetwork
+[04:43:46] AddExitPoint: firstOutput to Network: someAdvancedNetwork
+[04:43:46] CreateNetwork: someAdvancedNetwork.basicNetwork (Parent: someAdvancedNetwork)
+[04:43:46] AddEntryPoint: firstInput to Network: someAdvancedNetwork.basicNetwork
+[04:43:46] AddExitPoint: singleOutput to Network: someAdvancedNetwork.basicNetwork
+[04:43:46] CreateQueue: secQueue1 (Servers: 5, Capacity: 95) in Network: someAdvancedNetwork.basicNetwork
+[04:43:46] CreateQueue: secQueue2 (Servers: 5, Capacity: 95) in Network: someAdvancedNetwork.basicNetwork
+[04:43:46] ConnectNode: firstInput -> secQueue1 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:46] ConnectNode: secQueue1 -> secQueue2 (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:46] ConnectNode: secQueue2 -> singleOutput (Weight: 1) in Network: someAdvancedNetwork.basicNetwork
+[04:43:46] CreateQueue: testQueue1 (Servers: 7, Capacity: 10) in Network: someAdvancedNetwork
+[04:43:46] RegisterTopLevelNetwork: someAdvancedNetwork
+[04:43:46] CreateDispatcherNode: someAdvancedNetwork.@ dispatcher @.0 with rate function
+[04:43:46] ConnectDispatcher: someAdvancedNetwork.@ dispatcher @.0 -> someAdvancedNetwork.firstInput (Weight: 1)
+[04:43:46] ConnectNode: firstInput -> firstInput (Weight: 1) in Network: someAdvancedNetwork
+[04:43:46] ConnectNode: singleOutput -> testQueue1 (Weight: 1) in Network: someAdvancedNetwork
+[04:43:46] ConnectNode: testQueue1 -> firstOutput (Weight: 1) in Network: someAdvancedNetwork

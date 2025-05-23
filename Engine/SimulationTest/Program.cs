@@ -1,70 +1,58 @@
 ﻿using System;
 using SimEngine.Core;
+using SimEngine.Networks;
+
 
 class Program
 {
     static void Main()
     {
         var engine = new SimulationEngineAPI();
-        engine.SetSeed(42);
+        engine.SetSeed(42); // or whatever seed you use
 
-        Func<double> Exp(double rate) => () => -Math.Log(1 - engine.RandomGenerator.NextDouble()) / rate;
-        Func<double> Const(double value) => () => value;
+        var topNet = new NetworkDefinition { Name = "someAdvancedNetwork" };
 
-        // --- Pizza Shop ---
-        var pizza = new SimEngine.Networks.NetworkDefinition { Name = "PizzaShop" };
-        pizza.AddEntryPoint("In");
-        pizza.AddQueue("PrepStation", 1, 10, Exp(1.2));
-        pizza.AddQueue("PizzaOven", 1, 5, Exp(1.0));
-        pizza.AddQueue("Cashier", 1, 8, Exp(0.9));
-        pizza.AddExitPoint("Out");
-        pizza.Connect("In", "PrepStation");
-        pizza.Connect("PrepStation", "PizzaOven");
-        pizza.Connect("PizzaOven", "Cashier");
-        pizza.Connect("Cashier", "Out");
+        // Entry/exit points
+        topNet.AddEntryPoint("firstInput");
+        topNet.AddExitPoint("firstOutput");
 
-        // --- Chinese Shop ---
-        var chinese = new SimEngine.Networks.NetworkDefinition { Name = "ChineseShop" };
-        chinese.AddEntryPoint("In");
-        chinese.AddQueue("PrepStation", 1, 10, Exp(1.3));
-        chinese.AddQueue("SushiStation", 1, 6, Exp(0.8));
-        chinese.AddQueue("RamenStation", 1, 6, Exp(1.0));
-        chinese.AddQueue("Cashier", 1, 8, Exp(0.95));
-        chinese.AddExitPoint("Out");
-        chinese.Connect("In", "PrepStation");
-        chinese.Connect("PrepStation", "SushiStation", 0.4);
-        chinese.Connect("PrepStation", "RamenStation", 0.6);
-        chinese.Connect("SushiStation", "Cashier");
-        chinese.Connect("RamenStation", "Cashier");
-        chinese.Connect("Cashier", "Out");
+        // Subnetwork: someAdvancedNetwork.basicNetwork
+        var basicNet = new NetworkDefinition(topNet) { Name = "basicNetwork" };
+        basicNet.AddEntryPoint("firstInput");
+        basicNet.AddExitPoint("singleOutput");
 
-        // --- Mall wrapper ---
-        var mall = new SimEngine.Networks.NetworkDefinition { Name = "Mall" };
-        mall.AddEntryPoint("Entry");
-        mall.AddExitPoint("Out");
-        mall.AddSubNetwork(pizza);
-        mall.AddSubNetwork(chinese);
-        mall.Connect("Entry", "PizzaShop.In", 0.5);
-        mall.Connect("Entry", "ChineseShop.In", 0.5);
-        mall.Connect("PizzaShop.Out", "Out");
-        mall.Connect("ChineseShop.Out", "Out");
+        topNet.AddSubNetwork(basicNet);
 
-        engine.CreateNetwork(mall);
+        // Queues in basicNetwork
+        basicNet.AddQueue("secQueue1", 5, 95, () => engine.Exponential(10));
+        basicNet.AddQueue("secQueue2", 5, 95, () => engine.Exponential(10));
 
-        // --- Dispatcher OUTSIDE mall ---
-        engine.CreateDispatcherNode("D1", Const(0.8));
-        engine.ConnectNode("D1", "Mall.Entry");
+        // Route in basicNetwork
+        basicNet.Connect("firstInput", "secQueue1", 1);
+        basicNet.Connect("secQueue1", "secQueue2", 1);
+        basicNet.Connect("secQueue2", "singleOutput", 1);
 
-        // --- Final delivery queue ---
-        engine.CreateQueueNode("Delivery", 1, 30, Exp(1.2));
-        engine.ConnectNode("Mall.Out", "Delivery");
+        // Queue: testQueue1 in someAdvancedNetwork
+        topNet.AddQueue("testQueue1", 7, 10, () => 20);
 
-        // --- Run simulation ---
-        engine.SetSimulationParameters(1000, 1);
+        // Dispatcher for 250 constant arrival rate
+        string dispatcher = "someAdvancedNetwork.@ dispatcher @.0";
+        engine.CreateDispatcherNode(dispatcher, () => 250, "someAdvancedNetwork");
+
+        // Connect dispatcher to firstInput
+        engine.ConnectNode(dispatcher, "someAdvancedNetwork.firstInput", 1);
+
+        // Routes in someAdvancedNetwork
+        topNet.Connect("firstInput", "basicNetwork.firstInput", 1);
+        topNet.Connect("basicNetwork.singleOutput", "testQueue1", 1);
+        topNet.Connect("testQueue1", "firstOutput", 1);
+
+        // Register top-level network
+        engine.CreateNetwork(topNet);
+
+        // Run
+        engine.SetSimulationParameters(untilTime: 500, runCount: 5);
         engine.RunSimulation();
-
-        // --- Print results ---
-        var stats = engine.GetSimulationStats();
-        engine.PrintMetric(stats);
+        engine.PrintMetric(engine.GetSimulationStats());
     }
 }

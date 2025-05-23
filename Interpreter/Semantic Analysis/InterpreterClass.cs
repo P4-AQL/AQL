@@ -25,6 +25,7 @@ public class InterpreterClass(ProgramNode node)
     Table<object> VariableState => globalEnvironment.VariableState;
     Table<NetworkDeclarationNode> NetworkState => globalEnvironment.NetworkState;
     public SimulationEngineAPI? LastEngine { get; private set; }
+    private readonly HashSet<string> _createdNetworks = new();
 
     internal NetworkDefinitionManager QueueableManager => globalEnvironment.QueueableManager;
 
@@ -255,7 +256,15 @@ public class InterpreterClass(ProgramNode node)
         IEnumerable<NetworkInputOrOutput> inputs = node.Inputs.Select(NetworkDefinitionManager.GetInputOrOutput);
         IEnumerable<NetworkInputOrOutput> outputs = node.Outputs.Select(NetworkDefinitionManager.GetInputOrOutput);
 
-        IEnumerable<Queueable> newInstances = node.Instances.Select(QueueableManager.GetNewInstance);
+        List<Queueable> newInstances = node.Instances
+            .Select(QueueableManager.GetNewInstance)
+            .ToList();
+
+        foreach (var instance in newInstances)
+        {
+            QueueableManager.Queueables.Add(instance);
+        }
+
 
         Network network = new(
             node.Identifier.Identifier,
@@ -300,6 +309,7 @@ public class InterpreterClass(ProgramNode node)
             routeToCreate.Invoke();
         }
 
+        LogSimulationCall(queueable.Name, untilTime, runCount);
         engineAPI.RunSimulation();
         engineAPI.PrintMetric(engineAPI.GetSimulationStats());
     }
@@ -328,50 +338,67 @@ public class InterpreterClass(ProgramNode node)
 
     public static void CreateQueueInEngine(SimulationEngineAPI engineAPI, Queue queue, NetworkDefinition networkDefinition)
     {
+        LogEngineInteraction($"CreateQueue: {queue.Name} (Servers: {queue.Servers}, Capacity: {queue.Capacity}) in Network: {networkDefinition.FullName}");
         networkDefinition.AddQueue(queue.Name, queue.Servers, queue.Capacity, queue.Service);
     }
 
     public List<Action> CreateNetworkInEngine(SimulationEngineAPI engineAPI, Network network, NetworkDefinition? parent)
     {
+        // Skip already-created networks
+        if (!_createdNetworks.Add(network.Name))
+        {
+            LogEngineInteraction($"SKIPPED duplicate network creation: {network.Name}");
+            return [];
+        }
+
+
         NetworkDefinition networkDefinition = new(parent)
         {
             Name = network.Name
         };
 
-        foreach (NetworkInputOrOutput input in network.Inputs)
+        LogEngineInteraction($"CreateNetwork: {networkDefinition.FullName} (Parent: {parent?.FullName ?? "null"})");
+
+        foreach (var input in network.Inputs)
         {
+            LogEngineInteraction($"AddEntryPoint: {input.Name} to Network: {networkDefinition.FullName}");
             networkDefinition.AddEntryPoint(input.Name);
         }
-        foreach (NetworkInputOrOutput output in network.Outputs)
+
+        foreach (var output in network.Outputs)
         {
+            LogEngineInteraction($"AddExitPoint: {output.Name} to Network: {networkDefinition.FullName}");
             networkDefinition.AddExitPoint(output.Name);
         }
-        foreach (Queueable queueable in network.NewInstances)
+
+        // Recursively define sub-networks from Queueables that are Networks
+        foreach (var queueable in network.NewInstances)
         {
             CreateQueueableInEngine(engineAPI, queueable, networkDefinition);
         }
 
+        if (parent is null)
+        {
+            LogEngineInteraction($"RegisterTopLevelNetwork: {networkDefinition.FullName}");
+            engineAPI.CreateNetwork(networkDefinition);
+        }
+        else
+            parent.AddSubNetwork(networkDefinition);
+
         List<Action> routesToCreate = [];
-        int index = 0;
         if (network.Routes is not null)
         {
-            foreach (Route route in network.Routes)
+            int index = 0;
+            foreach (var route in network.Routes)
             {
                 routesToCreate.Add(CreateRouteInEngine(engineAPI, networkDefinition, route, index));
                 index++;
             }
         }
 
-        if (parent is null)
-        {
-            engineAPI.CreateNetwork(networkDefinition);
-        }
-        else
-        {
-            parent.AddSubNetwork(networkDefinition);
-        }
         return routesToCreate;
     }
+
 
     public Action CreateRouteInEngine(SimulationEngineAPI engineAPI, NetworkDefinition networkDefinition, Route route, int index)
     {
@@ -392,17 +419,21 @@ public class InterpreterClass(ProgramNode node)
     public static Action CreateFunctionRouteInEngine(SimulationEngineAPI engineAPI, FuncRoute funcRoute, NetworkDefinition networkDefinition, int index)
     {
         string dispatcherName = string.Join('.', networkDefinition.FullName, "@ dispatcher @", index);
+        LogEngineInteraction($"CreateDispatcherNode: {dispatcherName} with rate function");
         engineAPI.CreateDispatcherNode(
             dispatcherName,
-            funcRoute.FromRate
+            funcRoute.FromRate,
+            networkDefinition.FullName
         );
 
         string ToName = string.Join('.', networkDefinition.FullName, funcRoute.ToProbabilityPair.To.Name);
+        LogEngineInteraction($"ConnectDispatcher: {dispatcherName} -> {ToName} (Weight: {funcRoute.ToProbabilityPair.Weight})");
         return () => engineAPI.ConnectNode(dispatcherName, ToName, funcRoute.ToProbabilityPair.Weight);
     }
 
     private static Action CreateNetworkEntityRouteInEngine(NetworkEntityRoute networkEntityRoute, NetworkDefinition networkDefinition)
     {
+        LogEngineInteraction($"ConnectNode: {networkEntityRoute.From.Name} -> {networkEntityRoute.ToProbabilityPair.To.Name} (Weight: {networkEntityRoute.ToProbabilityPair.Weight}) in Network: {networkDefinition.FullName}");
         return () => networkDefinition.Connect(networkEntityRoute.From.Name, networkEntityRoute.ToProbabilityPair.To.Name, networkEntityRoute.ToProbabilityPair.Weight);
     }
 
@@ -723,4 +754,17 @@ public class InterpreterClass(ProgramNode node)
 
         return VariableState.Lookup(identifier, out @out);
     }
+
+    private static void LogSimulationCall(string networkName, int untilTime, int runCount)
+    {
+        string logLine = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Simulating network: {networkName}, UntilTime: {untilTime}, Runs: {runCount}";
+        File.AppendAllText("interpreter_simulation_log.txt", logLine + Environment.NewLine);
+    }
+
+    private static void LogEngineInteraction(string message)
+    {
+        File.AppendAllText("interpreter_engine_log.txt", $"[{DateTime.Now:HH:mm:ss}] {message}{Environment.NewLine}");
+    }
+
+
 }

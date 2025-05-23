@@ -41,6 +41,9 @@ public class SimulationEngineAPI
 
     public void CreateNetwork(NetworkDefinition network, string prefix = "")
     {
+        if (_validNetworkNames.Contains(network.FullName))
+            return;
+
         _validNetworkNames.Add(network.FullName);
 
         // Register queues
@@ -91,12 +94,13 @@ public class SimulationEngineAPI
         return string.IsNullOrEmpty(prefix) ? name : $"{prefix}.{name}";
     }
 
-    public void CreateDispatcherNode(string name, Func<double> arrivalDist)
+    public void CreateDispatcherNode(string name, Func<double> arrivalDist, string networkName)
     {
-        var dispatcher = new DispatcherNode(this, name, arrivalDist);
+        var dispatcher = new DispatcherNode(this, name, arrivalDist, networkName);
         _nodes.Add(name, dispatcher);
         _dispatchers[name] = dispatcher;
     }
+
 
     public void CreateQueueNode(string name, int servers, int capacity, Func<double> serviceTime, Func<double>? arrivalTime = null)
     {
@@ -114,19 +118,21 @@ public class SimulationEngineAPI
         if (!_nodes.TryGetValue(to, out var toNode))
             throw new ArgumentException($"Target node '{to}' not found.");
 
-        if (fromNode.NextNodeChoices == null && probability < 1.0)
-        {
-            fromNode.NextNodeChoices = new List<(Node, double)> { (toNode, probability) };
-        }
-        else if (fromNode.NextNodeChoices != null)
-        {
-            fromNode.NextNodeChoices.Add((toNode, probability));
-        }
-        else
+        // Single deterministic target
+        if (probability >= 1.0)
         {
             fromNode.NextNode = toNode;
         }
+        else
+        {
+            // Initialize the probabilistic choice list if it doesn't exist
+            if (fromNode.NextNodeChoices == null)
+                fromNode.NextNodeChoices = new List<(Node, double)>();
+
+            fromNode.NextNodeChoices.Add((toNode, probability));
+        }
     }
+
 
     public void RecordNetworkEntry(Entity entity, string networkName, double time)
     {

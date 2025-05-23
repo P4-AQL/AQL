@@ -98,7 +98,7 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
     {
         if (routeDefinition.From is FunctionCallNode or LiteralNode)
         {
-            double GetRate() => interpretExpression.Invoke(routeDefinition.From);
+            Func<double> GetRate = () => interpretExpression.Invoke(routeDefinition.From);
 
             FuncRoute CreateFuncRoute(double weight, NetworkEntity routeTo) =>
                 new(
@@ -110,7 +110,10 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
         }
         else if (routeDefinition.From is IdentifierExpressionNode identifierExpressionNode)
         {
+            // Console.WriteLine($"Trying to resolve: {identifierExpressionNode.Identifier.FullIdentifier} in {thisNetwork.Name}");
+
             NetworkEntity from = thisNetwork.FindNetworkEntity(identifierExpressionNode.Identifier, this);
+
             if (from is not (Queue or NetworkInputOrOutput))
             {
                 throw new InterpretationException($"Route '{routeDefinition.From}' is not a queue (Line: {routeDefinition.LineNumber})");
@@ -137,7 +140,7 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
                 double weight = interpretExpression.Invoke(routeValuePairNode.Probability);
                 IdentifierNode routeToIdentifierNode = routeValuePairNode.RouteTo;
 
-                NetworkEntity routeTo = thisNetwork.FindNetworkEntity(routeToIdentifierNode, this);
+                NetworkEntity routeTo = TryResolveGlobalFirst(routeToIdentifierNode, thisNetwork, this);
 
                 routes.Add(
                     createRoute(
@@ -149,6 +152,17 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
             return routes;
         }
     }
+
+    private static NetworkEntity TryResolveGlobalFirst(IdentifierNode identifierNode, Network thisNetwork, NetworkDefinitionManager manager)
+    {
+        // First try: if it's fully qualified, resolve globally
+        if (identifierNode is QualifiedIdentifierNode)
+            return manager.FindNetworkEntityOrThrow(identifierNode);
+
+        // Otherwise, try local first
+        return thisNetwork.FindNetworkEntity(identifierNode, manager);
+    }
+
 }
 
 
