@@ -2,56 +2,56 @@ queue ParkingLot {
   servers: 100;
   service: 300;
   capacity: 100;
-  * mrt *
+  *mrt, vrt, throughput*
 }
 
 queue BeforeCheckIn {
   servers: 2;
   service: 90;
   capacity: 10222220;
-  * mrt *
+  *mrt, vrt, throughput*
 }
 
 queue CheckIn {
   servers: 1;
   service: 20;
   capacity: 10222220;
-  * mrt *
+  *mrt, vrt, throughput*
 } 
 
 queue AfterCheckIn {
   servers: 4;
   service: 90;
   capacity: 10222220;
-  * mrt *
+  *mrt, vrt, throughput*
 }
 
 queue SecurityA {
   servers: 1;
   service: 120;
   capacity: 10222220;
-  * mrt *
+  *mrt, vrt, throughput*
 }
 
 queue SecurityB {
   servers: 1;
   service: 240;
   capacity: 10222220;
-  * mrt *
+  *mrt, vrt, throughput*
 }
 
 queue GateA {
   servers: 1;
   service: 10;
   capacity: 10222220;
-  * mrt *
+  *mrt, vrt, throughput*
 }
 
 queue GateB {
   servers: 1;
   service: 30;
   capacity: 10222220;
-  * mrt *
+  *mrt, vrt, throughput*
 }
 
 network ArrivalArea {
@@ -86,4 +86,10 @@ network Airport {
   ArrivalArea.path_to_sec_a1 -> ProcessingArea.arrival_sec_a1;
   ArrivalArea.path_to_sec_a2 -> ProcessingArea.arrival_sec_a2;
   ProcessingArea.flight -> plane_go_zumzum;
+}
+
+simulate {
+  run: Airport;
+  until: 500;
+  times: 5;
 }
