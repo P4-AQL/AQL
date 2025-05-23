@@ -76,6 +76,7 @@ public class SimulationEngineAPI
             var qualifiedFrom = Qualify(network.FullName, from);
             var qualifiedTo = Qualify(network.FullName, to);
             ConnectNode(qualifiedFrom, qualifiedTo, prob);
+            Console.WriteLine($"Connecting {qualifiedFrom} to {qualifiedTo} with probability {prob}");
         }
 
     }
@@ -113,14 +114,16 @@ public class SimulationEngineAPI
 
         if (!_nodes.TryGetValue(to, out var toNode))
             throw new ArgumentException($"Target node '{to}' not found.");
+        Console.WriteLine("fromNode.nextnoidechoices: " + fromNode.NextNodeChoices + " probability: " + probability);
 
-        if (fromNode.NextNodeChoices == null && probability < 1.0)
+        if (fromNode.NextNodeChoices == null && probability > 1.0)
         {
-            fromNode.NextNodeChoices = new List<(Node, double)> { (toNode, probability) };
+            fromNode.NextNodeChoices = new List<(Node, double)> { (toNode, probability / 100) };
+            Console.WriteLine("fromNode.nextnoidechoices UPDATED UPDATED: " + fromNode.NextNodeChoices);
         }
         else if (fromNode.NextNodeChoices != null)
         {
-            fromNode.NextNodeChoices.Add((toNode, probability));
+            fromNode.NextNodeChoices.Add((toNode, probability / 100));
         }
         else
         {

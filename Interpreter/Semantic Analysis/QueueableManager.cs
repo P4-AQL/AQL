@@ -22,15 +22,18 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
     public NetworkEntity? TryFindNetworkEntity(IdentifierNode identifierNode)
     {
         NetworkEntity? returnValue = null;
+        
         string firstIdentifier = identifierNode.FirstIdentifier;
-
         // Is the identifier referencing a local Queueable?
+        
         Queueable? queueable = FindQueueableOrDefault(firstIdentifier);
-
+        
         if (identifierNode is QualifiedIdentifierNode qualifiedIdentifierNode)
         {
+            
             if (queueable is null)
             {
+                
                 // Is the identifier referencing a Queueable in an imported dependency?
                 if (InterpretationEnvironment.ModuleDependencies.Lookup(firstIdentifier, out InterpretationEnvironment dependency))
                 {
@@ -42,6 +45,7 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
                 // Is the identifier referencing a network entity in the Queueable?
                 if (queueable is Network network)
                 {
+                    
                     returnValue = network.FindNetworkEntity(qualifiedIdentifierNode.RightIdentifier, this);
                 }
             }
