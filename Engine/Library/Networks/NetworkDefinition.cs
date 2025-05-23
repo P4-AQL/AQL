@@ -3,9 +3,10 @@ namespace SimEngine.Networks;
 using System;
 using System.Collections.Generic;
 
-public class NetworkDefinition
+public class NetworkDefinition(NetworkDefinition? parent)
 {
     public string Name { get; init; } = string.Empty;
+    public NetworkDefinition? Parent { get; init; } = parent;
 
     public List<(string Name, int Servers, int Capacity, Func<double> ServiceTime)> Queues { get; } = new();
     public List<(string From, string To, double Probability)> Routes { get; } = new();
@@ -27,4 +28,9 @@ public class NetworkDefinition
 
     public void AddSubNetwork(NetworkDefinition sub)
         => SubNetworks.Add(sub);
+
+    public string FullName =>
+        Parent is null
+            ? Name
+            : string.Join('.', Parent.FullName, Name);
 }

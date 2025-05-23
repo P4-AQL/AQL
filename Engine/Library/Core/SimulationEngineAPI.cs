@@ -3,7 +3,6 @@ namespace SimEngine.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NetworkDefinition = SimEngine.Networks.NetworkDefinition;
 using SimEngine.Nodes;
 using SimEngine.Networks;
 using SimEngine.Metrics;
@@ -42,20 +41,18 @@ public class SimulationEngineAPI
 
     public void CreateNetwork(NetworkDefinition network, string prefix = "")
     {
-        string fullName = string.IsNullOrEmpty(prefix) ? network.Name : $"{prefix}.{network.Name}";
-
-        _validNetworkNames.Add(fullName);
+        _validNetworkNames.Add(network.FullName);
 
         // Register queues
         foreach (var (name, servers, capacity, serviceTime) in network.Queues)
         {
-            CreateQueueNode($"{fullName}.{name}", servers, capacity, serviceTime);
+            CreateQueueNode($"{network.FullName}.{name}", servers, capacity, serviceTime);
         }
 
         // Register router entry/exit points
         foreach (var entry in network.RouterEntries)
         {
-            var nodeName = $"{fullName}.{entry}";
+            var nodeName = $"{network.FullName}.{entry}";
             var node = new RouterNode(this, nodeName);
             _nodes[nodeName] = node;
         }
@@ -63,8 +60,8 @@ public class SimulationEngineAPI
 
         foreach (var exit in network.RouterExits)
         {
-            var node = new RouterNode(this, $"{fullName}.{exit}");
-            _nodes[$"{fullName}.{exit}"] = node;
+            var node = new RouterNode(this, $"{network.FullName}.{exit}");
+            _nodes[$"{network.FullName}.{exit}"] = node;
         }
 
         // Recursively register sub-networks
@@ -76,8 +73,8 @@ public class SimulationEngineAPI
         // Register internal routes
         foreach (var (from, to, prob) in network.Routes)
         {
-            var qualifiedFrom = Qualify(fullName, from);
-            var qualifiedTo = Qualify(fullName, to);
+            var qualifiedFrom = Qualify(network.FullName, from);
+            var qualifiedTo = Qualify(network.FullName, to);
             ConnectNode(qualifiedFrom, qualifiedTo, prob);
         }
 
