@@ -29,5 +29,18 @@
       "stopAtEntry": false,
       "console": "internalConsole"
     },
+    {
+      "name": ".NET Core Test Debug",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "dotnet",
+      "args": [
+        "test",
+        "--no-build"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    }
   ]
 }

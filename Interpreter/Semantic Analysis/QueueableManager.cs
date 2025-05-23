@@ -65,23 +65,31 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
     {
         NetworkEntity instance = FindNetworkEntityOrThrow(instanceDeclaration.ExistingInstance);
 
-        string newNetworkName = instanceDeclaration.NewInstance.Identifier;
+        if (instance is not Queueable queueable)
+        {
+            throw new InterpretationException($"Invalid type '{instance.GetType()}' (Line: {instanceDeclaration.LineNumber})");
+        }
 
-        if (instance is Queue queue)
+        string newName = instanceDeclaration.NewInstance.Identifier;
+        return GetNewInstance(queueable, newName);
+    }
+
+    public Queueable GetNewInstance(Queueable existingQueue, string newName)
+    {
+        if (existingQueue is Queue queue)
         {
             return new Queue(
-                name: newNetworkName,
+                name: newName,
                 servers: queue.Servers,
                 capacity: queue.Capacity,
                 service: queue.Service,
                 metrics: queue.Metrics
             );
         }
-        else if (instance is Network network)
+        else if (existingQueue is Network network)
         {
-
             return new Network(
-                name: newNetworkName,
+                name: newName,
                 inputs: network.Inputs,
                 outputs: network.Outputs,
                 newInstances: network.NewInstances,
@@ -90,7 +98,7 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
         }
         else
         {
-            throw new InterpretationException($"Invalid instance type '{instance.GetType()}' (Line: {instanceDeclaration.NewInstance.LineNumber})");
+            throw new InterpretationException($"Invalid type '{existingQueue.GetType()}'");
         }
     }
 
@@ -100,9 +108,9 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
         {
             double GetRate() => interpretExpression.Invoke(routeDefinition.From);
 
-            FuncRoute CreateFuncRoute(double weight, NetworkEntity routeTo) =>
+            FuncRoute CreateFuncRoute(double weight, NetworkEntity routeTo, string toName) =>
                 new(
-                    toProbabilityPair: new(weight, routeTo),
+                    toProbabilityPair: new(weight, routeTo, toName),
                     rate: GetRate
                 );
 
@@ -116,10 +124,11 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
                 throw new InterpretationException($"Route '{routeDefinition.From}' is not a queue (Line: {routeDefinition.LineNumber})");
             }
 
-            NetworkEntityRoute CreateNetworkEntityRoute(double weight, NetworkEntity routeTo) =>
+            NetworkEntityRoute CreateNetworkEntityRoute(double weight, NetworkEntity routeTo, string toName) =>
                 new(
-                    to: new(weight, routeTo),
-                    from: from
+                    to: new(weight, routeTo, toName),
+                    from: from,
+                    fromName: identifierExpressionNode.Identifier.FullIdentifier
                 );
 
             return GetRoutes(CreateNetworkEntityRoute);
@@ -129,20 +138,22 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
             throw new InterpretationException($"Route '{routeDefinition.From}' is not a valid route (Line: {routeDefinition.LineNumber}");
         }
 
-        List<Route> GetRoutes<T>(Func<double, NetworkEntity, T> createRoute) where T : Route
+        List<Route> GetRoutes<T>(Func<double, NetworkEntity, string, T> createRoute) where T : Route
         {
             List<Route> routes = [];
             foreach (RouteValuePairNode routeValuePairNode in routeDefinition.To)
             {
                 double weight = interpretExpression.Invoke(routeValuePairNode.Probability);
                 IdentifierNode routeToIdentifierNode = routeValuePairNode.RouteTo;
+                string routeToName = routeToIdentifierNode.FullIdentifier;
 
                 NetworkEntity routeTo = thisNetwork.FindNetworkEntity(routeToIdentifierNode, this);
 
                 routes.Add(
                     createRoute(
                         weight,
-                        routeTo
+                        routeTo,
+                        routeToName
                     )
                 );
             }
@@ -154,6 +165,7 @@ public class NetworkDefinitionManager(InterpretationEnvironment interpretationEn
 
 public abstract class NetworkEntity(string name)
 {
+    public NetworkEntity? parent;
     public string Name { get; } = name;
 }
 
@@ -166,7 +178,7 @@ public class Network(string name, IEnumerable<NetworkInputOrOutput> inputs, IEnu
 {
     public IReadOnlyList<NetworkInputOrOutput> Inputs = [.. inputs];
     public IReadOnlyList<NetworkInputOrOutput> Outputs = [.. outputs];
-    public IReadOnlyList<Queueable> NewInstances = [.. newInstances];
+    public List<Queueable> NewInstances = [.. newInstances];
     public IReadOnlyList<Route>? Routes;
 
     public Network(string name, IEnumerable<NetworkInputOrOutput> inputs, IEnumerable<NetworkInputOrOutput> outputs, IEnumerable<Queueable> newInstances, IEnumerable<Route>? routes) : this(name, inputs, outputs, newInstances)
@@ -197,7 +209,14 @@ public class Network(string name, IEnumerable<NetworkInputOrOutput> inputs, IEnu
         }
 
         // Is the identifier referencing a global definition?
-        entity ??= networkDefinitionManager.FindNetworkEntityOrThrow(identifierNode);
+        if (entity is null)
+        {
+            entity = networkDefinitionManager.FindNetworkEntityOrThrow(identifierNode);
+            if (entity is Queueable queueable)
+            {
+                NewInstances.Add(networkDefinitionManager.GetNewInstance(queueable, queueable.Name));
+            }
+        }
 
         return entity;
     }
@@ -232,13 +251,15 @@ public class FuncRoute(RouteToProbabilityPair toProbabilityPair, Func<double> ra
     public Func<double> FromRate { get; } = rate;
 }
 
-public class NetworkEntityRoute(RouteToProbabilityPair to, NetworkEntity from) : Route(to)
+public class NetworkEntityRoute(RouteToProbabilityPair to, NetworkEntity from, string fromName) : Route(to)
 {
     public NetworkEntity From { get; } = from;
+    public string FromName { get; } = fromName;
 }
 
-public class RouteToProbabilityPair(double weight, NetworkEntity to)
+public class RouteToProbabilityPair(double weight, NetworkEntity to, string toName)
 {
     public double Weight { get; } = weight;
     public NetworkEntity To { get; } = to;
+    public string ToName { get; } = toName;
 }

@@ -14,9 +14,3 @@ public class DummyTypeNode : TypeNode
     public override string GetNodeLabel() => "DummyType";
     public override string GetTypeString() => "DummyType";
 }
-
-public class DummyQueueable : NetworkEntity
-{
-    public DummyQueueable(string name) : base(name) { }
-    public override NetworkEntity FindQueueable(string name) => this;
-}

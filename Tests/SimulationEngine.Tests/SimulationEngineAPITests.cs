@@ -59,7 +59,7 @@ public class SimulationEngineAPITests
         var api = new SimulationEngineAPI();
         var entity = new Entity(0.0);
 
-        var def = new NetworkDefinition { Name = "TestNet" };
+        var def = new NetworkDefinition(null) { Name = "TestNet" };
         api.CreateNetwork(def);
         api.RecordNetworkEntry(entity, "TestNet", 1.0);
         api.RecordNetworkExit(entity, "TestNet", 2.0);

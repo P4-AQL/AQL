@@ -13,15 +13,15 @@ public class SimulationEngineAPI
 {
     public Simulation _simulation = new();
     public Random RandomGenerator { get; private set; } = new();
-    private Dictionary<string, QueueNode> _queues = new();
-    private Dictionary<string, DispatcherNode> _dispatchers = new();
-    public Dictionary<string, NetworkStats> _networks = new();
-    public List<Entity> _entities = new();
-    private List<QueueNode> _allNodes = new();
-    private Dictionary<string, Node> _nodes = new();
+    private Dictionary<string, QueueNode> _queues = [];
+    private Dictionary<string, DispatcherNode> _dispatchers = [];
+    public Dictionary<string, NetworkStats> _networks = [];
+    public List<Entity> _entities = [];
+    private List<QueueNode> _allNodes = [];
+    private Dictionary<string, Node> _nodes = [];
     private double _untilTime = 1000;
     private int _runCount = 1;
-    private readonly HashSet<string> _validNetworkNames = new();
+    private readonly HashSet<string> _validNetworkNames = [];
     public SimulationStats Stats { get; private set; } = new();
 
     public QueueNode GetQueueNode(string name) => _queues[name];
@@ -223,7 +223,11 @@ public class SimulationEngineAPI
 
         for (int i = 0; i < _runCount; i++)
         {
-            _simulation = new Simulation();
+            _simulation = new()
+            {
+                simulationEngineAPI = this,
+                runNumber = i + 1
+            };
 
             foreach (var dispatcher in _dispatchers)
                 dispatcher.Value.ScheduleInitialArrival();

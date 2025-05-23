@@ -293,12 +293,7 @@ public class InterpreterClass(ProgramNode node)
             throw new InterpretationException($"Network '{simulateNode.NetworkIdentifier.FullIdentifier}' is not a network (Line: {simulateNode.NetworkIdentifier.LineNumber})");
         }
 
-        List<Action> routesToCreate = CreateQueueableInEngine(engineAPI, queueable, parent: null);
-
-        foreach (Action routeToCreate in routesToCreate)
-        {
-            routeToCreate.Invoke();
-        }
+        CreateQueueableInEngine(engineAPI, queueable, parent: null);
 
         engineAPI.RunSimulation();
         engineAPI.PrintMetric(engineAPI.GetSimulationStats());
@@ -338,6 +333,8 @@ public class InterpreterClass(ProgramNode node)
             Name = network.Name
         };
 
+        List<Action> routesToCreate = [];
+
         foreach (NetworkInputOrOutput input in network.Inputs)
         {
             networkDefinition.AddEntryPoint(input.Name);
@@ -348,10 +345,9 @@ public class InterpreterClass(ProgramNode node)
         }
         foreach (Queueable queueable in network.NewInstances)
         {
-            CreateQueueableInEngine(engineAPI, queueable, networkDefinition);
+            routesToCreate.AddRange(CreateQueueableInEngine(engineAPI, queueable, networkDefinition));
         }
 
-        List<Action> routesToCreate = [];
         int index = 0;
         if (network.Routes is not null)
         {
@@ -364,6 +360,11 @@ public class InterpreterClass(ProgramNode node)
 
         if (parent is null)
         {
+            foreach (Action routeToCreate in routesToCreate)
+            {
+                routeToCreate.Invoke();
+            }
+
             engineAPI.CreateNetwork(networkDefinition);
         }
         else
@@ -397,13 +398,23 @@ public class InterpreterClass(ProgramNode node)
             funcRoute.FromRate
         );
 
+        networkDefinition.AddDispatcher(dispatcherName, funcRoute.FromRate);
+
         string ToName = string.Join('.', networkDefinition.FullName, funcRoute.ToProbabilityPair.To.Name);
-        return () => engineAPI.ConnectNode(dispatcherName, ToName, funcRoute.ToProbabilityPair.Weight);
+
+        return () => networkDefinition.Connect(
+            dispatcherName,
+            ToName,
+            funcRoute.ToProbabilityPair.Weight
+        );
     }
 
     private static Action CreateNetworkEntityRouteInEngine(NetworkEntityRoute networkEntityRoute, NetworkDefinition networkDefinition)
     {
-        return () => networkDefinition.Connect(networkEntityRoute.From.Name, networkEntityRoute.ToProbabilityPair.To.Name, networkEntityRoute.ToProbabilityPair.Weight);
+        string fromName = string.Join('.', networkDefinition.FullName, networkEntityRoute.FromName);
+        string toName = string.Join('.', networkDefinition.FullName, networkEntityRoute.ToProbabilityPair.ToName);
+
+        return () => networkDefinition.Connect(fromName, toName, networkEntityRoute.ToProbabilityPair.Weight);
     }
 
     public object InterpretExpression(ExpressionNode node, Table<object>? shadowVariableState)
@@ -507,7 +518,15 @@ public class InterpreterClass(ProgramNode node)
         object leftValue = InterpretExpression(equalNode.Left, shadowVariableState);
         object rightValue = InterpretExpression(equalNode.Right, shadowVariableState);
 
-        return leftValue == rightValue;
+        return (leftValue, rightValue) switch
+        {
+            (int left, int right) => left == right,
+            (int left, double right) => left == right,
+            (double left, int right) => left == right,
+            (double left, double right) => left == right,
+            (bool left, bool right) => left == right,
+            (_, _) => throw new InterpretationException($"{nameof(equalNode)} unhandled (Line {equalNode.LineNumber})"),
+        };
     }
 
     public bool InterpretAndNode(AndNode andNode, Table<object>? shadowVariableState)
