@@ -311,7 +311,7 @@ public class TypeChecker
                 else
                     errors.Add($"Variable not found (Line {assignNode.LineNumber})");
             }
-            else if (FindExpressionType(assignNode.Expression, errors, localEnvironment).GetType() != nodeType.GetType())
+            else if (FindExpressionType(assignNode.Expression, errors, localEnvironment)!.GetType() != nodeType.GetType())
             {
                 errors.Add($"The expression type does not match the idetifier (Line {assignNode.LineNumber})");
             }
@@ -576,19 +576,17 @@ public class TypeChecker
 
                 foreach (ExpressionNode element in node.Elements.Skip(1))
                 {
-
                     object? elementType = FindRecursive(element);
-                    if (@object is not TypeNode typeNode)
+                    if (elementType is not TypeNode typeNode)
                     {
                         throw new($"Expression must evaluate to a type! (Line {element.LineNumber})");
                     }
                     if (oldTypeNode.GetType() != typeNode.GetType())
                     {
-                        throw new($"Types must match! (Line {typeNode.LineNumber})");
+                        throw new($"Types must match! (Line {element.LineNumber})");
                     }
                     oldTypeNode = typeNode;
                 }
-
                 return new ArrayTypeNode(node.LineNumber, oldTypeNode);
             }
 
@@ -795,7 +793,7 @@ public class TypeChecker
                 errors.Add($"Route destination must be an identifier (Line {destination.LineNumber})");
                 continue;
             }
-            
+
             // Get the type that is pointed to
             object? @object = GetTypeFromIdentifier(destination.RouteTo, globalEnvironment, localNetwork, errors);
 

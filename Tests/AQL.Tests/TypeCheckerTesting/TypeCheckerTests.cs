@@ -10,6 +10,8 @@ using Interpreter.AST.Nodes.Definitions;
 using Interpreter.AST.Nodes.Statements;
 using Interpreter.AST.Nodes.Networks;
 using Interpreter.AST.Nodes.Routes;
+using System.Reflection;
+
 
 namespace AQL.Tests;
 
@@ -136,7 +138,7 @@ public class TypeCheckerTests
 
             //Some invalid node
             ConstDeclarationNode constDeclarationNode = new ConstDeclarationNode(0, null, new IntTypeNode(0), new SingleIdentifierNode(0, "constant"), new StringLiteralNode(0, "whoops"));
-            
+
             typeChecker.TypeCheckDefinitionNode(constDeclarationNode, errors);
 
             // Verify errors
@@ -192,7 +194,7 @@ public class TypeCheckerTests
             Table<Node> localEnv = new();
 
             typeChecker.NetworkIsValid(errors, networkDeclarationNode, localEnv);
-            
+
             // Verify zero errors
             Assert.Empty(errors);
         }
@@ -208,7 +210,7 @@ public class TypeCheckerTests
             Table<Node> localEnv = new();
 
             typeChecker.NetworkIsValid(errors, networkDeclarationNode, localEnv);
-            
+
             // Verify errors
             Assert.NotEmpty(errors);
         }
@@ -235,6 +237,137 @@ public class TypeCheckerTests
 
             // Assert
             Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void ReturnNode_WrongReturnType_AddsError()
+        {
+            var errors = new List<string>();
+            var localEnv = new Table<Node>();
+
+            var returnNode = new ReturnNode(1, new StringLiteralNode(1, "not int"));
+            var checker = new TypeChecker();
+
+            checker.TypeCheckStatementNode(returnNode, errors, new IntTypeNode(1), localEnv);
+
+            Assert.NotEmpty(errors);
+            Assert.Contains(errors, e => e.Contains("Type must match the return type of the function"));
+        }
+
+        [Fact]
+        public void VariableDeclaration_TypeMismatch_AddsError()
+        {
+            var errors = new List<string>();
+            var localEnv = new Table<Node>();
+
+            var declaration = new VariableDeclarationNode(
+                1,
+                null, // next StatementNode
+                new IntTypeNode(1),
+                new SingleIdentifierNode(1, "x"),
+                new StringLiteralNode(1, "str")
+            );
+            var checker = new TypeChecker();
+
+            checker.TypeCheckStatementNode(declaration, errors, new IntTypeNode(1), localEnv);
+
+            Assert.Contains(errors, e => e.Contains("Expression must evaluate to the same type as the declared variable"));
+        }
+
+        [Fact]
+        public void FunctionDefinition_DuplicateParameter_AddsError()
+        {
+            var errors = new List<string>();
+            var funcID = new SingleIdentifierNode(0, "func");
+
+            var parameters = new List<TypeAndIdentifier>
+            {
+                new(0, new IntTypeNode(0), new SingleIdentifierNode(0, "p")),
+                new(0, new IntTypeNode(0), new SingleIdentifierNode(0, "p")) // duplicate
+            };
+
+            var function = new FunctionNode(0, null, new IntTypeNode(0), funcID, parameters, new SkipNode(0));
+            var checker = new TypeChecker();
+            checker.TypeCheckDefinitionNode(function, errors);
+
+            Assert.NotEmpty(errors);
+            Assert.Contains(errors, e => e.Contains("Parameter identifier already exist"));
+        }
+
+        [Fact]
+        public void VariableDeclaration_RedeclaredIdentifier_AddsError_SecondCase()
+        {
+            var errors = new List<string>();
+            var localEnv = new Table<Node>();
+            var typeChecker = new TypeChecker();
+
+            var id = new SingleIdentifierNode(0, "x");
+            localEnv.TryBindIfNotExists("x", new IntTypeNode(0)); // Already declared
+
+            var variableNode = new VariableDeclarationNode(0, null, new IntTypeNode(0), id, new IntLiteralNode(0, 10));
+            typeChecker.TypeCheckStatementNode(variableNode, errors, new IntTypeNode(0), localEnv);
+
+            Assert.NotEmpty(errors);
+            Assert.Contains(errors, e => e.Contains("Identifier already exist"));
+        }
+
+        [Fact]
+        public void VariableDeclaration_TypeMismatch_WithStringExpression_AddsError()
+        {
+            var errors = new List<string>();
+            var localEnv = new Table<Node>();
+            var typeChecker = new TypeChecker();
+
+            var id = new SingleIdentifierNode(0, "x");
+            var variableNode = new VariableDeclarationNode(0, null, new IntTypeNode(0), id, new StringLiteralNode(0, "oops"));
+
+            typeChecker.TypeCheckStatementNode(variableNode, errors, new IntTypeNode(0), localEnv);
+
+            Assert.NotEmpty(errors);
+            Assert.Contains(errors, e => e.Contains("Expression must evaluate to the same type as the declared variable"));
+        }
+
+        [Fact]
+        public void ReturnNode_WrongType_AddsError()
+        {
+            var errors = new List<string>();
+            var localEnv = new Table<Node>();
+            var returnStmt = new ReturnNode(1, new BoolLiteralNode(1, true));
+
+            var checker = new TypeChecker();
+            checker.TypeCheckStatementNode(returnStmt, errors, new IntTypeNode(1), localEnv);
+
+            Assert.Single(errors);
+            Assert.Contains("Type must match the return type", errors[0]);
+        }
+
+        [Fact]
+        public void SkipNode_NoEffect_NoErrors()
+        {
+            var errors = new List<string>();
+            var localEnv = new Table<Node>();
+            var skip = new SkipNode(1);
+
+            var checker = new TypeChecker();
+            checker.TypeCheckStatementNode(skip, errors, new IntTypeNode(1), localEnv);
+
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void VariableDeclaration_RedeclaredIdentifier_AddsError()
+        {
+            var errors = new List<string>();
+            var localEnv = new Table<Node>();
+            localEnv.TryBindIfNotExists("x", new IntTypeNode(1));
+
+            var declaration = new VariableDeclarationNode(1, null, new IntTypeNode(1), new SingleIdentifierNode(1, "x"), new IntLiteralNode(1, 5));
+            var checker = new TypeChecker();
+
+            checker.TypeCheckStatementNode(declaration, errors, new IntTypeNode(1), localEnv);
+
+            Assert.Single(errors);
+            Assert.Contains("already exist", errors[0]);
         }
     }
 
@@ -562,19 +695,94 @@ public class TypeCheckerTests
         }        
         */
 
+        // The method FindExpressionType() does not throw an error it adds an error to the error lists and then returns null, thats why the test above fails
+        [Fact]
+        public void FunctionCall_NonFunctionIdentifier_AddsError()
+        {
+            List<string> errors = [];
+            var env = new TypeCheckerEnvironment();
+
+            // Bind a non-function to the name
+            env.Environment.TryBindIfNotExists("notFunc", new IntTypeNode(1));
+
+            var typeChecker = new TypeChecker();
+            var globalEnvField = typeof(TypeChecker).GetField("globalEnvironment", BindingFlags.NonPublic | BindingFlags.Instance);
+            globalEnvField!.SetValue(typeChecker, env);
+
+            var identifier = new SingleIdentifierNode(1, "notFunc");
+            var funcCall = new FunctionCallNode(1, identifier, Array.Empty<ExpressionNode>());
+
+            var result = typeChecker.FindExpressionType(funcCall, errors, null);
+
+            Assert.Null(result);
+            Assert.Single(errors);
+            Assert.Contains("Identifier is not a function", errors[0]);
+        }
+
         /********************************************idetifiere***********************************************************************/
 
+        [Fact]
+        public void IdentifierExpression_SimpleBoundIntIdentifier_ReturnsIntType()
+        {
+            var errors = new List<string>();
+            var id = new SingleIdentifierNode(0, "x");
+            var expr = new IdentifierExpressionNode(0, id);
 
+            var env = new TypeCheckerEnvironment();
+            env.Environment.TryBindIfNotExists("x", new IntTypeNode(0));
 
+            var checker = new TypeChecker();
+            var field = typeof(TypeChecker).GetField("globalEnvironment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+            field.SetValue(checker, env);
 
+            var result = checker.FindExpressionType(expr, errors, null);
 
+            Assert.IsType<IntTypeNode>(result);
+            Assert.Empty(errors);
+        }
 
+        [Fact]
+        public void IdentifierExpression_UnboundIdentifier_AddsError()
+        {
+            var errors = new List<string>();
+            var id = new SingleIdentifierNode(0, "missing");
+            var expr = new IdentifierExpressionNode(0, id);
 
+            var checker = new TypeChecker();
 
+            var result = checker.FindExpressionType(expr, errors, null);
 
+            Assert.Null(result);
+            Assert.Single(errors);
+            Assert.Contains("Identifier not found", errors[0]);
+        }
 
+        [Fact]
+        public void IdentifierExpression_QualifiedIdentifier_ReturnsCorrectType()
+        {
+            var errors = new List<string>();
 
+            var subId = new SingleIdentifierNode(0, "inner");
+            var outerId = new SingleIdentifierNode(0, "outer");
+            var qualified = new QualifiedIdentifierNode(0, outerId, subId);
+            var expr = new IdentifierExpressionNode(0, qualified);
 
+            var subEnv = new Table<Node>();
+            subEnv.TryBindIfNotExists("inner", new BoolTypeNode(0));
+
+            var env = new TypeCheckerEnvironment();
+            var state = new TypeCheckerNetworkState(new NetworkDeclarationNode(0, new NetworkTypeNode(0, outerId), outerId, [], [], [], [], []), subEnv);
+            env.LocalNetworkScopesEnvironment.TryBindIfNotExists("outer", state);
+
+            var checker = new TypeChecker();
+            var field = typeof(TypeChecker).GetField("globalEnvironment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+            field.SetValue(checker, env);
+
+            var result = checker.FindExpressionType(expr, errors, null);
+
+            Assert.IsType<BoolTypeNode>(result);
+            Assert.Empty(errors);
+        }
 
         /********************************************LessThan***********************************************************************/
 
@@ -872,26 +1080,201 @@ public class TypeCheckerTests
                 }
 
         */
+
+        [Fact]
+        public void ArrayLiteral_MixedTypes_ReturnsError()
+        {
+            var errors = new List<string>();
+            var typeChecker = new TypeChecker();
+
+            var elements = new ExpressionNode[]
+            {
+                new IntLiteralNode(1, 1),
+                new StringLiteralNode(1, "a")
+            };
+
+            var arrayLiteralNode = new ArrayLiteralNode(1, elements);
+            var result = typeChecker.FindExpressionType(arrayLiteralNode, errors, null);
+
+            Assert.Null(result);
+            Assert.NotEmpty(errors); // More flexible
+            Assert.Contains(errors, e => e.Contains("Types must match") || e.Contains("Inconsistent array types"));
+        }
+
+        [Fact]
+        public void ArrayLiteral_FirstElementInvalid_ThrowsError()
+        {
+            var errors = new List<string>();
+            var typeChecker = new TypeChecker();
+
+            var elements = new ExpressionNode[]
+            {
+        new DummyExpressionNode(1) // not a TypeNode
+            };
+
+            var node = new ArrayLiteralNode(1, elements);
+
+            var result = typeChecker.FindExpressionType(node, errors, null);
+
+            Assert.Null(result);
+            Assert.Contains(errors, e => e.Contains("Not a valid expression"));
+        }
+
+        private class DummyExpressionNode : ExpressionNode
+        {
+            public DummyExpressionNode(int line) : base(line) { }
+        }
+
+
+        /********************************************ParenthesesNode***********************************************************************/
+
+        [Fact]
+        public void ParenthesesNode_ValidInnerExpression_ReturnsSameType()
+        {
+            var errors = new List<string>();
+            var typeChecker = new TypeChecker();
+
+            var inner = new IntLiteralNode(1, 5);
+            var node = new ParenthesesNode(1, inner);
+
+            var result = typeChecker.FindExpressionType(node, errors, null);
+
+            Assert.IsType<IntTypeNode>(result);
+            Assert.Empty(errors);
+        }
+
+
+
     }
+
+
 
     public class IsTypeIntOrDoubleTest : TypeCheckerTests
     {
-        
-    }
 
-    public class GetTypeFromIdentifierTest : TypeCheckerTests
-    {
+        [Fact]
+        public void IsTypeIntOrDouble_ReturnsCorrectly()
+        {
+            Assert.True(TypeChecker.IsTypeIntOrDouble(new IntTypeNode(0)));
+            Assert.True(TypeChecker.IsTypeIntOrDouble(new DoubleTypeNode(0)));
+            Assert.False(TypeChecker.IsTypeIntOrDouble(new BoolTypeNode(0)));
+            Assert.False(TypeChecker.IsTypeIntOrDouble(new StringTypeNode(0)));
+            Assert.False(TypeChecker.IsTypeIntOrDouble(null));
+        }
+
 
     }
 
     public class TypeCheckInputsTest : TypeCheckerTests
     {
+        [Fact]
+        public void TypeCheckInputs_DuplicateIdentifier_AddsError()
+        {
+            var id = new SingleIdentifierNode(0, "dup");
+            var network = new NetworkDeclarationNode(
+                0,
+                new NetworkTypeNode(0, id),
+                id,
+                [id, id],   // Duplicate inputs
+                [],         // Outputs
+                [],         // Instances
+                [],         // Routes
+                []          // Metrics
+            );
+
+            var wrapper = new NetworkDefinitionNode(0, null, network);
+            var checker = new TypeChecker();
+            List<string> errors = [];
+
+            checker.TypeCheckNetwork(wrapper, errors);
+
+            Assert.NotEmpty(errors);
+            Assert.Contains(errors, e => e.Contains("Duplicate identifier"));
+        }
+
+        [Fact]
+        public void TypeCheckInputs_RedeclaredInEnvironment_AddsError()
+        {
+            var id = new SingleIdentifierNode(0, "inputX");
+            var network = new NetworkDeclarationNode(
+                0,
+                new NetworkTypeNode(0, id),
+                id,
+                [id], // Inputs
+                [], [], [], []
+            );
+
+            // Pre-bind input identifier to const environment
+            var checker = new TypeChecker();
+            checker.TypeCheckDefinitionNode(
+                new ConstDeclarationNode(0, null, new IntTypeNode(0), id, new IntLiteralNode(0, 1)),
+                new()
+            );
+
+            var wrapper = new NetworkDefinitionNode(0, null, network);
+            List<string> errors = [];
+            checker.TypeCheckNetwork(wrapper, errors);
+
+            Assert.NotEmpty(errors);
+            Assert.Contains(errors, e => e.Contains("already declared"));
+        }
+    }
+
+    public class GetTypeFromIdentifierTest : TypeCheckerTests
+    {
+
+        [Fact]
+        public void GetTypeFromIdentifier_ReturnsCorrectType_FromEnvironment()
+        {
+            var env = new TypeCheckerEnvironment();
+            var id = new SingleIdentifierNode(0, "x");
+            var expectedType = new IntTypeNode(0);
+            env.Environment.TryBindIfNotExists("x", expectedType);
+
+            var checker = new TypeChecker();
+            var field = typeof(TypeChecker).GetField("globalEnvironment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            field!.SetValue(checker, env);
+
+            var errors = new List<string>();
+            var result = checker.FindExpressionType(new IdentifierExpressionNode(0, id), errors, null);
+
+            Assert.NotNull(result);
+            Assert.IsType<IntTypeNode>(result);
+            Assert.Empty(errors);
+        }
+
 
     }
 
     public class TypeCheckOutputsTest : TypeCheckerTests
     {
-        // TODO: these
+
+        [Fact]
+        public void TypeCheckOutputs_DuplicateIdentifier_AddsError()
+        {
+            var id = new SingleIdentifierNode(0, "dup");
+            var network = new NetworkDeclarationNode(
+                0,
+                new NetworkTypeNode(0, id),
+                id,
+                [],                             // inputs
+                [id, id],                       // outputs (duplicate)
+                [],                             // instances
+                [],                             // routes
+                []                              // metrics
+            );
+
+            var wrapper = new NetworkDefinitionNode(0, null, network);
+            var checker = new TypeChecker();
+            List<string> errors = [];
+
+            checker.TypeCheckNetwork(wrapper, errors);
+
+            Assert.NotEmpty(errors);
+            Assert.Contains(errors, e => e.Contains("Duplicate identifier"));
+        }
+
+
     }
 
     public class TypeCheckQueueMetricListTest : TypeCheckerTests
@@ -932,7 +1315,47 @@ public class TypeCheckerTests
 
     public class TypeCheckNetworkMetricListTest : TypeCheckerTests
     {
-        
+
+        [Fact]
+        public void TypeCheckNetworkMetricList_ValidMetrics_NoErrors()
+        {
+            var id = new SingleIdentifierNode(0, "net");
+            var network = new NetworkDeclarationNode(0, new NetworkTypeNode(0, id), id, [], [], [], [], [
+                new NamedMetricNode(0, "avg"),
+            new NamedMetricNode(0, "throughput"),
+            new NamedMetricNode(0, "expected_num_entities")
+            ]);
+            var env = new Table<Node>();
+            var state = new TypeCheckerNetworkState(network, env);
+
+            List<string> errors = [];
+            typeof(TypeChecker)
+                .GetMethod("TypeCheckNetworkMetricList", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+                .Invoke(null, new object[] { state, errors });
+
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void TypeCheckNetworkMetricList_InvalidMetric_AddsError()
+        {
+            var id = new SingleIdentifierNode(0, "net");
+            var network = new NetworkDeclarationNode(0, new NetworkTypeNode(0, id), id, [], [], [], [], [
+                new NamedMetricNode(0, "invalid_metric")
+            ]);
+            var env = new Table<Node>();
+            var state = new TypeCheckerNetworkState(network, env);
+
+            List<string> errors = [];
+            typeof(TypeChecker)
+                .GetMethod("TypeCheckNetworkMetricList", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+                .Invoke(null, new object[] { state, errors });
+
+            Assert.Single(errors);
+            Assert.Contains("not a valid metric for networks", errors[0]);
+        }
+
+
     }
 
     public class TypeCheckInstancesTest : TypeCheckerTests
@@ -946,7 +1369,7 @@ public class TypeCheckerTests
             SingleIdentifierNode networkID = new SingleIdentifierNode(0, "net");
             NetworkDeclarationNode networkDefinitionNode = new NetworkDeclarationNode(0, new NetworkTypeNode(0, networkID), networkID, [], [], [], [], []);
             Table<Node> globalEnvironment = new();
-            
+
             TypeCheckerNetworkState typeCheckerNetworkState = new(networkDefinitionNode, globalEnvironment);
 
             typeChecker.TypeCheckInstances(typeCheckerNetworkState, errors);
@@ -955,23 +1378,32 @@ public class TypeCheckerTests
             Assert.Empty(errors);
         }
 
-        /*[Fact]
-        public void ()
+        [Fact]
+        public void TypeCheckRouteDestination_RoutingToNonExistentInput_AddsError()
         {
             List<string> errors = [];
             TypeChecker typeChecker = new();
 
-            // Routing to a non existing input
+            // No bindings in local network
             Table<Node> localNetwork = new();
+
+            // Route to an input identifier that doesn't exist
             SingleIdentifierNode input = new(0, "input");
+            IReadOnlyList<RouteValuePairNode> destinations = [
+                new RouteValuePairNode(0, new IntLiteralNode(0, 1), input)
+            ];
 
-            IReadOnlyList<RouteValuePairNode> destinations = [new RouteValuePairNode(0, new IntLiteralNode(0, 1), input)];
-
+            // Act
             typeChecker.TypeCheckRouteDestination(destinations, localNetwork, errors);
 
-            // Verify errors
+            // Assert
             Assert.NotEmpty(errors);
-        }*/
+            Assert.Contains(errors, e => e.Contains("Route destination identifier 'Identifier(input)'"));
+
+        }
+
+
+
     }
 
     public class TypeCheckRoutesTest : TypeCheckerTests
@@ -1063,6 +1495,114 @@ public class TypeCheckerTests
 
             // Verify errors
             Assert.NotEmpty(errors);
+        }
+    }
+
+    public class TypeCheckDefinitionNodeSimulateTests : TypeCheckerTests
+    {
+        [Fact]
+        public void SimulateNode_NetworkIdentifierNotFound_AddsError()
+        {
+            var simulateNode = new SimulateNode(0,
+                new SingleIdentifierNode(0, "nonexistent"),
+                new IntLiteralNode(0, 5),
+                new IntLiteralNode(0, 10)
+            );
+
+            var wrapper = new DefinitionProgramNode(0, simulateNode);
+            var checker = new TypeChecker();
+            List<string> errors = [];
+
+            checker.TypeCheckNode(wrapper, errors);
+
+            Assert.Contains(errors, e => e.Contains("Network identifier not found"));
+        }
+
+        [Fact]
+        public void SimulateNode_NetworkIdentifierWrongType_AddsError()
+        {
+            var constNode = new ConstDeclarationNode(
+                0,
+                null,
+                new IntTypeNode(0),
+                new SingleIdentifierNode(0, "notNetwork"),
+                new IntLiteralNode(0, 5)
+            );
+
+            var simulateNode = new SimulateNode(0,
+                new SingleIdentifierNode(0, "notNetwork"),
+                new IntLiteralNode(0, 5),
+                new IntLiteralNode(0, 10)
+            );
+
+            var definition = new ConstDeclarationNode(
+                0,
+                simulateNode, // nextDefinition
+                new IntTypeNode(0),
+                new SingleIdentifierNode(0, "notNetwork"),
+                new IntLiteralNode(0, 5)
+            );
+
+            var wrapper = new DefinitionProgramNode(0, definition);
+            var checker = new TypeChecker();
+            List<string> errors = [];
+
+            checker.TypeCheckNode(wrapper, errors);
+
+            Assert.Contains(errors, e => e.Contains("Identifier is not of type network!"));
+        }
+
+        [Fact]
+        public void SimulateNode_RunsNotInt_AddsError()
+        {
+            var simulateNode = new SimulateNode(0,
+                new SingleIdentifierNode(0, "any"),
+                new StringLiteralNode(0, "oops"),
+                new IntLiteralNode(0, 10)
+            );
+
+            var wrapper = new DefinitionProgramNode(0, simulateNode);
+            var checker = new TypeChecker();
+            List<string> errors = [];
+
+            checker.TypeCheckNode(wrapper, errors);
+
+            Assert.Contains(errors, e => e.Contains("Expression for runs must be of type int"));
+        }
+
+        [Fact]
+        public void SimulateNode_TerminationCriteriaNotInt_AddsError()
+        {
+            var simulateNode = new SimulateNode(0,
+                new SingleIdentifierNode(0, "any"),
+                new IntLiteralNode(0, 5),
+                new DoubleLiteralNode(0, 10.0)
+            );
+
+            var wrapper = new DefinitionProgramNode(0, simulateNode);
+            var checker = new TypeChecker();
+            List<string> errors = [];
+
+            checker.TypeCheckNode(wrapper, errors);
+
+            Assert.Contains(errors, e => e.Contains("Expression for termination criteria must be of type int"));
+        }
+
+        [Fact]
+        public void ProgramNode_UnexpectedSubtype_AddsError()
+        {
+            var program = new DummyProgramNode(0);
+            var checker = new TypeChecker();
+            List<string> errors = [];
+
+            checker.TypeCheckNode(program, errors);
+
+            Assert.Contains(errors, e => e.Contains("Unexpected definition"));
+        }
+
+        private class DummyProgramNode : ProgramNode
+        {
+            public DummyProgramNode(int lineNumber) : base(lineNumber) { }
         }
     }
 }
