@@ -8,42 +8,49 @@ queue ParkingLot {
 queue BeforeCheckIn {
   servers: 2;
   service: 90;
+  capacity: 10222220;
   * mrt *
 }
 
 queue CheckIn {
   servers: 1;
   service: 20;
+  capacity: 10222220;
   * mrt *
 } 
 
 queue AfterCheckIn {
   servers: 4;
   service: 90;
+  capacity: 10222220;
   * mrt *
 }
 
 queue SecurityA {
   servers: 1;
   service: 120;
+  capacity: 10222220;
   * mrt *
 }
 
 queue SecurityB {
   servers: 1;
   service: 240;
+  capacity: 10222220;
   * mrt *
 }
 
 queue GateA {
   servers: 1;
   service: 10;
+  capacity: 10222220;
   * mrt *
 }
 
 queue GateB {
   servers: 1;
   service: 30;
+  capacity: 10222220;
   * mrt *
 }
 
@@ -64,11 +71,11 @@ network ProcessingArea {
   arrival_after_check_in -> AfterCheckIn -> [0.22 SecurityB, 0.38 SecurityA1, 0.38 SecurityA2, 0.02 AfterCheckIn];
   arrival_sec_a1 -> SecurityA1 -> [0.25 GateA1, 0.25 GateA2, 0.25 GateA3, 0.25 GateA4];
   arrival_sec_a2 -> SecurityA2 -> [0.25 GateA1, 0.25 GateA2, 0.25 GateA3, 0.25 GateA4];
-  GateB -> flight
-  GateA1 -> flight
-  GateA2 -> flight
-  GateA3 -> flight
-  GateA4 -> flight
+  GateB -> flight;
+  GateA1 -> flight;
+  GateA2 -> flight;
+  GateA3 -> flight;
+  GateA4 -> flight;
 }
 
 network Airport {
