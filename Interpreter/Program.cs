@@ -24,8 +24,28 @@ try
 
     if (errors.Count == 0)
     {
-        InterpreterClass interpreter = new(astRoot);
-        InterpretationEnvironment interpretationEnvironment = interpreter.StartInterpretation();
+        if (args.Contains("--benchmark"))
+        {
+            List<InterpretationEnvironment> environments = new();
+            for (int i = 0; i < 200; i++)
+            {
+                InterpreterClass interpreter = new(astRoot);
+                InterpretationEnvironment interpretationEnvironment = interpreter.StartInterpretation();
+                environments.Add(interpretationEnvironment);
+            }
+
+            Console.WriteLine("Benchmark completed. Results:");
+            foreach (var env in environments)
+            {
+                Console.WriteLine($"Start Time: {env.StartTime}, End Time: {env.EndTime}, Duration: {env.Duration.TotalMilliseconds} ms");
+            }
+            Console.WriteLine("Average Duration: " + environments.Sum(e => e.Duration.TotalMilliseconds) / environments.Count);
+        }
+        else
+        {
+            InterpreterClass interpreter = new(astRoot);
+            InterpretationEnvironment interpretationEnvironment = interpreter.StartInterpretation();
+        }
     }
 
     string? path = Environment.CurrentDirectory.EndsWith("net9.0")
