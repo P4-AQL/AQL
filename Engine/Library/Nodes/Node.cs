@@ -1,7 +1,10 @@
 namespace SimEngine.Nodes;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using SimEngine.Core;
 
 public abstract class Node
 {
@@ -21,4 +24,32 @@ public abstract class Node
             ? string.Join('.', parts.Take(parts.Length - 1))
             : name;
     }
+
+    public Node? ChooseProbabilisticNode(
+        List<(Node node, double probability)>? nodeChoices,
+        SimulationEngineAPI engine,
+        Node? defaultNode)
+    {
+        if (nodeChoices is null || nodeChoices.Count == 0)
+            return defaultNode;
+
+        double totalProb = 0.0;
+        foreach (var (_, prob) in nodeChoices)
+        {
+            totalProb += prob;
+        }
+
+        double r = engine.RandomGenerator.NextDouble() * totalProb;
+        double cumulative = 0.0;
+
+        foreach (var (node, prob) in nodeChoices)
+        {
+            cumulative += prob;
+            if (r <= cumulative)
+                return node;
+        }
+
+        return defaultNode;
+    }
+
 }
