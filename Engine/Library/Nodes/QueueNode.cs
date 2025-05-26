@@ -132,7 +132,6 @@ public class QueueNode : Node
 
     public void Reset(Core.Simulation simulation)
     {
-        Console.WriteLine("NextNodeChoices: " + NextNodeChoices);
         _waitingQueue.Clear();
         _busyServers = 0;
         _runtimeStats?.IncrementRun();
