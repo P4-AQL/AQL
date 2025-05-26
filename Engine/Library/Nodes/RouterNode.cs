@@ -18,30 +18,8 @@ public class RouterNode : Node
         _engine.TransitionNetwork(entity, currentNetwork, _network, Simulation.Now);
 
         // Routing to next node
-        var totalProb = 0.0;
-        if (NextNodeChoices is not null)
-        {
-            foreach ((Node node, double prob) in NextNodeChoices)
-            {
-                totalProb += prob;
-            }
-        }
+        Node? target = ChooseProbabilisticNode(NextNodeChoices, _engine, NextNode);
 
-        Node? target = NextNode;
-        if (NextNodeChoices is not null)
-        {
-            double r = _engine.RandomGenerator.NextDouble() * totalProb;
-            double cumulative = 0;
-            foreach ((Node node, double prob) in NextNodeChoices)
-            {
-                cumulative += prob;
-                if (r <= cumulative)
-                {
-                    target = node;
-                    break;
-                }
-            }
-        }
         if (target != null)
             Simulation.Schedule(0, () => RouteTo(target, entity));
 

@@ -24,21 +24,7 @@ public class DispatcherNode : Node
             _engine.RegisterEntity(entity);
             _engine.RecordNetworkEntry(entity, _network, Simulation.Now);
 
-            Node target = NextNode!;
-            if (NextNodeChoices != null)
-            {
-                double r = _engine.RandomGenerator.NextDouble();
-                double cumulative = 0;
-                foreach (var (node, prob) in NextNodeChoices)
-                {
-                    cumulative += prob;
-                    if (r <= cumulative)
-                    {
-                        target = node;
-                        break;
-                    }
-                }
-            }
+            Node? target = ChooseProbabilisticNode(NextNodeChoices, _engine, NextNode);
 
             if (target is QueueNode queue)
             {
