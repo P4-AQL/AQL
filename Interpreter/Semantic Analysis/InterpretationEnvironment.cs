@@ -18,8 +18,8 @@ public struct InterpretationEnvironment
     Table<object> _variableState;
     public readonly Table<NetworkDeclarationNode> NetworkState => _networkState;
     Table<NetworkDeclarationNode> _networkState;
-    public readonly NetworkDefinitionManager QueueableManager => _queueableManager;
-    NetworkDefinitionManager _queueableManager;
+    public readonly NetworkDefinitionManager NetworkDeclarationManager => _networkDeclarationManager;
+    NetworkDefinitionManager _networkDeclarationManager;
 
     public readonly Table<InterpretationEnvironment> ModuleDependencies => _moduleDependencies;
     Table<InterpretationEnvironment> _moduleDependencies;
@@ -42,7 +42,7 @@ public struct InterpretationEnvironment
 
             Root = root,
         };
-        emptyEnv._queueableManager = new NetworkDefinitionManager(emptyEnv);
+        emptyEnv._networkDeclarationManager = new NetworkDefinitionManager(emptyEnv);
 
         return emptyEnv;
     }

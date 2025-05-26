@@ -2,8 +2,14 @@
 
 
 using Antlr4.Runtime;
+using Interpreter.AST.Nodes.Definitions;
+using Interpreter.AST.Nodes.Expressions;
+using Interpreter.AST.Nodes.Identifiers;
+using Interpreter.AST.Nodes.Networks;
+using Interpreter.AST.Nodes.Programs;
 using Interpreter.SemanticAnalysis;
 using Interpreter.Visitors;
+using SimEngine.Networks;
 
 public class InterpreterIntergrationTests
 {
@@ -231,6 +237,106 @@ public class InterpreterIntergrationTests
             }
         """;
 
+    static readonly QueueDeclarationNode queueDeclarationNode = new(
+        0,
+        new(
+            0,
+            new(0, "queueAType")
+        ),
+        new(
+            0,
+            "queueAName"
+        ),
+        new IntLiteralNode(0, 2),
+        new IntLiteralNode(0, 10),
+        new IntLiteralNode(0, 5),
+        [ /* No metrics */ ]
+    );
+
+    static readonly NetworkDeclarationNode networkDeclarationNode = new(
+        0,
+        new(
+            0,
+            new(
+                0,
+                "AirportType"
+            )
+        ),
+        new(
+            0,
+            "AirportName"
+        ),
+        [ /* One input */
+            new(
+                0,
+                "arrivalA"
+            )
+        ],
+        [ /* One output */
+            new(
+                0,
+                "departureA"
+            )
+        ],
+        [ /* One instance */
+            new(
+                0,
+                new SingleIdentifierNode(0, "queueAName"),
+                new(0, "queueA-1")
+            )
+        ],
+        [ /* Two routes */ 
+            new(
+                0,
+                new IntLiteralNode(0, 10),
+                [
+                    new(
+                        0,
+                        new DoubleLiteralNode(0, 6.9),
+                        new SingleIdentifierNode(
+                            0,
+                            "arrivalA"
+                        )
+                    ),
+                ]
+            ),
+            new(
+                0,
+                new IdentifierExpressionNode(
+                    0,
+                    new SingleIdentifierNode(
+                        0,
+                        "departureA"
+                    )
+                ),
+                [
+                    new(
+                        0,
+                        new IntLiteralNode(0, 1),
+                        new SingleIdentifierNode(
+                            0,
+                            "queueA-1"
+                        )
+                    )
+                ]
+            )
+        ],
+        [/* no metrics */]
+    );
+
+    static readonly DefinitionProgramNode definitionProgramNode = new(
+        0,
+        new NetworkDefinitionNode(
+            0,
+            new NetworkDefinitionNode(
+                0,
+                null,
+                networkDeclarationNode
+            ),
+            queueDeclarationNode
+        )
+    );
+
     public static AQLParser Setup(string input)
     {
         AntlrInputStream antlrFileStream = new(input);
@@ -275,5 +381,45 @@ public class InterpreterIntergrationTests
 
         Assert.NotEmpty(errors);
         Assert.Equal(5, errors.Count);
+    }
+
+    [Fact]
+    public void InterpreterIntegrationTest_QueueDeclarationNode_ShouldBeCorrect()
+    {
+        var interpreter = new InterpreterClass(definitionProgramNode);
+
+        interpreter.InterpretQueueDeclaration(queueDeclarationNode);
+        Assert.False(interpreter.GlobalEnvironment.EncounteredError);
+
+        Queueable? queueable = interpreter.GlobalEnvironment.NetworkDeclarationManager.FindQueueableOrDefault("queueAName");
+        Assert.NotNull(queueable);
+        Queue queue = Assert.IsAssignableFrom<Queue>(queueable);
+        Assert.Equal(5, queue.Servers);
+        Assert.Equal(2, queue.Service());
+        Assert.Equal(10, queue.Capacity);
+        Assert.Empty(queue.Metrics);
+
+        interpreter.InterpretNetworkDeclaration(networkDeclarationNode);
+        Assert.False(interpreter.GlobalEnvironment.EncounteredError);
+
+        queueable = interpreter.GlobalEnvironment.NetworkDeclarationManager.FindQueueableOrDefault("AirportName");
+        Assert.NotNull(queueable);
+        Network network = Assert.IsAssignableFrom<Network>(queueable);
+        Assert.Single(network.Inputs);
+        Assert.Equal("arrivalA", network.Inputs[0].Name);
+        Assert.Single(network.Outputs);
+        Assert.Equal("departureA", network.Outputs[0].Name);
+        Assert.Single(network.NewInstances);
+        Assert.NotNull(network.Routes);
+        Assert.Equal(2, network.Routes.Count);
+        FuncRoute funcRoute = Assert.IsAssignableFrom<FuncRoute>(network.Routes[0]);
+        Assert.Equal(10, funcRoute.FromRate());
+        Assert.Equal(6.9, funcRoute.ToProbabilityPair.Weight);
+        Assert.Equal("arrivalA", funcRoute.ToProbabilityPair.ToName);
+
+        NetworkEntityRoute networkEntityRoute = Assert.IsAssignableFrom<NetworkEntityRoute>(network.Routes[1]);
+        Assert.Equal("departureA", networkEntityRoute.FromName);
+        Assert.Equal(1, networkEntityRoute.ToProbabilityPair.Weight);
+        Assert.Equal("queueA-1", networkEntityRoute.ToProbabilityPair.ToName);
     }
 }
