@@ -47,6 +47,7 @@ queue GateB {
   capacity: 10222220;
   *mrt, vrt, throughput*
 }
+
 network ArrivalArea {
   main_parking_entrance | path_to_sec_b, path_to_after_check_in, path_to_sec_a1, path_to_sec_a2;
   CheckIn : CheckInA, CheckInB;
@@ -85,6 +86,6 @@ network Airport {
 
 simulate {
   run: Airport;
-  until: 6000;
-  times: 1;
+  until: 2400;
+  times: 10;
 }
