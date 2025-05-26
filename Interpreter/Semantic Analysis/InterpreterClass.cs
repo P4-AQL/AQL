@@ -32,12 +32,12 @@ public class InterpreterClass(ProgramNode node)
     {
         try
         {
-            DateTime startTime = DateTime.Now;
+            globalEnvironment.StartTime = DateTime.Now;
             InterpretProgram(globalEnvironment.Root);
-            DateTime endTime = DateTime.Now;
-            Console.WriteLine($"Started interpretation at {startTime:HH:mm:ss.fff}");
-            Console.WriteLine($"Finished interpretation at {endTime:HH:mm:ss.fff}");
-            Console.WriteLine($"Interpretation took {(endTime - startTime).TotalMilliseconds} ms");
+            globalEnvironment.EndTime = DateTime.Now;
+            Console.WriteLine($"Started interpretation at {globalEnvironment.StartTime:HH:mm:ss.fff}");
+            Console.WriteLine($"Finished interpretation at {globalEnvironment.EndTime:HH:mm:ss.fff}");
+            Console.WriteLine($"Interpretation took {globalEnvironment.Duration.TotalMilliseconds} ms");
         }
         catch (Exception ex)
         {
@@ -292,7 +292,7 @@ public class InterpreterClass(ProgramNode node)
         engineAPI.SetSimulationParameters(untilTime: untilTime, runCount: runCount);
 
         NetworkEntity networkEntity = QueueableManager.FindNetworkEntityOrThrow(simulateNode.NetworkIdentifier);
-        
+
 
         if (networkEntity is not Queueable queueable)
         {
@@ -349,7 +349,7 @@ public class InterpreterClass(ProgramNode node)
         {
             networkDefinition.AddExitPoint(output.Name);
         }
-        
+
         foreach (Queueable queueable in network.NewInstances)
         {
             routesToCreate.AddRange(CreateQueueableInEngine(engineAPI, queueable, networkDefinition));
@@ -372,8 +372,6 @@ public class InterpreterClass(ProgramNode node)
                 routeToCreate.Invoke();
             }
 
-            
-
             engineAPI.CreateNetwork(networkDefinition);
         }
         else
@@ -385,7 +383,7 @@ public class InterpreterClass(ProgramNode node)
 
     public Action CreateRouteInEngine(SimulationEngineAPI engineAPI, NetworkDefinition networkDefinition, Route route, int index)
     {
-        
+
         if (route is FuncRoute funcRoute)
         {
             return CreateFunctionRouteInEngine(engineAPI, funcRoute, networkDefinition, index);
@@ -423,8 +421,8 @@ public class InterpreterClass(ProgramNode node)
     {
         string fromName = string.Join('.', networkDefinition.FullName, networkEntityRoute.FromName);
         string toName = string.Join('.', networkDefinition.FullName, networkEntityRoute.ToProbabilityPair.ToName);
-        
-        
+
+
         return () => networkDefinition.Connect(fromName, toName, networkEntityRoute.ToProbabilityPair.Weight);
     }
 

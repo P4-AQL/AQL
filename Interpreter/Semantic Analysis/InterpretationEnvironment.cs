@@ -24,6 +24,10 @@ public struct InterpretationEnvironment
     public readonly Table<InterpretationEnvironment> ModuleDependencies => _moduleDependencies;
     Table<InterpretationEnvironment> _moduleDependencies;
 
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
+    public readonly TimeSpan Duration => EndTime - StartTime;
+
     public ProgramNode Root;
 
     public static InterpretationEnvironment Empty(ProgramNode root)
