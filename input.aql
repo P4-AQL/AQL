@@ -86,6 +86,6 @@ network Airport {
 
 simulate {
   run: Airport;
-  until: 2400;
-  times: 10;
+  until: 86400;
+  times: 5;
 }
