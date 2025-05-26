@@ -32,12 +32,17 @@ public class InterpreterClass(ProgramNode node)
     {
         try
         {
+            DateTime startTime = DateTime.Now;
             InterpretProgram(globalEnvironment.Root);
+            DateTime endTime = DateTime.Now;
+            Console.WriteLine($"Started interpretation at {startTime:HH:mm:ss.fff}");
+            Console.WriteLine($"Finished interpretation at {endTime:HH:mm:ss.fff}");
+            Console.WriteLine($"Interpretation took {(endTime - startTime).TotalMilliseconds} ms");
         }
         catch (Exception ex)
         {
             globalEnvironment.SetError(ex.Message);
-            
+
         }
 
         return globalEnvironment;
