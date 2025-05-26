@@ -76,7 +76,6 @@ public class SimulationEngineAPI
             var qualifiedFrom = Qualify(network.FullName, from);
             var qualifiedTo = Qualify(network.FullName, to);
             ConnectNode(qualifiedFrom, qualifiedTo, prob);
-            Console.WriteLine($"Connecting {qualifiedFrom} to {qualifiedTo} with probability {prob}");
         }
 
     }

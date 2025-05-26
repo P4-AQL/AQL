@@ -29,7 +29,6 @@ public class DispatcherNode : Node
             {
                 double r = _engine.RandomGenerator.NextDouble();
                 double cumulative = 0;
-                Console.WriteLine($"DispatcherNode {Name} - Random number: {r}");
                 foreach (var (node, prob) in NextNodeChoices)
                 {
                     cumulative += prob;
