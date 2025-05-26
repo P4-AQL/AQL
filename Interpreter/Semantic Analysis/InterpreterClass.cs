@@ -26,18 +26,18 @@ public class InterpreterClass(ProgramNode node)
     Table<NetworkDeclarationNode> NetworkState => globalEnvironment.NetworkState;
     public SimulationEngineAPI? LastEngine { get; private set; }
 
-    internal NetworkDefinitionManager QueueableManager => globalEnvironment.QueueableManager;
+    internal NetworkDefinitionManager NetworkDeclarationManager => globalEnvironment.NetworkDeclarationManager;
 
     public InterpretationEnvironment StartInterpretation()
     {
         try
         {
-            DateTime startTime = DateTime.Now;
+            globalEnvironment.StartTime = DateTime.Now;
             InterpretProgram(globalEnvironment.Root);
-            DateTime endTime = DateTime.Now;
-            Console.WriteLine($"Started interpretation at {startTime:HH:mm:ss.fff}");
-            Console.WriteLine($"Finished interpretation at {endTime:HH:mm:ss.fff}");
-            Console.WriteLine($"Interpretation took {(endTime - startTime).TotalMilliseconds} ms");
+            globalEnvironment.EndTime = DateTime.Now;
+            Console.WriteLine($"Started interpretation at {globalEnvironment.StartTime:HH:mm:ss.fff}");
+            Console.WriteLine($"Finished interpretation at {globalEnvironment.EndTime:HH:mm:ss.fff}");
+            Console.WriteLine($"Interpretation took {globalEnvironment.Duration.TotalMilliseconds} ms");
         }
         catch (Exception ex)
         {
@@ -242,7 +242,7 @@ public class InterpreterClass(ProgramNode node)
 
         VariableState.ForceBind(node.Identifier.Identifier, queueTuple);
 
-        QueueableManager.Queueables.Add(
+        NetworkDeclarationManager.Queueables.Add(
             new Queue(
                 node.Identifier.Identifier,
                 servers,
@@ -260,7 +260,7 @@ public class InterpreterClass(ProgramNode node)
         IEnumerable<NetworkInputOrOutput> inputs = node.Inputs.Select(NetworkDefinitionManager.GetInputOrOutput);
         IEnumerable<NetworkInputOrOutput> outputs = node.Outputs.Select(NetworkDefinitionManager.GetInputOrOutput);
 
-        IEnumerable<Queueable> newInstances = node.Instances.Select(QueueableManager.GetNewInstance);
+        IEnumerable<Queueable> newInstances = node.Instances.Select(NetworkDeclarationManager.GetNewInstance);
 
         Network network = new(
             node.Identifier.Identifier,
@@ -274,12 +274,12 @@ public class InterpreterClass(ProgramNode node)
         List<Route> routes = [];
         foreach (RouteDefinitionNode routeDefinitionNode in node.Routes)
         {
-            routes.AddRange(QueueableManager.GetRoutes(routeDefinitionNode, network, InterpretExpressionAssumeDouble));
+            routes.AddRange(NetworkDeclarationManager.GetRoutes(routeDefinitionNode, network, InterpretExpressionAssumeDouble));
         }
 
         network.Routes = routes;
 
-        QueueableManager.Queueables.Add(network);
+        NetworkDeclarationManager.Queueables.Add(network);
     }
 
     public void InterpretSimulate(SimulateNode simulateNode)
@@ -291,8 +291,8 @@ public class InterpreterClass(ProgramNode node)
 
         engineAPI.SetSimulationParameters(untilTime: untilTime, runCount: runCount);
 
-        NetworkEntity networkEntity = QueueableManager.FindNetworkEntityOrThrow(simulateNode.NetworkIdentifier);
-        
+        NetworkEntity networkEntity = NetworkDeclarationManager.FindNetworkEntityOrThrow(simulateNode.NetworkIdentifier);
+
 
         if (networkEntity is not Queueable queueable)
         {
@@ -349,7 +349,7 @@ public class InterpreterClass(ProgramNode node)
         {
             networkDefinition.AddExitPoint(output.Name);
         }
-        
+
         foreach (Queueable queueable in network.NewInstances)
         {
             routesToCreate.AddRange(CreateQueueableInEngine(engineAPI, queueable, networkDefinition));
@@ -372,8 +372,6 @@ public class InterpreterClass(ProgramNode node)
                 routeToCreate.Invoke();
             }
 
-            
-
             engineAPI.CreateNetwork(networkDefinition);
         }
         else
@@ -385,7 +383,7 @@ public class InterpreterClass(ProgramNode node)
 
     public Action CreateRouteInEngine(SimulationEngineAPI engineAPI, NetworkDefinition networkDefinition, Route route, int index)
     {
-        
+
         if (route is FuncRoute funcRoute)
         {
             return CreateFunctionRouteInEngine(engineAPI, funcRoute, networkDefinition, index);
@@ -423,8 +421,8 @@ public class InterpreterClass(ProgramNode node)
     {
         string fromName = string.Join('.', networkDefinition.FullName, networkEntityRoute.FromName);
         string toName = string.Join('.', networkDefinition.FullName, networkEntityRoute.ToProbabilityPair.ToName);
-        
-        
+
+
         return () => networkDefinition.Connect(fromName, toName, networkEntityRoute.ToProbabilityPair.Weight);
     }
 

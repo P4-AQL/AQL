@@ -48,7 +48,7 @@ public class InterpreterQueueDeclarationTests
 
         interpreter.InterpretQueueDeclaration(queueNode);
 
-        var flat = interpreter.QueueableManager.FindQueueableOrDefault("q1");
+        var flat = interpreter.NetworkDeclarationManager.FindQueueableOrDefault("q1");
         Assert.NotNull(flat);
         Assert.Equal("q1", flat.Name);
     }
