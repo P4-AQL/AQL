@@ -1193,7 +1193,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     {
         return new(
             lineNumber: context.Start.Line,
-            value: int.Parse(context.INT().GetText())
+            value: int.Parse(context.INT().GetText(), System.Globalization.CultureInfo.InvariantCulture)
         );
     }
 
@@ -1201,7 +1201,7 @@ class ASTAQLVisitor : AQLBaseVisitor<object>
     {
         return new(
             lineNumber: context.Start.Line,
-            value: double.Parse(context.DOUBLE().GetText())
+            value: double.Parse(context.DOUBLE().GetText(), System.Globalization.CultureInfo.InvariantCulture)
         );
     }
 
