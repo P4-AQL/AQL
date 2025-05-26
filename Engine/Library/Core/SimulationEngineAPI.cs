@@ -114,6 +114,22 @@ public class SimulationEngineAPI
 
         if (!_nodes.TryGetValue(to, out var toNode))
             throw new ArgumentException($"Target node '{to}' not found.");
+
+        if (fromNode.NextNodeChoices == null)
+            fromNode.NextNodeChoices = new List<(Node, double)>();
+
+        fromNode.NextNodeChoices.Add((toNode, probability));
+    }
+
+
+    /*
+    public void ConnectNode(string from, string to, double probability = 1.0)
+    {
+        if (!_nodes.TryGetValue(from, out var fromNode))
+            throw new ArgumentException($"Node '{from}' not found.");
+
+        if (!_nodes.TryGetValue(to, out var toNode))
+            throw new ArgumentException($"Target node '{to}' not found.");
         Console.WriteLine("fromNode.nextnoidechoices: " + fromNode.NextNodeChoices + " probability: " + probability);
 
         if (fromNode.NextNodeChoices == null && probability < 1.0)
@@ -130,6 +146,7 @@ public class SimulationEngineAPI
             fromNode.NextNode = toNode;
         }
     }
+    */
 
     public void RecordNetworkEntry(Entity entity, string networkName, double time)
     {
