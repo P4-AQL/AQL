@@ -91,7 +91,7 @@ public class QueueNode : Node
         Node? target = NextNode;
         if (NextNodeChoices is not null)
         {
-            double r = _engine.RandomGenerator.Next() * totalProb;
+            double r = _engine.RandomGenerator.NextDouble() * totalProb;
             double cumulative = 0;
             foreach ((Node node, double prob) in NextNodeChoices)
             {
