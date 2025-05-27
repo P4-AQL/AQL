@@ -18,7 +18,10 @@ public class DispatcherNode : Node
 
     public void ScheduleInitialArrival()
     {
-        Simulation.Schedule(_arrivalDist(), () =>
+        double lamda = 1 / _arrivalDist();
+        double arrivalTime = GetArrivalExponetialDistribution(lamda, _engine.RandomGenerator);
+
+        Simulation.Schedule(arrivalTime, () =>
         {
             var entity = new Entity(Simulation.Now);
             _engine.RegisterEntity(entity);
@@ -38,5 +41,14 @@ public class DispatcherNode : Node
 
             ScheduleInitialArrival();
         });
+    }
+
+    public static double GetArrivalExponetialDistribution(double lamda, Random random)
+    {
+        if (lamda <= 0)
+        {
+            throw new ArgumentException("Lambda must be greater than zero for exponential distribution.");
+        }
+        return -Math.Log(1.0 - random.NextDouble()) / lamda;
     }
 }

@@ -60,7 +60,8 @@ public class QueueNode : Node
     private void StartService(Core.Entity entity)
     {
         _busyServers++;
-        double serviceTime = _serviceTimeDist();
+        double lamda = 1 / _serviceTimeDist();
+        double serviceTime = DispatcherNode.GetArrivalExponetialDistribution(lamda, _engine.RandomGenerator);
         double waitTime = Simulation.Now - entity.ArrivalTime;
         Simulation.Schedule(serviceTime, () => ProcessDeparture(entity));
 
